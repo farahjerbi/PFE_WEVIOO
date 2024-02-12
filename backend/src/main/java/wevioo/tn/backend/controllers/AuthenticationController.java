@@ -1,5 +1,6 @@
 package wevioo.tn.backend.controllers;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,7 +13,7 @@ import wevioo.tn.backend.dtos.SignUpRequest;
 import wevioo.tn.backend.dtos.VerificationRequest;
 import wevioo.tn.backend.repositories.UserRepository;
 import wevioo.tn.backend.services.AuthenticationService;
-
+@Tag(name = "Authentication", description = "Authentication")
 @RestController
 @RequestMapping("/api/auth/")
 public class AuthenticationController {
