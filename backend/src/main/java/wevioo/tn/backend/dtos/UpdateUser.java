@@ -6,5 +6,10 @@ import lombok.Data;
 public class UpdateUser {
     private String firstName;
     private String lastName;
+    private String description;
+    private String github;
+    private String twitter;
+    private String phone;
+    private String address;
     private boolean mfaEnabled;
 }

@@ -18,6 +18,7 @@ import static dev.samstevens.totp.util.Utils.getDataUriForImage;
 public class TwoFactorAuthenticationService {
 
     public String generateNewSecret() {
+
         return new DefaultSecretGenerator().generate();
     }
 
@@ -48,10 +49,6 @@ public class TwoFactorAuthenticationService {
         CodeGenerator codeGenerator = new DefaultCodeGenerator();
         CodeVerifier verifier = new DefaultCodeVerifier(codeGenerator, timeProvider);
         return verifier.isValidCode(secret, code);
-    }
-
-    public boolean isOtpNotValid(String secret, String code) {
-        return !this.isOtpValid(secret, code);
     }
 
 }

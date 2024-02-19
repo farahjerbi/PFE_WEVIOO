@@ -14,14 +14,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+
 import wevioo.tn.backend.entities.Role;
 import wevioo.tn.backend.security.JwtAuthenticationFilter;
 import wevioo.tn.backend.services.CustomUserDetailsService;
 
-import java.util.Arrays;
+
 
 @Configuration
 @EnableWebSecurity
@@ -50,9 +49,13 @@ public class SecurityConfig {
                 .permitAll()
                 .requestMatchers("/api/admins/**").hasAnyAuthority(Role.ADMIN.name())
                         .requestMatchers("/api/users/**").hasAuthority("USER")
-                                .anyRequest().authenticated())
+                                .anyRequest().authenticated()
+
+                )
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                ;
+
         return http.build();
     }
 

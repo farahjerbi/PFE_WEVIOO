@@ -14,5 +14,11 @@ public class AuthenticationResponse {
     private UserResponse user;
     private boolean mfaEnabled;
     private String secretImageUri;
+    private  String message;
+    private String description;
+    private String address;
+    private String phone;
+    private String github;
+    private String twitter;
 
 }

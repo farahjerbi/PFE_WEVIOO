@@ -22,11 +22,18 @@ public class UserEntity implements UserDetails {
     private String lastName;
     private String email;
     private String password;
-    private boolean mfaEnabled;
-    private boolean enabled;
+    private boolean mfaEnabled=false;
+    private boolean enabled=false;
     private String secret;
+    private String description;
+    private String address;
+    private String phone;
+    private String github;
+    private String twitter;
+
+
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private Role role= Role.valueOf("USER");
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -53,8 +60,5 @@ public class UserEntity implements UserDetails {
         return true;
     }
 
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
+
 }

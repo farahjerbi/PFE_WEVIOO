@@ -13,7 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import wevioo.tn.backend.TwoFactorAuth.TwoFactorAuthenticationService;
 import wevioo.tn.backend.dtos.*;
-import wevioo.tn.backend.entities.Role;
 import wevioo.tn.backend.entities.UserEntity;
 import wevioo.tn.backend.repositories.UserRepository;
 import wevioo.tn.backend.security.JwtGenerator;
@@ -24,38 +23,44 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
-    private JwtGenerator jwtGenerator;
-    private TwoFactorAuthenticationService tfaService;
-    @Autowired
-    private ModelMapper modelMapper;
+    private final JwtGenerator jwtGenerator;
+    private final TwoFactorAuthenticationService tfaService;
+
+    private final EmailAuthVerification emailAuthVerification;
+
+    private final ModelMapper modelMapper;
 
     @Autowired
-    public AuthenticationServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtGenerator jwtGenerator, TwoFactorAuthenticationService tfaService) {
+    public AuthenticationServiceImpl(ModelMapper modelMapper ,UserRepository userRepository, PasswordEncoder passwordEncoder,
+                                     AuthenticationManager authenticationManager, JwtGenerator jwtGenerator,
+                                     TwoFactorAuthenticationService tfaService,EmailAuthVerification emailAuthVerification) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtGenerator = jwtGenerator;
         this.tfaService = tfaService;
+        this.modelMapper=modelMapper;
+        this.emailAuthVerification=emailAuthVerification;
     }
 
 
     public AuthenticationResponse singUp(SignUpRequest signUpRequest){
-        UserEntity user = new UserEntity();
 
-        user.setEmail(signUpRequest.getEmail());
-        user.setFirstName(signUpRequest.getFirstName());
-        user.setLastName(signUpRequest.getLastName());
-        user.setRole(Role.USER);
+        UserEntity user = modelMapper.map(signUpRequest, UserEntity.class);
         user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
-        user.setMfaEnabled(signUpRequest.isMfaEnabled());
-        
         if(signUpRequest.isMfaEnabled()){
             user.setSecret(tfaService.generateNewSecret());
+            user.setEnabled(true);
         }
 
         userRepository.save(user);
+
+        if(!user.isEnabled()){
+        emailAuthVerification.sendEmailAuthVerification(user.getEmail());
+        }
+
 
 
         return AuthenticationResponse.builder()
@@ -66,9 +71,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     public AuthenticationResponse signIn( SignInRequest signInRequest){
+        UserEntity userFound= userRepository.findByEmail(signInRequest.getEmail()).orElseThrow(()->new IllegalArgumentException("Invalid email or password"));
+
+        if(!userFound.isEnabled()){
+            return AuthenticationResponse.builder()
+                    .message("Account is not Enabled ! Please enable your account")
+                    .build();
+        }
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signInRequest.getEmail(),signInRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        UserEntity userFound= userRepository.findByEmail(signInRequest.getEmail()).orElseThrow(()->new IllegalArgumentException("Invalid email or password"));
         String token = jwtGenerator.generateToken(authentication);
        // String refreshToken = jwtGenerator.generateToken(authentication);
         UserResponse user = modelMapper.map(userFound, UserResponse.class);
@@ -87,31 +98,54 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return AuthenticationResponse.builder()
                 .token(token)
                 .user(user)
+                .mfaEnabled(false)
                 .build();
 
 
     }
 
     public AuthenticationResponse verifyCode(VerificationRequest verificationRequest) {
-        UserEntity user = userRepository.findByEmail(verificationRequest.getEmail())
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format("No user found with %S", verificationRequest.getEmail()))
-                );
-        if (tfaService.isOtpNotValid(user.getSecret(), verificationRequest.getCode())) {
+
+        UserEntity user= userRepository.findByEmail(verificationRequest.getEmail()).orElseThrow(()->new IllegalArgumentException("Invalid email"));
+
+        if ( !tfaService.isOtpValid(user.getSecret(), verificationRequest.getCode())) {
 
             throw new BadCredentialsException("Code is not correct");
         }
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(),user.getPassword()));
-        var jwtToken = jwtGenerator.generateToken(authentication);
+
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(verificationRequest.getEmail(),verificationRequest.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String token = jwtGenerator.generateToken(authentication);
 
         UserResponse userResponse = modelMapper.map(user, UserResponse.class);
 
 
         return AuthenticationResponse.builder()
-                .token(jwtToken)
+                .token(token)
                 .user(userResponse)
-                .mfaEnabled(user.isMfaEnabled())
                 .build();
     }
+
+
+    public String enableUser(String email){
+        UserEntity user= userRepository.findByEmail(email).orElseThrow(()->new IllegalArgumentException("Email not found"));
+        user.setEnabled(true);
+        userRepository.save(user);
+        return "User Enabled successfully";
+
+    }
+
+    public String deactivateUser(String email){
+        UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("No user found with %S", email)
+                ));
+
+        user.setEnabled(false);
+        return "User Deactivated successfully";
+
+    }
+
+
 
 }

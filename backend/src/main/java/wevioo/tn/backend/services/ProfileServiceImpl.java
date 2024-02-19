@@ -1,5 +1,6 @@
 package wevioo.tn.backend.services;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,11 +12,15 @@ import wevioo.tn.backend.repositories.UserRepository;
 
 
 @Service
-public class UserEntityServiceImpl implements UserEntityService {
+public class ProfileServiceImpl implements ProfileService {
     @Autowired
     private  PasswordEncoder passwordEncoder;
     @Autowired
     private  UserRepository userRepository;
+
+    @Autowired
+    private  ModelMapper modelMapper;
+
 
     public void changePassword(ChangePasswordRequest request ) {
 
@@ -42,14 +47,17 @@ public class UserEntityServiceImpl implements UserEntityService {
     }
 
 
-    public String UpdateUser(UpdateUser userEntity , Long id){
+    public String UpdateProfile(UpdateUser userEntity , Long id){
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException("User not found"));
 
         user.setLastName(userEntity.getLastName());
-        user.setMfaEnabled(userEntity.isMfaEnabled());
         user.setFirstName(userEntity.getFirstName());
-
+        user.setAddress(userEntity.getAddress());
+        user.setDescription(userEntity.getDescription());
+        user.setGithub(userEntity.getGithub());
+        user.setPhone(userEntity.getPhone());
+        user.setTwitter(userEntity.getTwitter());
         userRepository.save(user);
 
         return "User Updated successfully";
@@ -57,7 +65,7 @@ public class UserEntityServiceImpl implements UserEntityService {
 
 
 
-    public  String deleteUser(long id){
+    public  String deleteProfile(long id){
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException("User not found"));
 
