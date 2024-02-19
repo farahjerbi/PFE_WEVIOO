@@ -18,7 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import wevioo.tn.backend.entities.Role;
 import wevioo.tn.backend.security.JwtAuthenticationFilter;
-import wevioo.tn.backend.services.CustomUserDetailsService;
+import wevioo.tn.backend.services.auth.CustomUserDetailsService;
 
 
 

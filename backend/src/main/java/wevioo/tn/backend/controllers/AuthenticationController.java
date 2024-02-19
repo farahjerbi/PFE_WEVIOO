@@ -10,7 +10,9 @@ import wevioo.tn.backend.dtos.SignInRequest;
 import wevioo.tn.backend.dtos.SignUpRequest;
 import wevioo.tn.backend.dtos.VerificationRequest;
 import wevioo.tn.backend.repositories.UserRepository;
-import wevioo.tn.backend.services.AuthenticationService;
+import wevioo.tn.backend.services.auth.AuthenticationService;
+
+import wevioo.tn.backend.services.uploadFiles.FileStorageService;
 
 @Tag(name = "Authentication", description = "Authentication")
 @RestController
@@ -20,6 +22,7 @@ public class AuthenticationController {
     private AuthenticationService authenticationService;
     @Autowired
     private UserRepository userRepository;
+
 
 
     @PostMapping("register")
@@ -52,6 +55,7 @@ public class AuthenticationController {
     public String deactivateUserByEmail(@RequestBody String email) {
         return authenticationService.deactivateUser(email);
     }
+
 
 
 

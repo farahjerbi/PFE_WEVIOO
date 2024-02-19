@@ -1,4 +1,4 @@
-package wevioo.tn.backend.services;
+package wevioo.tn.backend.services.profile;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +9,7 @@ import wevioo.tn.backend.dtos.ChangePasswordRequest;
 import wevioo.tn.backend.dtos.UpdateUser;
 import wevioo.tn.backend.entities.UserEntity;
 import wevioo.tn.backend.repositories.UserRepository;
+import wevioo.tn.backend.services.profile.ProfileService;
 
 
 @Service
@@ -54,7 +55,7 @@ public class ProfileServiceImpl implements ProfileService {
         user.setLastName(userEntity.getLastName());
         user.setFirstName(userEntity.getFirstName());
         user.setAddress(userEntity.getAddress());
-        user.setDescription(userEntity.getDescription());
+        user.setProfession(userEntity.getProfession());
         user.setGithub(userEntity.getGithub());
         user.setPhone(userEntity.getPhone());
         user.setTwitter(userEntity.getTwitter());

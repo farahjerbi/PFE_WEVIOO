@@ -15,7 +15,7 @@ public class AuthenticationResponse {
     private boolean mfaEnabled;
     private String secretImageUri;
     private  String message;
-    private String description;
+    private String profession;
     private String address;
     private String phone;
     private String github;

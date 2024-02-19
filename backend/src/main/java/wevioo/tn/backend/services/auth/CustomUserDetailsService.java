@@ -1,4 +1,4 @@
-package wevioo.tn.backend.services;
+package wevioo.tn.backend.services.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;

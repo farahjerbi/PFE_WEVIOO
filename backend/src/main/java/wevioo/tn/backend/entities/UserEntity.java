@@ -25,7 +25,7 @@ public class UserEntity implements UserDetails {
     private boolean mfaEnabled=false;
     private boolean enabled=false;
     private String secret;
-    private String description;
+    private String profession;
     private String address;
     private String phone;
     private String github;

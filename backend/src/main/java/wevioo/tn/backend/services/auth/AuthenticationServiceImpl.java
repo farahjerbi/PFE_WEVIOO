@@ -1,4 +1,4 @@
-package wevioo.tn.backend.services;
+package wevioo.tn.backend.services.auth;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -81,7 +81,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signInRequest.getEmail(),signInRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = jwtGenerator.generateToken(authentication);
-       // String refreshToken = jwtGenerator.generateToken(authentication);
         UserResponse user = modelMapper.map(userFound, UserResponse.class);
 
         if (userFound.isMfaEnabled()) {
@@ -93,7 +92,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
 
-      //  authenticationResponse.setRefreshToken(refreshToken);
 
         return AuthenticationResponse.builder()
                 .token(token)

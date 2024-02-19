@@ -1,4 +1,4 @@
-package wevioo.tn.backend.services;
+package wevioo.tn.backend.services.profile;
 
 import wevioo.tn.backend.dtos.ChangePasswordRequest;
 import wevioo.tn.backend.dtos.UpdateUser;

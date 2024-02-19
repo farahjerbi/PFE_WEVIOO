@@ -1,4 +1,4 @@
-package wevioo.tn.backend.services;
+package wevioo.tn.backend.services.auth;
 
 import wevioo.tn.backend.dtos.AuthenticationResponse;
 import wevioo.tn.backend.dtos.SignInRequest;

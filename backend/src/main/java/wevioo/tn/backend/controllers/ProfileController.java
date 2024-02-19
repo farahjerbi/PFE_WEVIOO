@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import wevioo.tn.backend.dtos.ChangePasswordRequest;
 import wevioo.tn.backend.dtos.UpdateUser;
-import wevioo.tn.backend.services.ProfileService;
+import wevioo.tn.backend.services.profile.ProfileService;
 
 
 
