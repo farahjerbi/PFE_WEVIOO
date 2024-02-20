@@ -17,7 +17,7 @@ import wevioo.tn.backend.services.email.EmailTemplateService;
 
 @Tag(name = "Authentication", description = "Authentication")
 @RestController
-@RequestMapping("/api/facebook/")
+@RequestMapping("/api/auth/")
 public class AuthenticationController {
     @Autowired
     private AuthenticationService authenticationService;

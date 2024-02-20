@@ -5,12 +5,8 @@
     <title >Example Template</title>
 </head>
 <body>
-<h1 th:text="${template.templateBody.subject}"></h1>
-<p th:text="${template.templateBody.salutation}"></p>
-<p th:text="${template.templateBody.introduction}"></p>
-<p th:text="${template.templateBody.infos}"></p>
-<p th:text="${template.templateBody.closing}"></p>
-<p th:text="${template.templateBody.signOff}"></p>
+<h1 th:utext="${template.templateBody.subject}"></h1>
+<p th:utext="${template.templateBody.content}"></p>
 
 </body>
 </html>

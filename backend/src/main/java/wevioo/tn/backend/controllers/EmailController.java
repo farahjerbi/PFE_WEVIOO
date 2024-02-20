@@ -8,10 +8,13 @@ import wevioo.tn.backend.entities.EmailTemplate;
 import wevioo.tn.backend.entities.TemplateBody;
 import wevioo.tn.backend.repositories.EmailTemplateRepository;
 import wevioo.tn.backend.services.email.EmailTemplateService;
+import wevioo.tn.backend.services.email.TemplateUtils;
+
+import java.util.Map;
 
 
 @RestController
-@RequestMapping("/api/auth/")
+@RequestMapping("/api/email/")
 public class EmailController {
 
     @Autowired
@@ -20,6 +23,8 @@ public class EmailController {
     private EmailTemplateRepository emailTemplateRepository;
     @Autowired
     private EmailTemplateService emailService;
+    private TemplateUtils templateUtils;
+
 
     @PostMapping("addTemplate")
     public ResponseEntity<EmailTemplate> createEmailTemplate(@RequestBody EmailTemplate emailTemplate) {
@@ -46,20 +51,27 @@ public class EmailController {
     }
 
     @PostMapping("sendEmail/{emailTemplateId}")
-    public ResponseEntity<?> sendEmail(@PathVariable Long emailTemplateId) {
+    public ResponseEntity<?> sendEmail(@PathVariable Long emailTemplateId,@RequestBody Map<String, Object> requestBody) {
         try {
             EmailTemplate emailTemplate = emailTemplateRepository.findEmailTemplateWithDetails(emailTemplateId);
 
             if (emailTemplate == null) {
                 return ResponseEntity.ok("Email template not found.");
             }
-
-            emailService.sendHtmlEmailWithEmbeddedFiles(emailTemplate);
+            emailService.sendHtmlEmail(emailTemplate,requestBody);
             return ResponseEntity.ok().body("Email sent successfully.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Failed to send email: " + e.getMessage());
         }
+    }
+
+    @PostMapping("test")
+    public String testReplacePlaceholders(@RequestBody Map<String, Object> requestBody) {
+        String template = (String) requestBody.get("template");
+        Map<String, String> placeholderValues = (Map<String, String>) requestBody.get("placeholderValues");
+        String result = templateUtils.replacePlaceholders(template, placeholderValues);
+        return result;
     }
 
 
