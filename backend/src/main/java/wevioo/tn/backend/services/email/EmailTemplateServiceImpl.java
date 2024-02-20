@@ -1,6 +1,12 @@
 package wevioo.tn.backend.services.email;
 
+import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
+import jakarta.activation.FileDataSource;
+import jakarta.mail.BodyPart;
+import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
 import lombok.AllArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -43,7 +49,7 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
             MimeMessage message = emailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, UTF_8_ENCODING);
             helper.setPriority(1);
-            helper.setSubject("NEW_USER_ACCOUNT_VERIFICATION");
+            helper.setSubject("TEST_EMAIL");
             helper.setFrom("farah.jeerbi@gmail.com");
             helper.setTo("farah.jeerbi@gmail.com");
 
@@ -51,14 +57,26 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
             Map<String, String> placeholderValues = (Map<String, String>) requestBody.get("placeholderValues");
             String result = templateUtils.replacePlaceholders(template, placeholderValues);
             emailTemplate.getTemplateBody().setContent(result);
-            // Set the HTML content directly
             Context context = new Context();
             context.setVariable("template", emailTemplate);
             String text = templateEngine.process(EMAIL_TEMPLATE, context);
-            helper.setText(text, true); // true indicates HTML content
 
+            MimeMultipart mimeMultipart = new MimeMultipart("related");
+            BodyPart messageBodyPart = new MimeBodyPart();
+            messageBodyPart.setContent(text, TEXT_HTML_ENCODING);
+            mimeMultipart.addBodyPart(messageBodyPart);
+
+            // Add images to the email body
+            BodyPart imageBodyPart = new MimeBodyPart();
+            DataSource dataSource = new FileDataSource( "uploads/files/1708349596719-file.jpg");
+            imageBodyPart.setDataHandler(new DataHandler(dataSource));
+            imageBodyPart.setHeader("Content-ID", "image");
+            mimeMultipart.addBodyPart(imageBodyPart);
+
+            message.setContent(mimeMultipart);
             emailSender.send(message);
         } catch (Exception exception) {
+            System.out.println(exception.getMessage());
             System.out.println(exception.getMessage());
             throw new RuntimeException(exception.getMessage());
         }

@@ -43,7 +43,7 @@ public class EmailController {
         return ResponseEntity.ok("TemplateBody assigned to EmailTemplate successfully.");
     }
 
-    @GetMapping("hey/{emailTemplateId}")
+    @GetMapping("getById/{emailTemplateId}")
     public ResponseEntity<EmailTemplate> getEmailById(@PathVariable Long emailTemplateId) {
         EmailTemplate emailTemplate = emailTemplateRepository.findEmailTemplateWithDetails(emailTemplateId);
 
