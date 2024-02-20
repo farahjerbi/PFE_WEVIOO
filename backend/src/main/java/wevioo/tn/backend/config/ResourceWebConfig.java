@@ -1,4 +1,4 @@
-package wevioo.tn.backend.config;
+/*package wevioo.tn.backend.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -19,4 +19,4 @@ public class ResourceWebConfig implements WebMvcConfigurer {
 
         registry.addResourceHandler("/uploads/**").addResourceLocations(location);
     }
-}
+}*/

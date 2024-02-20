@@ -9,22 +9,23 @@ import wevioo.tn.backend.dtos.AuthenticationResponse;
 import wevioo.tn.backend.dtos.SignInRequest;
 import wevioo.tn.backend.dtos.SignUpRequest;
 import wevioo.tn.backend.dtos.VerificationRequest;
+import wevioo.tn.backend.entities.EmailTemplate;
 import wevioo.tn.backend.repositories.UserRepository;
 import wevioo.tn.backend.services.auth.AuthenticationService;
+import wevioo.tn.backend.services.email.EmailTemplateService;
 
-import wevioo.tn.backend.services.uploadFiles.FileStorageService;
 
 @Tag(name = "Authentication", description = "Authentication")
 @RestController
-@RequestMapping("/api/auth/")
+@RequestMapping("/api/facebook/")
 public class AuthenticationController {
     @Autowired
     private AuthenticationService authenticationService;
     @Autowired
     private UserRepository userRepository;
 
-
-
+    @Autowired
+    private EmailTemplateService emailTemplateService;
     @PostMapping("register")
     public ResponseEntity<?>signUp(@RequestBody SignUpRequest signUpRequest){
         Boolean emailExists = userRepository.existsByEmail(signUpRequest.getEmail());

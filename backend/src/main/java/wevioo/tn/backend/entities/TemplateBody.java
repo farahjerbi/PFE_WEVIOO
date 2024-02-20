@@ -1,16 +1,39 @@
 package wevioo.tn.backend.entities;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
-public class TemplateBody {
+import java.io.Serializable;
+
+@Getter
+@Setter
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+public class TemplateBody implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String subject;
     private String salutation;
     private String introduction;
     private String closing;
     private String signOff;
-    private Image signature;
-    private Image logo;
+
     private String infos;
+    @JsonIgnore
+    @OneToOne(mappedBy = "templateBody")
+    private EmailTemplate emailTemplate;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "signature_id")
+    private Image signature;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "logo_id")
+    private Image logo;
 }

@@ -1,12 +1,26 @@
 package wevioo.tn.backend.entities;
 
-import lombok.Data;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
-public class EmailTemplate {
+import java.io.Serializable;
+
+@Getter
+@Setter
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+public class EmailTemplate implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String language;
     private State state;
-    private EmailTemplate details;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "template_body_id", referencedColumnName = "id")
+    private TemplateBody templateBody;
 }
