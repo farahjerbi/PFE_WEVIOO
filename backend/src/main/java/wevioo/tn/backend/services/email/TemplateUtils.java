@@ -3,7 +3,10 @@ package wevioo.tn.backend.services.email;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -31,5 +34,11 @@ public class TemplateUtils {
             template = template.replace("{{" + placeholder + "}}", value);
         }
         return template;
+    }
+
+    public File convert(MultipartFile file) throws IOException {
+        File convFile = new File(file.getOriginalFilename());
+        file.transferTo(convFile);
+        return convFile;
     }
 }

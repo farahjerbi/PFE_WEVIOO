@@ -1,15 +1,18 @@
 package wevioo.tn.backend.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import wevioo.tn.backend.entities.EmailTemplate;
 import wevioo.tn.backend.entities.TemplateBody;
 import wevioo.tn.backend.repositories.EmailTemplateRepository;
 import wevioo.tn.backend.services.email.EmailTemplateService;
 import wevioo.tn.backend.services.email.TemplateUtils;
 
+import java.io.File;
 import java.util.Map;
 
 
@@ -51,14 +54,20 @@ public class EmailController {
     }
 
     @PostMapping("sendEmail/{emailTemplateId}")
-    public ResponseEntity<?> sendEmail(@PathVariable Long emailTemplateId,@RequestBody Map<String, Object> requestBody) {
+    public ResponseEntity<?> sendEmail(@PathVariable Long emailTemplateId,
+                                       @RequestParam String requestBody ,
+                                       @RequestParam("attachment")  MultipartFile attachment
+                                       ) {
         try {
             EmailTemplate emailTemplate = emailTemplateRepository.findEmailTemplateWithDetails(emailTemplateId);
 
             if (emailTemplate == null) {
                 return ResponseEntity.ok("Email template not found.");
             }
-            emailService.sendHtmlEmail(emailTemplate,requestBody);
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, Object> requestBodyJson = objectMapper.readValue(requestBody, Map.class);
+
+            emailService.sendHtmlEmail(emailTemplate,requestBodyJson,attachment);
             return ResponseEntity.ok().body("Email sent successfully.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
