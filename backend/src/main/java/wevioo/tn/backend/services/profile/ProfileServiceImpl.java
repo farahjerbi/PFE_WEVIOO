@@ -5,11 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import wevioo.tn.backend.dtos.ChangePasswordRequest;
-import wevioo.tn.backend.dtos.UpdateUser;
+import wevioo.tn.backend.dtos.request.ChangePasswordRequest;
+import wevioo.tn.backend.dtos.request.UpdateUser;
 import wevioo.tn.backend.entities.UserEntity;
 import wevioo.tn.backend.repositories.UserRepository;
-import wevioo.tn.backend.services.profile.ProfileService;
 
 
 @Service

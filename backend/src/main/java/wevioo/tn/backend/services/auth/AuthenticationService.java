@@ -1,9 +1,9 @@
 package wevioo.tn.backend.services.auth;
 
-import wevioo.tn.backend.dtos.AuthenticationResponse;
-import wevioo.tn.backend.dtos.SignInRequest;
-import wevioo.tn.backend.dtos.SignUpRequest;
-import wevioo.tn.backend.dtos.VerificationRequest;
+import wevioo.tn.backend.dtos.response.AuthenticationResponse;
+import wevioo.tn.backend.dtos.request.SignInRequest;
+import wevioo.tn.backend.dtos.request.SignUpRequest;
+import wevioo.tn.backend.dtos.request.VerificationRequest;
 
 public interface AuthenticationService {
      AuthenticationResponse singUp(SignUpRequest signUpRequest);

@@ -1,12 +1,8 @@
 package wevioo.tn.backend.services.email;
 
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -25,9 +21,8 @@ public class TemplateUtils {
         }
         return placeholders;
     }
-
     // Method to replace placeholders with actual values
-    public static String replacePlaceholders(String template, Map<String, String> placeholderValues) {
+    public  String replacePlaceholders(String template, Map<String, String> placeholderValues) {
         for (Map.Entry<String, String> entry : placeholderValues.entrySet()) {
             String placeholder = entry.getKey();
             String value = entry.getValue();
@@ -36,9 +31,5 @@ public class TemplateUtils {
         return template;
     }
 
-    public File convert(MultipartFile file) throws IOException {
-        File convFile = new File(file.getOriginalFilename());
-        file.transferTo(convFile);
-        return convFile;
-    }
+
 }

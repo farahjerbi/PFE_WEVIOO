@@ -1,32 +1,39 @@
 package wevioo.tn.backend.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import org.quartz.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import wevioo.tn.backend.config.EmailJob;
+import wevioo.tn.backend.dtos.request.ScheduleEmailRequest;
+import wevioo.tn.backend.dtos.response.ScheduleEmailResponse;
 import wevioo.tn.backend.entities.EmailTemplate;
 import wevioo.tn.backend.entities.TemplateBody;
 import wevioo.tn.backend.repositories.EmailTemplateRepository;
 import wevioo.tn.backend.services.email.EmailTemplateService;
 import wevioo.tn.backend.services.email.TemplateUtils;
 
-import java.io.File;
+import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
 
 
 @RestController
 @RequestMapping("/api/email/")
+@AllArgsConstructor
 public class EmailController {
 
-    @Autowired
     private EmailTemplateService emailTemplateService;
-    @Autowired
     private EmailTemplateRepository emailTemplateRepository;
-    @Autowired
     private EmailTemplateService emailService;
     private TemplateUtils templateUtils;
+    private Scheduler scheduler;
 
 
     @PostMapping("addTemplate")
@@ -54,9 +61,10 @@ public class EmailController {
     }
 
     @PostMapping("sendEmail/{emailTemplateId}")
-    public ResponseEntity<?> sendEmail(@PathVariable Long emailTemplateId,
+    public ResponseEntity<?> sendEmailWithAttachment(@PathVariable Long emailTemplateId,
                                        @RequestParam String requestBody ,
-                                       @RequestParam("attachment")  MultipartFile attachment
+                                       @RequestParam("attachment") MultipartFile attachment,
+                                       @RequestParam String recipients
                                        ) {
         try {
             EmailTemplate emailTemplate = emailTemplateRepository.findEmailTemplateWithDetails(emailTemplateId);
@@ -64,10 +72,11 @@ public class EmailController {
             if (emailTemplate == null) {
                 return ResponseEntity.ok("Email template not found.");
             }
-            ObjectMapper objectMapper = new ObjectMapper();
-            Map<String, Object> requestBodyJson = objectMapper.readValue(requestBody, Map.class);
 
-            emailService.sendHtmlEmail(emailTemplate,requestBodyJson,attachment);
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, String> requestBodyJson = objectMapper.readValue(requestBody, Map.class);
+
+            emailService.sendEmail(emailTemplate,requestBodyJson,attachment,recipients);
             return ResponseEntity.ok().body("Email sent successfully.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -79,8 +88,66 @@ public class EmailController {
     public String testReplacePlaceholders(@RequestBody Map<String, Object> requestBody) {
         String template = (String) requestBody.get("template");
         Map<String, String> placeholderValues = (Map<String, String>) requestBody.get("placeholderValues");
-        String result = templateUtils.replacePlaceholders(template, placeholderValues);
-        return result;
+        return templateUtils.replacePlaceholders(template, placeholderValues);
+
+    }
+
+    @PostMapping("/scheduleEmail")
+    public ResponseEntity<ScheduleEmailResponse> scheduleEmail(@Valid @RequestBody ScheduleEmailRequest scheduleEmailRequest) {
+        try {
+            ZonedDateTime dateTime = ZonedDateTime.of(scheduleEmailRequest.getDateTime(), scheduleEmailRequest.getTimeZone());
+            if(dateTime.isBefore(ZonedDateTime.now())) {
+                ScheduleEmailResponse scheduleEmailResponse = new ScheduleEmailResponse(false,
+                        "dateTime must be after current time");
+                return ResponseEntity.badRequest().body(scheduleEmailResponse);
+            }
+
+            JobDetail jobDetail = buildJobDetail(scheduleEmailRequest);
+            Trigger trigger = buildJobTrigger(jobDetail, dateTime);
+            scheduler.scheduleJob(jobDetail, trigger);
+
+            ScheduleEmailResponse scheduleEmailResponse = new ScheduleEmailResponse(true,
+                    jobDetail.getKey().getName(), jobDetail.getKey().getGroup(), "Email Scheduled Successfully!");
+            return ResponseEntity.ok(scheduleEmailResponse);
+        } catch (SchedulerException ex) {
+
+            ScheduleEmailResponse scheduleEmailResponse = new ScheduleEmailResponse(false,
+                    "Error scheduling email. Please try later!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(scheduleEmailResponse);
+        }
+    }
+
+
+
+    public JobDetail buildJobDetail(ScheduleEmailRequest scheduleEmailRequest) {
+        JobDataMap jobDataMap = new JobDataMap();
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            String placeHoldersJson = objectMapper.writeValueAsString(scheduleEmailRequest.getPlaceHolders());
+            jobDataMap.put("requestBody", placeHoldersJson);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        jobDataMap.put("email", scheduleEmailRequest.getEmail());
+        jobDataMap.put("templateId", scheduleEmailRequest.getTemplateId());
+
+
+        return JobBuilder.newJob(EmailJob.class)
+                .withIdentity(UUID.randomUUID().toString(), "email-jobs")
+                .withDescription("Send Email Job")
+                .usingJobData(jobDataMap)
+                .storeDurably()
+                .build();
+    }
+
+    public Trigger buildJobTrigger(JobDetail jobDetail, ZonedDateTime startAt) {
+        return TriggerBuilder.newTrigger()
+                .forJob(jobDetail)
+                .withIdentity(jobDetail.getKey().getName(), "email-triggers")
+                .withDescription("Send Email Trigger")
+                .startAt(Date.from(startAt.toInstant()))
+                .withSchedule(SimpleScheduleBuilder.simpleSchedule().withMisfireHandlingInstructionFireNow())
+                .build();
     }
 
 

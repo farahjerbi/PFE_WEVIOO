@@ -1,7 +1,7 @@
 package wevioo.tn.backend.services.profile;
 
-import wevioo.tn.backend.dtos.ChangePasswordRequest;
-import wevioo.tn.backend.dtos.UpdateUser;
+import wevioo.tn.backend.dtos.request.ChangePasswordRequest;
+import wevioo.tn.backend.dtos.request.UpdateUser;
 
 
 public interface ProfileService {

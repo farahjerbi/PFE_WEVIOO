@@ -1,4 +1,4 @@
-package wevioo.tn.backend.dtos;
+package wevioo.tn.backend.dtos.request;
 
 import lombok.Data;
 

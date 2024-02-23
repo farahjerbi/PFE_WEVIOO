@@ -5,11 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.*;
-import wevioo.tn.backend.dtos.AuthenticationResponse;
-import wevioo.tn.backend.dtos.SignInRequest;
-import wevioo.tn.backend.dtos.SignUpRequest;
-import wevioo.tn.backend.dtos.VerificationRequest;
-import wevioo.tn.backend.entities.EmailTemplate;
+import wevioo.tn.backend.dtos.response.AuthenticationResponse;
+import wevioo.tn.backend.dtos.request.SignInRequest;
+import wevioo.tn.backend.dtos.request.SignUpRequest;
+import wevioo.tn.backend.dtos.request.VerificationRequest;
 import wevioo.tn.backend.repositories.UserRepository;
 import wevioo.tn.backend.services.auth.AuthenticationService;
 import wevioo.tn.backend.services.email.EmailTemplateService;
