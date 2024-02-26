@@ -47,11 +47,9 @@ public class EmailController {
     }
     @PostMapping("assignTemplateBody/{emailTemplateId}")
     public ResponseEntity<String> assignTemplateBodyToEmailTemplate(@PathVariable Long emailTemplateId, @RequestBody TemplateBody templateBody) {
+
         EmailTemplate emailTemplate = emailTemplateRepository.getReferenceById(emailTemplateId);
 
-        if (emailTemplate == null) {
-            return ResponseEntity.notFound().build();
-        }
 
         emailTemplateService.assignTemplateBodyToEmailTemplate(templateBody, emailTemplate);
         return ResponseEntity.ok("TemplateBody assigned to EmailTemplate successfully.");
@@ -73,7 +71,7 @@ public class EmailController {
     @PostMapping("sendEmail/{emailTemplateId}")
     public ResponseEntity<?> sendEmailWithAttachment(@PathVariable Long emailTemplateId,
                                                      @RequestPart("requestBody") Map<String, String> requestBody ,
-                                                     @RequestPart("attachment") MultipartFile attachment,
+                                                     @RequestPart(value = "attachment", required = false) MultipartFile attachment,
                                                      @RequestPart("recipients") String recipients
                                        ) {
         try {

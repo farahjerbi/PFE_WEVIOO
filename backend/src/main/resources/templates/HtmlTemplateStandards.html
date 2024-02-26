@@ -5,9 +5,23 @@
     <title >Example Template</title>
 </head>
 <body>
+
 <h1 th:utext="${template.subject}"></h1>
+
+<div th:if="${template.logo} && ${template.logo} == 'top' "  >
+    <img th:src="'cid:image'" alt="Embedded Image"
+         th:style="'height: ' + ${template.logo.height}
+    + 'px; width: ' + ${template.logo.width}">
+</div>
+
 <p th:utext="${template.content}"></p>
-<img th:src="'cid:image'" alt="Embedded Image">
+
+<div th:if="${template.signature}" >
+    <img th:src="'cid:image'" alt="Embedded Image"
+    th:style="'height: ' + ${template.signature.height}
+    + 'px; width: ' + ${template.signature.width}">
+</div>
+
 
 </body>
 </html>

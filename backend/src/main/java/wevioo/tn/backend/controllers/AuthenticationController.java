@@ -1,7 +1,7 @@
 package wevioo.tn.backend.controllers;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.*;
@@ -11,20 +11,17 @@ import wevioo.tn.backend.dtos.request.SignUpRequest;
 import wevioo.tn.backend.dtos.request.VerificationRequest;
 import wevioo.tn.backend.repositories.UserRepository;
 import wevioo.tn.backend.services.auth.AuthenticationService;
-import wevioo.tn.backend.services.email.EmailTemplateService;
 
 
 @Tag(name = "Authentication", description = "Authentication")
 @RestController
 @RequestMapping("/api/auth/")
+@AllArgsConstructor
 public class AuthenticationController {
-    @Autowired
-    private AuthenticationService authenticationService;
-    @Autowired
-    private UserRepository userRepository;
+    private final AuthenticationService authenticationService;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private EmailTemplateService emailTemplateService;
+
     @PostMapping("register")
     public ResponseEntity<?>signUp(@RequestBody SignUpRequest signUpRequest){
         Boolean emailExists = userRepository.existsByEmail(signUpRequest.getEmail());

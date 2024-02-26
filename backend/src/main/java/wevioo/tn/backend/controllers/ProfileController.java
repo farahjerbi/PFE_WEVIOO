@@ -1,6 +1,6 @@
 package wevioo.tn.backend.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,10 +12,9 @@ import wevioo.tn.backend.services.profile.ProfileService;
 
 @RestController
 @RequestMapping("/api/profiles/")
-
+@AllArgsConstructor
 public class ProfileController {
-    @Autowired
-    private ProfileService profileService;
+    private final ProfileService profileService;
 
 
     @GetMapping("demo")
@@ -38,7 +37,7 @@ public class ProfileController {
         return new ResponseEntity<>(profileService.deleteProfile(id), HttpStatus.OK);
     }
 
-    @PostMapping("changepassword")
+    @PostMapping("changePassword")
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request ) {
         profileService.changePassword(request);
         return ResponseEntity.ok().build();
