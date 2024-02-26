@@ -25,11 +25,11 @@ public class TemplateBody implements Serializable {
     @OneToOne(mappedBy = "templateBody")
     private EmailTemplate emailTemplate;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER , orphanRemoval = true)
     @JoinColumn(name = "signature_id")
     private Image signature;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER , orphanRemoval = true)
     @JoinColumn(name = "logo_id")
     private Image logo;
 }

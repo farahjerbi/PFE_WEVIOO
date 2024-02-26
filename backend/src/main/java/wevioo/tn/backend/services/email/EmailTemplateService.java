@@ -11,7 +11,8 @@ import java.util.Map;
 public interface EmailTemplateService {
     EmailTemplate createEmailTemplate(EmailTemplate emailTemplate);
     void assignTemplateBodyToEmailTemplate(TemplateBody templateBody, EmailTemplate emailTemplate);
-    void sendEmail(EmailTemplate emailTemplate,
+    void sendEmail(TemplateBody emailTemplate,
                        Map<String, String> requestBody, MultipartFile attachment, String recipients);
      void sendScheduledEmail(Long idTemplate, String requestBody,String recipients) throws JsonProcessingException;
+    String deleteEmailTemplate(Long id);
 }

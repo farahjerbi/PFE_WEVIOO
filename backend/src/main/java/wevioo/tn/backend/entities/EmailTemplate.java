@@ -20,7 +20,7 @@ public class EmailTemplate implements Serializable {
     private String name;
     private String language;
     private State state;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER , orphanRemoval = true)
     @JoinColumn(name = "template_body_id", referencedColumnName = "id")
     private TemplateBody templateBody;
 }

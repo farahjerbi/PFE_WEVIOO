@@ -13,13 +13,16 @@ import wevioo.tn.backend.config.EmailJob;
 import wevioo.tn.backend.dtos.request.ScheduleEmailRequest;
 import wevioo.tn.backend.dtos.response.ScheduleEmailResponse;
 import wevioo.tn.backend.entities.EmailTemplate;
+import wevioo.tn.backend.entities.Image;
 import wevioo.tn.backend.entities.TemplateBody;
 import wevioo.tn.backend.repositories.EmailTemplateRepository;
 import wevioo.tn.backend.services.email.EmailTemplateService;
+import wevioo.tn.backend.services.email.ImageService;
 import wevioo.tn.backend.services.email.TemplateUtils;
 
 import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -29,11 +32,12 @@ import java.util.UUID;
 @AllArgsConstructor
 public class EmailController {
 
-    private EmailTemplateService emailTemplateService;
-    private EmailTemplateRepository emailTemplateRepository;
-    private EmailTemplateService emailService;
-    private TemplateUtils templateUtils;
-    private Scheduler scheduler;
+    private final EmailTemplateService emailTemplateService;
+    private final EmailTemplateRepository emailTemplateRepository;
+    private final EmailTemplateService emailService;
+    private final TemplateUtils templateUtils;
+    private final Scheduler scheduler;
+    private final ImageService imageService;
 
 
     @PostMapping("addTemplate")
@@ -53,18 +57,24 @@ public class EmailController {
         return ResponseEntity.ok("TemplateBody assigned to EmailTemplate successfully.");
     }
 
+    @PostMapping("/createAndAssignImage/{emailTemplateId}")
+    public String createAndAssignImageToTemplate(
+            @PathVariable Long emailTemplateId ,
+            @RequestPart("Image") Image image,
+            @RequestPart("file") MultipartFile file, @RequestPart("type") String type) {
+        return imageService.createAndAssignImageToTemplate(emailTemplateId,image,file,type);
+    }
     @GetMapping("getById/{emailTemplateId}")
     public ResponseEntity<EmailTemplate> getEmailById(@PathVariable Long emailTemplateId) {
         EmailTemplate emailTemplate = emailTemplateRepository.findEmailTemplateWithDetails(emailTemplateId);
-
         return ResponseEntity.ok(emailTemplate);
     }
 
     @PostMapping("sendEmail/{emailTemplateId}")
     public ResponseEntity<?> sendEmailWithAttachment(@PathVariable Long emailTemplateId,
-                                       @RequestParam String requestBody ,
-                                       @RequestParam("attachment") MultipartFile attachment,
-                                       @RequestParam String recipients
+                                                     @RequestPart("requestBody") Map<String, String> requestBody ,
+                                                     @RequestPart("attachment") MultipartFile attachment,
+                                                     @RequestPart("recipients") String recipients
                                        ) {
         try {
             EmailTemplate emailTemplate = emailTemplateRepository.findEmailTemplateWithDetails(emailTemplateId);
@@ -72,11 +82,7 @@ public class EmailController {
             if (emailTemplate == null) {
                 return ResponseEntity.ok("Email template not found.");
             }
-
-            ObjectMapper objectMapper = new ObjectMapper();
-            Map<String, String> requestBodyJson = objectMapper.readValue(requestBody, Map.class);
-
-            emailService.sendEmail(emailTemplate,requestBodyJson,attachment,recipients);
+            emailService.sendEmail(emailTemplate.getTemplateBody(),requestBody,attachment,recipients);
             return ResponseEntity.ok().body("Email sent successfully.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -150,6 +156,16 @@ public class EmailController {
                 .build();
     }
 
+    @DeleteMapping("deleteTemplate/{id}")
+    public String deleteEmailTemplate(@PathVariable Long id){
+       return emailTemplateService.deleteEmailTemplate(id);
+    }
+
+
+    @GetMapping("getAll")
+    public List<EmailTemplate> getAllEmailTemplates(){
+        return emailTemplateRepository.findAll();
+    }
 
 }
 

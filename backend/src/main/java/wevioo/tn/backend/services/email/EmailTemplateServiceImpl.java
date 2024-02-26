@@ -56,7 +56,7 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
         emailTemplateRepository.save(emailTemplate);
     }
 
-    public void sendEmail(EmailTemplate emailTemplate,
+    public void sendEmail(TemplateBody emailTemplate,
                           Map<String, String> requestBody,
                           MultipartFile attachment,
                           String recipients) {
@@ -65,13 +65,13 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
             MimeMessage message = emailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, UTF_8_ENCODING);
             helper.setPriority(1);
-            helper.setSubject("emailTemplate.getTemplateBody().getSubject()");
+            helper.setSubject(emailTemplate.getSubject());
             helper.setFrom("farah.jeerbi@gmail.com");
             helper.setTo(recipients);
 
-            String templateContent = emailTemplate.getTemplateBody().getContent();
+            String templateContent = emailTemplate.getContent();
             String result = templateUtils.replacePlaceholders(templateContent, requestBody);
-            emailTemplate.getTemplateBody().setContent(result);
+            emailTemplate.setContent(result);
 
             Context context = new Context();
             context.setVariable("template", emailTemplate);
@@ -115,10 +115,16 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
         Map<String, String> requestBodyMap = objectMapper.readValue(requestBody, Map.class);
 
         try {
-            sendEmail(emailTemplate, requestBodyMap, null, recipients);
+            sendEmail(emailTemplate.getTemplateBody(), requestBodyMap, null, recipients);
         } catch (Exception exception) {
             throw new EmailSendingException("Failed to send scheduled email", exception);
         }
+    }
+
+
+    public String deleteEmailTemplate(Long id){
+        emailTemplateRepository.deleteById(id);
+        return "deleted Successfully";
     }
 
 
