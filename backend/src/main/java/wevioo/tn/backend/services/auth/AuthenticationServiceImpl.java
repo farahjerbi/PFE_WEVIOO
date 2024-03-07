@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -11,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import wevioo.tn.backend.TwoFactorAuth.TwoFactorAuthenticationService;
 import wevioo.tn.backend.dtos.request.SignInRequest;
 import wevioo.tn.backend.dtos.request.SignUpRequest;
@@ -63,9 +65,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         if(!user.isEnabled()){
         emailAuthVerification.sendEmailAuthVerification(user.getEmail());
+        return AuthenticationResponse.builder().mfaEnabled(user.isMfaEnabled()).build();
         }
-
-
 
         return AuthenticationResponse.builder()
                 .secretImageUri(tfaService.generateQrCodeImageUri(user.getSecret()))
@@ -77,10 +78,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public AuthenticationResponse signIn( SignInRequest signInRequest){
         UserEntity userFound= userRepository.findByEmail(signInRequest.getEmail()).orElseThrow(()->new IllegalArgumentException("Invalid email or password"));
 
-        if(!userFound.isEnabled()){
-            return AuthenticationResponse.builder()
-                    .message("Account is not Enabled ! Please enable your account")
-                    .build();
+        if (!userFound.isEnabled()) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "User is not enabled");
         }
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signInRequest.getEmail(),signInRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);

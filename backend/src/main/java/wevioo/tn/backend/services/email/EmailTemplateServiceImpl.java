@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
+import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
 import lombok.AllArgsConstructor;
@@ -59,23 +60,30 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
             helper.setSubject(emailTemplate.getSubject());
             helper.setFrom("farah.jeerbi@gmail.com");
             helper.setTo(recipients);
+            helper.addCc("farah.jerbi@esprit.tn");
+            helper.setReplyTo("farah.jeerbi@gmail.com");
 
             String templateContent = emailTemplate.getContent();
             String result = templateUtils.replacePlaceholders(templateContent, requestBody);
             emailTemplate.setContent(result);
 
 
+
+
             MimeMultipart mimeMultipart = new MimeMultipart("related");
 
-            //Add Html Part
+            //Add HTML Body content
             templateUtils.addHtmlContentToEmail(mimeMultipart,emailTemplate);
+
 
 
             // Add images to the email body
             templateUtils.addImagesToEmailBody(emailTemplate.getSignature().getValue(),mimeMultipart);
 
             //AddAttachment
+            if (attachment != null && !attachment.isEmpty()) {
             templateUtils.addAttachment(attachment,mimeMultipart);
+            }
 
             message.setContent(mimeMultipart);
             emailSender.send(message);
@@ -102,6 +110,20 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
     public String deleteEmailTemplate(Long id){
         emailTemplateRepository.deleteById(id);
         return "deleted Successfully";
+    }
+
+    public void sendHtmlEmail(String to, String subject, String htmlBody) {
+        MimeMessage message = emailSender.createMimeMessage();
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(htmlBody, true); // true indicates HTML content
+            emailSender.send(message);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            // Handle exception appropriately
+        }
     }
 
 

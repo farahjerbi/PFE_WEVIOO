@@ -1,0 +1,8 @@
+.CardContainer{
+    margin: 0 20% !important;
+    width: 75% !important;
+}
+
+.header{
+    background: linear-gradient(90deg, rgba(176, 206, 204, 1) 0%, rgba(7, 58, 187, 1) 100%) ;
+}

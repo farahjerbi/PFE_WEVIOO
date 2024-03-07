@@ -1,7 +1,6 @@
 package wevioo.tn.backend.services.profile;
 
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,14 +11,12 @@ import wevioo.tn.backend.repositories.UserRepository;
 
 
 @Service
+@AllArgsConstructor
 public class ProfileServiceImpl implements ProfileService {
-    @Autowired
-    private  PasswordEncoder passwordEncoder;
-    @Autowired
-    private  UserRepository userRepository;
 
-    @Autowired
-    private  ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+
 
 
     public void changePassword(ChangePasswordRequest request ) {
@@ -53,11 +50,6 @@ public class ProfileServiceImpl implements ProfileService {
 
         user.setLastName(userEntity.getLastName());
         user.setFirstName(userEntity.getFirstName());
-        user.setAddress(userEntity.getAddress());
-        user.setProfession(userEntity.getProfession());
-        user.setGithub(userEntity.getGithub());
-        user.setPhone(userEntity.getPhone());
-        user.setTwitter(userEntity.getTwitter());
         userRepository.save(user);
 
         return "User Updated successfully";
@@ -66,7 +58,7 @@ public class ProfileServiceImpl implements ProfileService {
 
 
     public  String deleteProfile(long id){
-        UserEntity user = userRepository.findById(id)
+         userRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException("User not found"));
 
          userRepository.deleteById(id);

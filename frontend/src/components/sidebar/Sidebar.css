@@ -1,0 +1,73 @@
+strong{
+  color: #eff0f8;
+  
+}
+.sidebar-icon{
+  font-size: 1.2rem;
+  margin: 19px 0;
+  color: #2196f3;
+}
+
+span{
+  margin-left: 4%;
+  font-size: medium;
+  color: rgb(81, 100, 127);
+}
+
+.sidebar-container{
+  width: 15% !important;
+  position: absolute;
+  z-index: 100;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19) !important;
+}
+
+.sidebar-header {
+  position: relative;
+  height: 30%; /* Adjust the height as needed */
+  overflow: hidden; /* Hide any overflow from the background image */
+}
+
+h5 {
+  text-align: center;
+  margin: 0;
+  color: rgb(9, 30, 64);
+
+}
+
+.sidebar-item{
+  background-color: transparent !important;
+}
+
+.sidebar-item:hover{
+  background-color: rgb(228, 230, 244) !important;
+  cursor: pointer;
+}
+
+.logoStyle{
+  width: 25%;
+}
+
+.sidebar-icon-secondary{
+  font-size: 0.8rem;
+  margin: 10% 15%;
+  color: rgb(26, 79, 164);
+}
+
+.span-secondary{
+  font-size: medium;
+  color: rgb(128, 139, 154);
+}
+
+.avatar{
+  width: 45%;
+}
+
+.testimonial-card{
+  background-color: (255, 255, 255) !important;
+}
+
+.logo{
+  padding-left: 0;
+  margin-left: 5%;
+}
+

@@ -4,7 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.apache.commons.io.IOUtils;
 import org.quartz.*;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +22,9 @@ import wevioo.tn.backend.services.email.EmailTemplateService;
 import wevioo.tn.backend.services.email.ImageService;
 import wevioo.tn.backend.services.email.TemplateUtils;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
@@ -165,5 +170,17 @@ public class EmailController {
         return emailTemplateRepository.findAll();
     }
 
+    @PostMapping("sendHtml/{id}")
+    public String sendHtmlEmail(@PathVariable Long id){
+        EmailTemplate emailTemplate = emailTemplateRepository.findEmailTemplateWithDetails(id);
+        emailTemplateService.sendHtmlEmail("farah.jeerbi@gmail.com","Lol",emailTemplate.getTemplateBody().getContent());
+        return "Will it work  all the time ? find out next on MBC action";
+    }
+
+
+    @PostMapping("add")
+    public String add(@RequestParam String content) throws IOException {
+       return templateUtils.saveEmailHtmlTemplate(content);
+    }
 }
 

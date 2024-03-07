@@ -19,8 +19,8 @@ public class TemplateBody implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String subject;
+    @Column(columnDefinition = "TEXT")
     private String content;
-
     @JsonIgnore
     @OneToOne(mappedBy = "templateBody")
     private EmailTemplate emailTemplate;

@@ -1,0 +1,15 @@
+.illustration{
+    width: 100%;
+    height: 100%;
+    background-color: rgb(235, 228, 228);
+}  
+
+.logo{
+    width: 20%;
+    margin-left: 38%;
+}
+
+body{
+    background-color: rgb(225, 215, 212) !important;
+}
+

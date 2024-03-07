@@ -16,7 +16,13 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import wevioo.tn.backend.entities.TemplateBody;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -82,5 +88,25 @@ public class TemplateUtils {
 
     }
 
+    public String saveEmailHtmlTemplate(String content) throws IOException {
+        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String fileName = "file_" + timestamp + ".txt";
 
+        String directory = "templates";
+
+        String directoryPath = Paths.get("src", "main", "resources", directory).toString();
+
+        Files.createDirectories(Paths.get(directoryPath));
+
+        String filePath = Paths.get(directoryPath, fileName).toString();
+
+        try (FileWriter writer = new FileWriter(filePath)) {
+            writer.write(content);
+        }
+
+        return fileName;
+    }
 }
+
+
+

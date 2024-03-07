@@ -1,0 +1,19 @@
+.avatar-list{
+    width:10%;
+    position: absolute;
+    z-index: 100;
+    top: 10%;
+    right: 1%;
+}
+
+.navbar-size{
+    position: absolute;
+    background-color:transparent;
+}
+.flexible-navbar{
+    position: relative;  
+    margin-left: 19% !important;
+    margin: 2%;  
+    border-radius: 20px; /* Adjust the border-radius value to make the navbar more rounded */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19) !important;
+}

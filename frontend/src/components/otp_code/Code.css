@@ -1,0 +1,10 @@
+.code_container{
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.otp-input{
+    width: 60px;
+    margin-right: 6px;
+}

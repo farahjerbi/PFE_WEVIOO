@@ -22,7 +22,7 @@ public class EmailAuthVerification {
 
 
     public void sendEmailAuthVerification(String toEmail ){
-        String activationLink = "http://localhost:4200/pages/activateAccount?email=" + toEmail;
+        String activationLink = "http://localhost:3000/pages/activateAccount?email=" + toEmail;
         String body = "<!DOCTYPE html>\n" +
                 "<html lang=\"en\">\n" +
                 "<head>\n" +

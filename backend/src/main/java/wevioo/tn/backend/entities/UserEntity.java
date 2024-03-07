@@ -25,12 +25,6 @@ public class UserEntity implements UserDetails {
     private boolean mfaEnabled=false;
     private boolean enabled=false;
     private String secret;
-    private String profession;
-    private String address;
-    private String phone;
-    private String github;
-    private String twitter;
-
 
     @Enumerated(EnumType.STRING)
     private Role role= Role.valueOf("USER");

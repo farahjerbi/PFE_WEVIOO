@@ -4,24 +4,25 @@
     <meta charset="UTF-8">
     <title >Example Template</title>
 </head>
-<body>
-
-<h1 th:utext="${template.subject}"></h1>
-
-<div th:if="${template.logo} && ${template.logo} == 'top' "  >
-    <img th:src="'cid:image'" alt="Embedded Image"
-         th:style="'height: ' + ${template.logo.height}
-    + 'px; width: ' + ${template.logo.width}">
-</div>
-
-<p th:utext="${template.content}"></p>
-
-<div th:if="${template.signature}" >
-    <img th:src="'cid:image'" alt="Embedded Image"
-    th:style="'height: ' + ${template.signature.height}
-    + 'px; width: ' + ${template.signature.width}">
-</div>
-
-
+<body class="clean-body u_body" style="margin: 0;padding: 0;-webkit-text-size-adjust: 100%;background-color: #e7e7e7;color: #000000">
+<table style="border-collapse: collapse;table-layout: fixed;border-spacing: 0;mso-table-lspace: 0pt;mso-table-rspace: 0pt;vertical-align: top;min-width: 320px;Margin: 0 auto;background-color: #e7e7e7;width:100%" cellpadding="0" cellspacing="0">
+    <tbody>
+    <tr style="vertical-align: top">
+        <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top">
+            <div class="u-row-container" style="padding: 0px;background-color: transparent">
+                <div class="u-row" style="margin: 0 auto;min-width: 320px;max-width: 500px;overflow-wrap: break-word;word-wrap: break-word;word-break: break-word;background-color: transparent;">
+                    <div style="border-collapse: collapse;display: table;width: 100%;height: 100%;background-color: transparent;">
+                        <div class="u-col u-col-100" style="max-width: 320px;min-width: 500px;display: table-cell;vertical-align: top;">
+                            <div style="height: 100%;width: 100%">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>
 </body>
+
 </html>
