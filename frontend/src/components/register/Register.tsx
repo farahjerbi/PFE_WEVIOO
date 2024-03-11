@@ -80,7 +80,7 @@ const Register=()=> {
     {isMfaEnabled && (
       <MDBContainer>
         <h5 className='title'>Set Up Two-Factor Authentication</h5>
-        <img src={isMfaEnabled} alt="QR Code" />
+        <img className='QRCode' src={isMfaEnabled} alt="QR Code" />
         <Code email={email} password={password} stage={stage}/>
       </MDBContainer>
     )}

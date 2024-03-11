@@ -20,8 +20,11 @@ import wevioo.tn.backend.entities.TemplateBody;
 import wevioo.tn.backend.repositories.EmailTemplateRepository;
 
 
+import java.io.File;
+import java.nio.file.Paths;
 import java.util.Map;
 
+import static wevioo.tn.backend.services.email.TemplateUtils.DIRECTORYPATH;
 
 
 @Service
@@ -108,6 +111,11 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
 
 
     public String deleteEmailTemplate(Long id){
+        String filePath = Paths.get(DIRECTORYPATH, id.toString() + ".json").toString();
+        File file = new File(filePath);
+        if (file.exists()) {
+            file.delete();
+        }
         emailTemplateRepository.deleteById(id);
         return "deleted Successfully";
     }
@@ -122,9 +130,12 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
             emailSender.send(message);
         } catch (MessagingException e) {
             e.printStackTrace();
-            // Handle exception appropriately
         }
     }
+
+
+
+
 
 
 

@@ -16,7 +16,38 @@ export const emailApi = createApi({
                 };
             }
         }),
+
+        getAllEmailTemplates : builder.mutation({
+            query:()=>{
+                return{
+                    url:"/getAll",
+                    method:"GET"
+                 };
+            }
+        }),
+
+        addDesignTemplate: builder.mutation({
+            query: (data: { jsonObject: any; id: number }) => ({
+                url: `/addDesignTemplate/${data.id}`,
+                method: "POST",
+                body: data.jsonObject,
+            }),
+        }),
+
+        getDesignTemplate: builder.mutation({
+            query: ( id: number ) => ({
+                url: `/getDesignTemplate/${id}`,
+                method: "GET",
+            }),
+        }),
+        deleteTemplate: builder.mutation({
+            query: ( id: number ) => ({
+                url: `/deleteTemplate/${id}`,
+                method: "DELETE",
+            }),
+        }),
     })
 })
 
-export const {useAddTemplateEmailMutation }=emailApi;
+export const {useAddTemplateEmailMutation,useGetAllEmailTemplatesMutation,
+                useAddDesignTemplateMutation,useGetDesignTemplateMutation,useDeleteTemplateMutation}=emailApi;

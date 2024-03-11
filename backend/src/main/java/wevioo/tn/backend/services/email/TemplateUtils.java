@@ -1,6 +1,7 @@
 package wevioo.tn.backend.services.email;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
 import jakarta.activation.FileDataSource;
@@ -36,6 +37,8 @@ public class TemplateUtils {
     private  final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{\\{([^{}]*)\\}\\}");
     public static final String EMAIL_TEMPLATE = "HtmlTemplateStandards";
     public static final String TEXT_HTML_ENCODING = "text/html";
+    public static final String DIRECTORY="templates";
+    public static final String DIRECTORYPATH=Paths.get("src", "main", "resources", DIRECTORY).toString();
 
     // Method to extract dynamic placeholders from the template
     public  Set<String> extractPlaceholders(String template) {
@@ -92,13 +95,9 @@ public class TemplateUtils {
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String fileName = "file_" + timestamp + ".txt";
 
-        String directory = "templates";
+        Files.createDirectories(Paths.get(DIRECTORYPATH));
 
-        String directoryPath = Paths.get("src", "main", "resources", directory).toString();
-
-        Files.createDirectories(Paths.get(directoryPath));
-
-        String filePath = Paths.get(directoryPath, fileName).toString();
+        String filePath = Paths.get(DIRECTORYPATH, fileName).toString();
 
         try (FileWriter writer = new FileWriter(filePath)) {
             writer.write(content);
@@ -106,6 +105,33 @@ public class TemplateUtils {
 
         return fileName;
     }
+
+
+    public String addDesignTemplate(Object jsonObject, Long id) throws IOException {
+        String fileName = id + ".json";
+        String filePath = Paths.get(DIRECTORYPATH, fileName).toString();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonString = objectMapper.writeValueAsString(jsonObject);
+
+        Files.createDirectories(Paths.get(DIRECTORYPATH));
+
+        try (FileWriter writer = new FileWriter(filePath)) {
+            writer.write(jsonString);
+        }
+
+        return fileName;
+    }
+
+    public static Object readDesignFile(Long fileName) throws IOException {
+        String filePath = Paths.get(DIRECTORYPATH, fileName.toString()).toString();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        File file = new File(filePath+".json");
+
+        return objectMapper.readValue(file, Object.class);
+    }
+
 }
 
 

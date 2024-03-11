@@ -5,6 +5,7 @@ import BreadcrumSection from '../../../../components/BreadcrumSection/BreadcrumS
 import { useAddTemplateEmailMutation } from '../../../../redux/services/emailApi'
 import { toast } from 'sonner'
 import { EmailTemplate } from '../../../../models/EmailTemplate'
+import { useNavigate } from 'react-router-dom'
 const CreateSimpleEmail = () => {
   const initialState={
     name: '',
@@ -19,14 +20,14 @@ const CreateSimpleEmail = () => {
   const [formData, setFormData] = useState(initialState);
   const {name,language,subject,content}=formData;
   const[addTemplateEmail]=useAddTemplateEmailMutation();
-
+  const navigate = useNavigate();
   const handleAddTemplate: (evt: React.FormEvent<HTMLFormElement>) => void = async (e) => {
     e.preventDefault();
     try {
       const emailTemplate: EmailTemplate = {
         name: formData.name,
         language: formData.language,
-        state: 'PUBLIC',
+        state: 'SIMPLE',
         templateBody: {
           subject: formData.subject,
           content: formData.content
@@ -37,6 +38,7 @@ const CreateSimpleEmail = () => {
       console.log("🚀 ~ emailData:", userData);
       toast.success("Template added successfully");
       setFormData(initialState);
+      navigate('/lisEmailTemplates')
     } catch (error) {
       toast.error("Error! Yikes");
       console.error("🚀 ~ error:", error);

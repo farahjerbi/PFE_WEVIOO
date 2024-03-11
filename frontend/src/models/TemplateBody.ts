@@ -6,4 +6,5 @@ export interface TemplateBody{
     content:string,
     signature?:Image,
     logo?:Image
+    design?:string;
 }

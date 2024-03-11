@@ -60,7 +60,7 @@ const Sidebar = () => {
                     </MDBListGroupItem>
                     {showEmail && (
                     <>
-                         <NavLink to="/lisEmailTemplates" >
+                         <NavLink to="/listEmailTemplates" >
                               <MDBListGroupItem noBorders className='sidebar-item'>
                                   <MDBIcon icon="list-ol" className='sidebar-icon-secondary '/>
                                   <span className='span-secondary'>List</span>

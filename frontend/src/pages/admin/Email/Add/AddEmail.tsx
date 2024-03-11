@@ -21,7 +21,7 @@ const AddEmail = () => {
         </MDBCardBody>
         <MDBCardFooter className="links-light profile-card-footer">
           <span className="right">
-            <MDBBtn type='submit' color='primary' className='mb-4' block onClick={()=>navigate('/addSimpleEmail')}>
+            <MDBBtn type='submit' color='info' className='mb-4' block onClick={()=>navigate('/addSimpleEmail')}>
             <MDBIcon icon="plus" className="ml-1" style={{marginRight:"4px"}}  />
                     Add now
             </MDBBtn>
@@ -32,7 +32,7 @@ const AddEmail = () => {
     <MDBCol lg="6" xl="5" className="mb-3">
       <MDBCard className="d-flex mb-5">
       <div className="center-image">
-      <MDBCardImage src="../assets/emailcomplex.png" position="top" fluid className="size_img" />
+      <MDBCardImage src="../assets/notification.png" position="top" fluid className="size_img" />
          </div>
         <MDBCardBody>
           <MDBCardTitle className="font-bold mb-3">
@@ -42,7 +42,7 @@ const AddEmail = () => {
         </MDBCardBody>
         <MDBCardFooter className="links-light profile-card-footer">
           <span className="right">
-          <MDBBtn type='submit' color='success' className='button mb-4' block onClick={()=>navigate('/createTemplate')}>
+          <MDBBtn type='submit' color='primary' className='button mb-4' block onClick={()=>navigate('/createTemplate')}>
             <MDBIcon icon="plus" className="ml-1" style={{marginRight:"4px"}}/>
                     Add now
             </MDBBtn>

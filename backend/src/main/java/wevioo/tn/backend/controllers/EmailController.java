@@ -4,9 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.apache.commons.io.IOUtils;
 import org.quartz.*;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,8 +21,7 @@ import wevioo.tn.backend.services.email.ImageService;
 import wevioo.tn.backend.services.email.TemplateUtils;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
+
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
@@ -46,7 +43,7 @@ public class EmailController {
 
 
     @PostMapping("addTemplate")
-    public ResponseEntity<EmailTemplate> createEmailTemplate(@RequestBody EmailTemplate emailTemplate) {
+    public ResponseEntity<EmailTemplate> createEmailTemplate(@RequestBody EmailTemplate emailTemplate ,Object jsonObject ) {
         EmailTemplate createdEmailTemplate = emailTemplateService.createEmailTemplate(emailTemplate);
         return ResponseEntity.ok(createdEmailTemplate);
     }
@@ -181,6 +178,17 @@ public class EmailController {
     @PostMapping("add")
     public String add(@RequestParam String content) throws IOException {
        return templateUtils.saveEmailHtmlTemplate(content);
+    }
+
+
+    @PostMapping("addDesignTemplate/{id}")
+    public String addDesignTemplate(@RequestBody Object jsonObject ,@PathVariable Long id) throws IOException {
+        return templateUtils.addDesignTemplate(jsonObject,id);
+    }
+
+    @GetMapping("getDesignTemplate/{id}")
+    public Object getDesignTemplate(@PathVariable Long id) throws IOException {
+        return templateUtils.readDesignFile(id);
     }
 }
 
