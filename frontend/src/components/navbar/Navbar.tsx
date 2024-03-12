@@ -98,17 +98,17 @@ const Navbar = () => {
                             <a rel="noopener noreferrer"  className="nav-link Ripple-parent" href="https://mdbootstrap.com/bootstrap-tutorial/" target="_blank">Free tutorials</a>
                         </MDBNavbarItem>
                     </MDBNavbarNav>
-                    <MDBNavbarNav className='justify-content-end' >
-                    <MDBBtn outline color="primary" className='me-2' type='button'>
+                    <MDBNavbarNav  className='justify-content-end' >
+                    {/* <MDBBtn  outline color="primary" className='btn me-2' type='button'> */}
                     <MDBNavbarItem>
                             <a className="nav-link navbar-link" rel="noopener noreferrer" target="_blank" href="https://pl-pl.facebook.com/mdbootstrap/"><MDBIcon fab icon="github" /> Github</a>
                         </MDBNavbarItem>
-                      </MDBBtn>
-                      <MDBBtn outline color="info" size="sm" type='button'>
+                      {/* </MDBBtn> */}
+                      {/* <MDBBtn className='btn' outline color="info" size="sm" type='button'> */}
                       <MDBNavbarItem>
                             <a className="nav-link navbar-link" rel="noopener noreferrer" target="_blank" href="https://twitter.com/mdbootstrap"><MDBIcon fab icon="twitter" /> twitter</a>
                         </MDBNavbarItem>
-                       </MDBBtn>
+                       {/* </MDBBtn> */}
                         <div id='dropdown-list' style={{margin:"0 10px "}}>
                           <img
                           src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img(30).webp"

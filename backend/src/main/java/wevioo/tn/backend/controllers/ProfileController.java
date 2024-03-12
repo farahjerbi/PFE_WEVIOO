@@ -6,21 +6,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import wevioo.tn.backend.dtos.request.ChangePasswordRequest;
 import wevioo.tn.backend.dtos.request.UpdateUser;
+import wevioo.tn.backend.dtos.response.UserResponse;
+import wevioo.tn.backend.services.auth.AuthenticationService;
 import wevioo.tn.backend.services.profile.ProfileService;
 
+import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/profiles/")
+@RequestMapping("/api/users/")
 @AllArgsConstructor
 public class ProfileController {
     private final ProfileService profileService;
 
+    private final AuthenticationService authenticationService;
 
-    @GetMapping("demo")
-    public ResponseEntity<String> demo() {
-        return ResponseEntity.ok().build();
-    }
 
     @PutMapping("forgot_password")
     public ResponseEntity<String> forgetPassword(@RequestBody String email){
@@ -41,6 +41,21 @@ public class ProfileController {
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request ) {
         profileService.changePassword(request);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("getAllUsers")
+    public List<UserResponse> getUsers( ) {
+        return profileService.getAllUsers();
+    }
+
+    @PutMapping("enableUser/{email}")
+    public String enableUserByEmail(@PathVariable  String email) {
+        return authenticationService.enableUser(email);
+    }
+
+    @PutMapping("deactivateUser/{email}")
+    public String deactivateUserByEmail(@PathVariable String email) {
+        return authenticationService.deactivateUser(email);
     }
 
 }

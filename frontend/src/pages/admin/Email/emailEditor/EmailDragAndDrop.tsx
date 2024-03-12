@@ -65,6 +65,11 @@ const EmailDragAndDrop: React.FC = () => {
     // }
   };
 
+  const Viewer = () => {
+    return <div>I am a custom tool.</div>;
+  };
+  
+
 
   const handleAddTemplate: (evt: React.FormEvent<HTMLFormElement>) => void = async (e) => {
     e.preventDefault();
@@ -96,6 +101,9 @@ const EmailDragAndDrop: React.FC = () => {
       console.error("🚀 ~ error:", error);
     }
   };
+
+
+  
 
 
   

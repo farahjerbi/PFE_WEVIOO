@@ -143,6 +143,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 ));
 
         user.setEnabled(false);
+        userRepository.save(user);
         return "User Deactivated successfully";
 
     }

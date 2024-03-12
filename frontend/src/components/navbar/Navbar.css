@@ -11,9 +11,14 @@
     background-color:transparent;
 }
 .flexible-navbar{
+    height: 60px;
     position: relative;  
-    margin-left: 19% !important;
-    margin: 2%;  
-    border-radius: 20px; /* Adjust the border-radius value to make the navbar more rounded */
+    margin-left: 15% !important;
+    /* border-radius: 18px;  */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19) !important;
 }
+
+.nav-link{
+    font-size: 14px !important;
+}
+

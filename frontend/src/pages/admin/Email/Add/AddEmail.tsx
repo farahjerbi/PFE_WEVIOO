@@ -11,7 +11,7 @@ const AddEmail = () => {
     <MDBCol xl="5" >
       <MDBCard >
       <div className="center-image">
-      <MDBCardImage src="../assets/notification.png" position="top" fluid className="size_img" />
+      <MDBCardImage src="../assets/notification.gif" position="top" fluid className="size_img" />
          </div>
          <MDBCardBody>
           <MDBCardTitle className="font-bold mb-3">
@@ -32,7 +32,7 @@ const AddEmail = () => {
     <MDBCol lg="6" xl="5" className="mb-3">
       <MDBCard className="d-flex mb-5">
       <div className="center-image">
-      <MDBCardImage src="../assets/notification.png" position="top" fluid className="size_img" />
+      <MDBCardImage src="../assets/Font.gif" position="top" fluid className="size_img" /> 
          </div>
         <MDBCardBody>
           <MDBCardTitle className="font-bold mb-3">

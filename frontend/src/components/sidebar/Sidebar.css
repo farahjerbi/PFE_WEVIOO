@@ -3,15 +3,15 @@ strong{
   
 }
 .sidebar-icon{
-  font-size: 1.2rem;
+  font-size: 0.97rem;
   margin: 19px 0;
-  color: #2196f3;
+  color: rgb(231, 233, 236);
 }
 
 span{
   margin-left: 4%;
-  font-size: medium;
-  color: rgb(81, 100, 127);
+  font-size: 15px;
+  color: rgb(231, 233, 236);
 }
 
 .sidebar-container{
@@ -27,10 +27,10 @@ span{
   overflow: hidden; /* Hide any overflow from the background image */
 }
 
-h5 {
+h4 {
   text-align: center;
   margin: 0;
-  color: rgb(9, 30, 64);
+  color: rgb(231, 233, 236);
 
 }
 
@@ -39,7 +39,7 @@ h5 {
 }
 
 .sidebar-item:hover{
-  background-color: rgb(228, 230, 244) !important;
+  background-color: rgb(135, 137, 161) !important;
   cursor: pointer;
 }
 
@@ -49,13 +49,13 @@ h5 {
 
 .sidebar-icon-secondary{
   font-size: 0.8rem;
-  margin: 10% 15%;
-  color: rgb(26, 79, 164);
+  margin: 6% 10%;
+  color: rgb(193, 200, 211);
 }
 
 .span-secondary{
-  font-size: medium;
-  color: rgb(128, 139, 154);
+  font-size: small;
+  color: rgb(231, 233, 236);
 }
 
 .avatar{
@@ -63,7 +63,7 @@ h5 {
 }
 
 .testimonial-card{
-  background-color: (255, 255, 255) !important;
+  background-color: transparent !important ;
 }
 
 .logo{

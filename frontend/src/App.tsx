@@ -1,6 +1,6 @@
 import './App.css';
 import {BrowserRouter,Route, Routes } from "react-router-dom"
-import Dashboard from './pages/dashboard/Dashboard';
+import Dashboard from './pages/admin/dashboard/Dashboard';
 import Authentication from './pages/authentication/Authentication';
 import { Toaster } from 'sonner'
 
@@ -10,6 +10,7 @@ import CreateSimpleEmail from './pages/admin/Email/create/CreateSimpleEmail';
 import EmailDragAndDrop from './pages/admin/Email/emailEditor/EmailDragAndDrop';
 import ListEmails from './pages/admin/Email/list/ListEmails';
 import Layout from './Layout';
+import ListUsers from './pages/admin/users/list/ListUsers';
 function App() {
   return (
     <div className="App">
@@ -24,6 +25,7 @@ function App() {
             <Route path='/addSimpleEmail' element={<CreateSimpleEmail />} />
             <Route path='/createTemplate' element={<EmailDragAndDrop />} />
             <Route path='/listEmailTemplates' element={<ListEmails />} />
+            <Route path='/listUsers' element={<ListUsers />} />
           </Route> 
           <Route path='/authentication' element={<Authentication />} />
         </Routes>

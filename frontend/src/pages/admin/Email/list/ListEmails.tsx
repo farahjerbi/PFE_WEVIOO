@@ -1,4 +1,4 @@
-import { MDBBadge, MDBBtn, MDBCard, MDBCardBody, MDBCol, MDBModal, MDBModalBody, MDBModalContent, MDBModalDialog, MDBModalFooter, MDBModalHeader, MDBModalTitle, MDBRow, MDBTable, MDBTableBody, MDBTableHead } from 'mdb-react-ui-kit'
+import { MDBBadge, MDBBtn, MDBCard, MDBCardBody, MDBCardImage, MDBCol, MDBModal, MDBModalBody, MDBModalContent, MDBModalDialog, MDBModalFooter, MDBModalHeader, MDBModalTitle, MDBRow, MDBTable, MDBTableBody, MDBTableHead } from 'mdb-react-ui-kit'
 import './ListEmails.css'
 import { useEffect, useRef, useState } from 'react'
 import { useDeleteTemplateMutation, useGetAllEmailTemplatesMutation, useGetDesignTemplateMutation } from '../../../../redux/services/emailApi';
@@ -70,7 +70,8 @@ const ListEmails = () => {
     <div>
        <BreadcrumSection />
        <MDBRow>
-          <MDBCol md="9" className="list_container mb-4">
+          <MDBCol md="9" className="list_container mb-4 d-flex align-items-center">
+          <MDBCardImage src="../assets/listEmails.gif" position="top" fluid className="size_imgg" />
               <MDBCard>
                   <MDBCardBody>
                     <MDBTable striped hover bordered >

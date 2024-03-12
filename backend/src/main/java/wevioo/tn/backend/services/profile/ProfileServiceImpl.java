@@ -2,12 +2,17 @@ package wevioo.tn.backend.services.profile;
 
 import lombok.AllArgsConstructor;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import wevioo.tn.backend.dtos.request.ChangePasswordRequest;
 import wevioo.tn.backend.dtos.request.UpdateUser;
+import wevioo.tn.backend.dtos.response.UserResponse;
 import wevioo.tn.backend.entities.UserEntity;
 import wevioo.tn.backend.repositories.UserRepository;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Service
@@ -16,6 +21,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
 
 
@@ -64,7 +70,19 @@ public class ProfileServiceImpl implements ProfileService {
          userRepository.deleteById(id);
 
         return "User deleted successfully";
+    }
 
+
+    public List<UserResponse> getAllUsers() {
+        List<UserEntity> users = userRepository.findAll();
+        List<UserResponse> userResponses = new ArrayList<>();
+
+        for (UserEntity user : users) {
+            UserResponse userResponse = modelMapper.map(user, UserResponse.class);
+            userResponses.add(userResponse);
+        }
+
+        return userResponses;
     }
 
 
