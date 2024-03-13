@@ -4,9 +4,10 @@ import Register from '../../components/register/Register';
 import Login from '../../components/login/Login';
 import './Authentication.css'
 
+
 const Authentication = () => {
     const [loginRegisterActive, setLoginRegisterActive] = useState<string>("login"); 
-  return (
+    return (
     <div className="container">
     <MDBCard className='my-5'  >
       <MDBRow>
@@ -15,7 +16,7 @@ const Authentication = () => {
         </MDBCol>
         <MDBCol md="6">
           <MDBCardBody  >
-            <img  className='logo'  src="../assets/logo.png" alt="" />
+            <img  className='logoo'  src="../assets/logo.png" alt="" />
             <MDBTabs pills justify className='mb-3'>
               <MDBTabsItem>
                 <MDBTabsLink

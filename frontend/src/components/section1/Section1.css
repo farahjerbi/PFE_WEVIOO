@@ -1,7 +1,13 @@
 .section{
-    margin-left: 19%;
+    margin-left: 17%;
 }
 
 .cascading-admin-card{
-    border-radius: 5% !important; /* Adjust the border-radius value to make the navbar more rounded */
+    border-radius: 5% !important;
+    width: 85% !important;
+
+}
+
+strong{
+    color: rgb(13, 69, 125) !important;
 }

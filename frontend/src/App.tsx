@@ -9,8 +9,12 @@ import AddEmail from './pages/admin/Email/Add/AddEmail';
 import CreateSimpleEmail from './pages/admin/Email/create/CreateSimpleEmail';
 import EmailDragAndDrop from './pages/admin/Email/emailEditor/EmailDragAndDrop';
 import ListEmails from './pages/admin/Email/list/ListEmails';
-import Layout from './Layout';
+import Layout from './routes/Layout';
 import ListUsers from './pages/admin/users/list/ListUsers';
+import UsersStatistics from './pages/admin/users/statistics/UsersStatistics';
+import EmailStatistics from './pages/admin/Email/statistics/EmailStatistics';
+import ProtectedRoute from './routes/ProtectedRoute';
+import { Role } from '../src/models/Role';
 function App() {
   return (
     <div className="App">
@@ -19,13 +23,15 @@ function App() {
         <Routes>
           <Route element={<Layout/>}>
             <Route index element={<Home/>} />
-            <Route path='/dashboard' element={<Dashboard />} />
-            <Route path='/addEmailTemplate' element={<AddEmail />} />
+            <Route path="/dashboard" element={ <ProtectedRoute path="/dashboard" requiredRole={Role.ADMIN} element={<Dashboard />}/> } />
+           <Route path='/addEmailTemplate' element={<AddEmail />} />
             <Route path='/home' element={<Home />} />
             <Route path='/addSimpleEmail' element={<CreateSimpleEmail />} />
             <Route path='/createTemplate' element={<EmailDragAndDrop />} />
             <Route path='/listEmailTemplates' element={<ListEmails />} />
             <Route path='/listUsers' element={<ListUsers />} />
+            <Route path='/usersStatistics' element={<UsersStatistics />} />
+            <Route path='/emailsStatistics' element={<EmailStatistics />} />
           </Route> 
           <Route path='/authentication' element={<Authentication />} />
         </Routes>

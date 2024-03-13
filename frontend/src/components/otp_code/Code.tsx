@@ -13,14 +13,7 @@ const Code= ({ email, password ,stage}: OtpProps) => {
     const navigate =useNavigate();
     const dispatch = useDispatch();
 
-    const[verifyOTP,
-      {
-        data:otpData,
-        isError:isOtpError,
-        isSuccess:isOtpSuccess,
-        error:otpError
-      }]
-      =useVerifyOTPMutation();
+    const[verifyOTP]=useVerifyOTPMutation();
 
     const handleInputChange = (index: number, value: string) => {
       const newOTP = [...otp];
@@ -41,7 +34,7 @@ const Code= ({ email, password ,stage}: OtpProps) => {
         navigate('/authentication')
       }
       if(userData && stage==="login"){
-        dispatch(setUser({ user: userData.user, token: userData.token }));
+        dispatch(setUser({ user: userData.user, token: userData.token,role:userData.user.role}));
         toast.success("User logged In successfully !")
         navigate('/createTemplate')
       }

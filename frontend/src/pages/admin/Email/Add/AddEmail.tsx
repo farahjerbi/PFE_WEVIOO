@@ -1,4 +1,4 @@
-import { MDBBtn, MDBCard, MDBCardBody, MDBCardFooter, MDBCardImage, MDBCardOverlay, MDBCardText, MDBCardTitle, MDBCol, MDBIcon, MDBRow } from 'mdb-react-ui-kit'
+import { MDBBtn, MDBCard, MDBCardBody, MDBCardFooter, MDBCardImage, MDBCardText, MDBCardTitle, MDBCol, MDBIcon, MDBRow } from 'mdb-react-ui-kit'
 import BreadcrumSection from '../../../../components/BreadcrumSection/BreadcrumSection'
 import './AddEmail.css'
 import { useNavigate } from 'react-router-dom'

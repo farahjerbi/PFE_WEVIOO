@@ -196,15 +196,19 @@ main {
 
 
 .color_green{
-  background: linear-gradient(90deg, rgba(88, 173, 91, 1) 0%, rgba(137, 235, 139, 1) 50%, rgba(95, 165, 105, 1) 100%);
+  background: linear-gradient(90deg, rgba(88, 173, 91, 1) 0%, rgb(48, 141, 49) 50%, rgba(95, 165, 105, 1) 100%);
 }
 
 .color_orange{
-  background: linear-gradient(90deg, rgba(233, 138, 85, 1) 0%, rgba(255, 207, 181, 1) 51%, rgba(233, 138, 85, 1) 100%);
+  background: linear-gradient(90deg, rgba(233, 138, 85, 1) 0%, rgb(214, 85, 16) 51%, rgba(233, 138, 85, 1) 100%);
 }
 
 .color_purple{
-  background: linear-gradient(90deg, rgba(210, 114, 210, 1) 0%, rgba(255, 231, 255, 1) 50%, rgba(210, 114, 210, 1) 100%);
+  background: linear-gradient(90deg, rgba(210, 114, 210, 1) 0%, rgb(156, 47, 156) 50%, rgba(210, 114, 210, 1) 100%);
+}
+
+.color_red{
+  background: linear-gradient(90deg, rgb(226, 18, 18) 0%, rgb(157, 21, 21) 50%, rgba(226, 18, 18) 100%);
 }
 
 .green{

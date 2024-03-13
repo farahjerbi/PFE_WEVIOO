@@ -5,11 +5,9 @@ import {
   MDBContainer,
   MDBInput,
   MDBCheckbox,
-  
 }
 from 'mdb-react-ui-kit';
 import {useRegisterUserMutation} from '../../redux/services/authApi';
-import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import Code from '../otp_code/Code';
 const Register=()=> {
@@ -24,8 +22,7 @@ const Register=()=> {
   const [formData, setFormData] = useState(initialState);
   const {firstName,lastName,email,password,confirmPassword,mfaEnabled}=formData;
   const [isMfaEnabled,setIsMfaEnabled]=useState<string>();
-  const navigate =useNavigate();
-  const[registerUser,{data,isSuccess,isError,error}] =useRegisterUserMutation();
+  const[registerUser] =useRegisterUserMutation();
 
   
   const handleChange=(e: React.ChangeEvent<HTMLInputElement>)=>{

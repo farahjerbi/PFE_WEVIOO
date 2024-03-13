@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from 'react'
+import React, {  useState } from 'react'
 import './SimpleEmailTemplate.css'
 import { MDBBtn, MDBCard, MDBCardBody, MDBCardHeader, MDBInput, MDBTextArea } from 'mdb-react-ui-kit'
 import BreadcrumSection from '../../../../components/BreadcrumSection/BreadcrumSection'

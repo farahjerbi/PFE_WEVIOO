@@ -1,4 +1,4 @@
-import { MDBBadge, MDBBtn, MDBCard, MDBCardBody, MDBCardImage, MDBCol, MDBModal, MDBModalBody, MDBModalContent, MDBModalDialog, MDBModalFooter, MDBModalHeader, MDBModalTitle, MDBRow, MDBTable, MDBTableBody, MDBTableHead } from 'mdb-react-ui-kit'
+import { MDBBadge, MDBBtn, MDBCard, MDBCardBody, MDBCardImage, MDBCol, MDBModal, MDBModalBody, MDBModalContent, MDBModalDialog, MDBModalFooter, MDBModalHeader, MDBModalTitle, MDBPagination, MDBPaginationItem, MDBPaginationLink, MDBRow, MDBTable, MDBTableBody, MDBTableHead } from 'mdb-react-ui-kit'
 import './ListEmails.css'
 import { useEffect, useRef, useState } from 'react'
 import { useDeleteTemplateMutation, useGetAllEmailTemplatesMutation, useGetDesignTemplateMutation } from '../../../../redux/services/emailApi';
@@ -15,6 +15,15 @@ const ListEmails = () => {
   const [templateDesign,setTemplateDesign]= useState<any>();
   const[getDesignTemplate]=useGetDesignTemplateMutation();
   const[deleteTemplate]=useDeleteTemplateMutation();
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4; 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = templates.slice(indexOfFirstItem, indexOfLastItem);
+
+  const handlePageChange = (page:any) => {
+    setCurrentPage(page);
+  };
 
 
   const toggleOpen = () => setBasicModal(!basicModal);
@@ -85,7 +94,7 @@ const ListEmails = () => {
                         </tr>
                       </MDBTableHead>
                       <MDBTableBody>
-                      {templates.map(template => (
+                      {currentItems.map(template => (
                         <tr key={template.id}>
                           <td>{template.id}</td>
                           <td>{template.name}</td>
@@ -116,6 +125,21 @@ const ListEmails = () => {
                       </MDBTableBody>
                     </MDBTable>
                   </MDBCardBody>
+                  <nav aria-label='Page navigation example'>
+                    <MDBPagination circle center className='mb-2'>
+                      <MDBPaginationItem disabled={currentPage === 1}>
+                        <MDBPaginationLink onClick={() => handlePageChange(currentPage - 1)}>Previous</MDBPaginationLink>
+                      </MDBPaginationItem>
+                      {Array.from({ length: Math.ceil(templates.length / itemsPerPage) }, (_, i) => (
+                        <MDBPaginationItem key={i} active={i + 1 === currentPage}>
+                          <MDBPaginationLink onClick={() => handlePageChange(i + 1)}>{i + 1}</MDBPaginationLink>
+                        </MDBPaginationItem>
+                      ))}
+                      <MDBPaginationItem disabled={currentPage === Math.ceil(templates.length / itemsPerPage)}>
+                        <MDBPaginationLink onClick={() => handlePageChange(currentPage + 1)}>Next</MDBPaginationLink>
+                      </MDBPaginationItem>
+                    </MDBPagination>
+                  </nav>
               </MDBCard>
           </MDBCol>
           { templateDesign && (

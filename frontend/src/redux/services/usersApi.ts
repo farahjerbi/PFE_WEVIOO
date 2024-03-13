@@ -34,7 +34,16 @@ export const usersApi = createApi({
             }
         }),
 
+        deleteUser : builder.mutation({
+            query:(id:number)=>{
+                return{
+                    url:`/deleteProfile/${id}`,
+                    method:"DELETE",
+                };
+            }
+        }),
+
     })
 })
 
-export const {useGetAllUsersMutation ,useActivateUserMutation,useDesActivateUserMutation}=usersApi;
+export const {useGetAllUsersMutation ,useActivateUserMutation,useDesActivateUserMutation,useDeleteUserMutation}=usersApi;

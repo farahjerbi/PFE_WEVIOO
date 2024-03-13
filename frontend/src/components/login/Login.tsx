@@ -12,6 +12,9 @@ import {
 import { useLoginUserMutation } from '../../redux/services/authApi';
 import { toast } from 'sonner';
 import Code from '../otp_code/Code';
+import { useNavigate } from 'react-router-dom';
+import { setUser } from '../../redux/state/authSlice';
+import { useDispatch } from 'react-redux';
 
 const Login=()=> {
   const stage="login"
@@ -22,6 +25,9 @@ const Login=()=> {
   const [formData, setFormData] = useState(initialState);
   const {email,password}=formData;
   const [isMfaEnabled,setIsMfaEnabled]=useState<boolean>();
+  const [isEnabled,setIsEnabled]=useState<boolean>();
+  const navigate=useNavigate();
+  const dispatch = useDispatch();
   const[loginUser,{data,isSuccess,isError,error,isLoading}]=useLoginUserMutation();
 
   const handleChange=(e: React.ChangeEvent<HTMLInputElement>)=>{
@@ -37,9 +43,18 @@ const Login=()=> {
       .unwrap()
       .then((userData: any) => {
           console.log("🚀 ~ .then ~ userData:", userData)
-          setIsMfaEnabled(userData.mfaEnabled)
+          if(userData){
+            setIsMfaEnabled(userData.mfaEnabled)
+            setIsEnabled(userData.user.enabled)
+            if(userData.user){
+              dispatch(setUser({ user: userData.user, token: userData.token ,role:userData.user.role}));   
+              toast.success("User logged In successfully !")
+              navigate('/dashboard') 
+            }
+          }
     })
-    }catch(error){
+ 
+    }catch(error){ 
       toast.error("User is not enabled ! please check your email")
       console.log("🚀 ~ Login ~ error:", error)
     }

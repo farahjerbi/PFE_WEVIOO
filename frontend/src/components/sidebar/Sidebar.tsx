@@ -1,4 +1,4 @@
-import { MDBCard, MDBCardBody, MDBCardImage, MDBCol, MDBIcon, MDBListGroup, MDBListGroupItem, MDBRow } from 'mdb-react-ui-kit';
+import { MDBCard, MDBCardBody, MDBCol, MDBIcon, MDBListGroup, MDBListGroupItem } from 'mdb-react-ui-kit';
 import { useState } from 'react'
 import './Sidebar.css'
 import { NavLink, useNavigate } from 'react-router-dom';
@@ -83,7 +83,7 @@ const Sidebar = () => {
                                   <span className='span-secondary'>List</span>
                               </MDBListGroupItem>
                           </NavLink>
-                          <NavLink to="/tables" >
+                          <NavLink to="/usersStatistics" >
                               <MDBListGroupItem noBorders className='sidebar-item'>
                                   <MDBIcon icon="chart-bar" className='sidebar-icon-secondary '/>
                                   <span className='span-secondary'>Statistics</span>
@@ -111,7 +111,7 @@ const Sidebar = () => {
                                   <span className='span-secondary'>Add </span>
                               </MDBListGroupItem>
                           </NavLink>
-                          <NavLink to="/emailStatistics" >
+                          <NavLink to="/emailsStatistics" >
                               <MDBListGroupItem noBorders className='sidebar-item'>
                                   <MDBIcon icon="chart-bar" className='sidebar-icon-secondary  '/>
                                   <span className='span-secondary'>Statistics</span>
