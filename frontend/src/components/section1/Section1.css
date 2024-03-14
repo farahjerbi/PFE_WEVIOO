@@ -1,5 +1,6 @@
 .section{
     margin-left: 17%;
+    margin-top: 8%;
 }
 
 .cascading-admin-card{
@@ -10,4 +11,10 @@
 
 strong{
     color: rgb(13, 69, 125) !important;
+}
+
+.admin-up:hover{
+    cursor: pointer;
+    transform: translate(-1rem);
+    transition: all 0.3s ease;
 }

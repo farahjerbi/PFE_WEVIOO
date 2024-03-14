@@ -1,11 +1,11 @@
 .list_container{
-    margin-left: 20%;
+    margin-top: 4% !important;
+    margin-left: 18% !important;
 }
 
 .view{
     position: absolute;
-    width: 17% !important;
-    margin-left: 20%;
+    margin-left: 13%;
 }
 
 .buttons{

@@ -28,7 +28,7 @@ const Login=()=> {
   const [isEnabled,setIsEnabled]=useState<boolean>();
   const navigate=useNavigate();
   const dispatch = useDispatch();
-  const[loginUser,{data,isSuccess,isError,error,isLoading}]=useLoginUserMutation();
+  const[loginUser]=useLoginUserMutation();
 
   const handleChange=(e: React.ChangeEvent<HTMLInputElement>)=>{
     setFormData({...formData,[e.target.name]:e.target.value})
@@ -55,7 +55,7 @@ const Login=()=> {
     })
  
     }catch(error){ 
-      toast.error("User is not enabled ! please check your email")
+      toast.error("Error !")
       console.log("🚀 ~ Login ~ error:", error)
     }
   }

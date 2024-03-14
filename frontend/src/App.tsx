@@ -1,4 +1,3 @@
-import './App.css';
 import {BrowserRouter,Route, Routes } from "react-router-dom"
 import Dashboard from './pages/admin/dashboard/Dashboard';
 import Authentication from './pages/authentication/Authentication';
@@ -15,6 +14,8 @@ import UsersStatistics from './pages/admin/users/statistics/UsersStatistics';
 import EmailStatistics from './pages/admin/Email/statistics/EmailStatistics';
 import ProtectedRoute from './routes/ProtectedRoute';
 import { Role } from '../src/models/Role';
+import Profile from "./pages/user/profile/Profile";
+import ChangePassword from "./pages/user/changePassword/ChangePassword";
 function App() {
   return (
     <div className="App">
@@ -24,7 +25,7 @@ function App() {
           <Route element={<Layout/>}>
             <Route index element={<Home/>} />
             <Route path="/dashboard" element={ <ProtectedRoute path="/dashboard" requiredRole={Role.ADMIN} element={<Dashboard />}/> } />
-           <Route path='/addEmailTemplate' element={<AddEmail />} />
+            <Route path='/addEmailTemplate' element={<AddEmail />} />
             <Route path='/home' element={<Home />} />
             <Route path='/addSimpleEmail' element={<CreateSimpleEmail />} />
             <Route path='/createTemplate' element={<EmailDragAndDrop />} />
@@ -32,8 +33,10 @@ function App() {
             <Route path='/listUsers' element={<ListUsers />} />
             <Route path='/usersStatistics' element={<UsersStatistics />} />
             <Route path='/emailsStatistics' element={<EmailStatistics />} />
+            <Route path='/profile' element={<Profile />} />
           </Route> 
           <Route path='/authentication' element={<Authentication />} />
+
         </Routes>
       </BrowserRouter>
     </div>

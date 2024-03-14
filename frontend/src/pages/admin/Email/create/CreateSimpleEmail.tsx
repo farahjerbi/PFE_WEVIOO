@@ -48,7 +48,7 @@ const CreateSimpleEmail = () => {
   return (
     <div>
          <BreadcrumSection />
-            <MDBCard className='CardContainer'>
+            <MDBCard className='CardContainer '>
             <MDBCardHeader className='header'>Create new template</MDBCardHeader>
             <MDBCardBody>
               <form onSubmit={handleAddTemplate}>

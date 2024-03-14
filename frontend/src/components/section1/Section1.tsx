@@ -45,8 +45,8 @@ const Section1 = () => {
   };
 
   return (
-    <div className='section'>
-        <MDBRow className="mb-4">
+    <div className='section '>
+        <MDBRow className="mb-4 ">
         <MDBCol xl="3" md="6" className="mb-r">
           <MDBCard className="cascading-admin-card">
               <div className="admin-up" >

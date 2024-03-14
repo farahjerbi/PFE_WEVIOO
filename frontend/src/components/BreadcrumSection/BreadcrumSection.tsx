@@ -14,7 +14,7 @@ const BreadcrumSection = () => {
   }, [location.pathname]);
 
   return (
-    <MDBCard className="breadcrum mb-10 ">
+    <MDBCard className="breadcrum mb-6 ">
       <MDBCardBody id="breadcrumb" >
         <MDBBreadcrumb>
           <MDBBreadcrumbItem>

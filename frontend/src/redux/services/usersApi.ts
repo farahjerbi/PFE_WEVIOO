@@ -42,8 +42,17 @@ export const usersApi = createApi({
                 };
             }
         }),
+        changePassword : builder.mutation({
+            query:(body:{oldPassword:string,newPassword:string,confirmNewPassword:string,email:string})=>{
+                return{
+                    url:`/changePassword`,
+                    method:"POST",
+                    body
+                };
+            }
+        }),
 
     })
 })
 
-export const {useGetAllUsersMutation ,useActivateUserMutation,useDesActivateUserMutation,useDeleteUserMutation}=usersApi;
+export const {useGetAllUsersMutation ,useActivateUserMutation,useDesActivateUserMutation,useDeleteUserMutation,useChangePasswordMutation}=usersApi;

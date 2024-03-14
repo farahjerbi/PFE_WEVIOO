@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import wevioo.tn.backend.dtos.request.ChangePasswordRequest;
 import wevioo.tn.backend.dtos.request.UpdateUser;
 import wevioo.tn.backend.dtos.response.UserResponse;
+import wevioo.tn.backend.entities.UserEntity;
+import wevioo.tn.backend.repositories.UserRepository;
 import wevioo.tn.backend.services.auth.AuthenticationService;
 import wevioo.tn.backend.services.profile.ProfileService;
 
@@ -20,6 +22,7 @@ public class ProfileController {
     private final ProfileService profileService;
 
     private final AuthenticationService authenticationService;
+    private final UserRepository userRepository;
 
 
     @PutMapping("forgot_password")

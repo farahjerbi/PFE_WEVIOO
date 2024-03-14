@@ -1,10 +1,12 @@
-import { MDBBadge, MDBBtn, MDBCard, MDBCardBody, MDBCol, MDBModal, MDBModalBody, MDBModalContent, MDBModalDialog, MDBModalFooter, MDBModalHeader, MDBModalTitle, MDBPagination, MDBPaginationItem, MDBPaginationLink, MDBTable, MDBTableBody, MDBTableHead } from 'mdb-react-ui-kit'
+import { MDBBadge, MDBBtn, MDBCard, MDBCardBody, MDBCol, MDBPagination, MDBPaginationItem, MDBPaginationLink, MDBTable, MDBTableBody, MDBTableHead } from 'mdb-react-ui-kit'
 import  { useEffect, useState } from 'react'
-import { useActivateUserMutation, useDeleteUserMutation, useDesActivateUserMutation, useGetAllUsersMutation } from '../../../../redux/services/usersApi';
+import { useActivateUserMutation, useDesActivateUserMutation, useGetAllUsersMutation } from '../../../../redux/services/usersApi';
 import { toast } from 'sonner';
 import { User } from '../../../../models/User';
 import BreadcrumSection from '../../../../components/BreadcrumSection/BreadcrumSection';
 import './ListUsers.css'
+import DeleteUserModal from '../../../../components/modals/DeleteUserModal';
+import { Role } from '../../../../models/Role';
 const ListUsers = () => {
   const [updated, setUpdated] = useState<boolean>(false);
     useEffect(() => {
@@ -12,13 +14,10 @@ const ListUsers = () => {
       }, [updated]);
       const [users, setUsers] = useState<User[]>([]);
       const [idDelete, setIdDelete] = useState<number>();
-      console.log("🚀 ~ ListUsers ~ idDelete:", idDelete)
       const[getAllUsers]=useGetAllUsersMutation();
       const[desActivateUser]=useDesActivateUserMutation();
       const[activateUser]=useActivateUserMutation();
-      const[deleteUser]=useDeleteUserMutation();
-      const [basicModal, setBasicModal] = useState(false);
-
+      const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
       //Pagination 
       const [currentPage, setCurrentPage] = useState(1);
       const itemsPerPage = 4; 
@@ -31,7 +30,7 @@ const ListUsers = () => {
       };
 
       //endPagination
-      const toggleOpen = () => setBasicModal(!basicModal);
+
       const fetchData = async () => {
         try {
           const response = await getAllUsers({}).unwrap();
@@ -66,23 +65,16 @@ const ListUsers = () => {
         }
       };
 
-      const deleteU = async (id:number) => {
-        try {
-          await deleteUser(id);
-          toast.success("User Deleted Successfully !");
-          setBasicModal(!basicModal)
-          setUpdated(true)
-        } catch (error) {
-          toast.error("Error! Yikes");
-          console.error("🚀 ~ error:", error);
-        }
-      };
+      const handleUpdate = () => {
+        setUpdated(!updated); 
+        setDeleteModalOpen(false)
+            };
 
   return (
     <div className='users_container'>
        <BreadcrumSection />
-        <MDBCol md="10" className="list_container mb-4 d-flex align-items-center mt-5">
-                <MDBCard>
+        <MDBCol md="10" className="list_container mb-4 d-flex align-items-center ">
+                <MDBCard style={{marginTop:"7%" , marginLeft:'4%'}} >
                     <MDBCardBody>
                     <MDBTable striped hover bordered >
                         <MDBTableHead color="blue lighten-4">
@@ -123,7 +115,7 @@ const ListUsers = () => {
                             {user.enabled ==="true"&& ( <MDBBtn className='btn' color='info' onClick={()=>desactivate(user.email)} >Desactivate </MDBBtn>  )}                            </div>
                             </td>
                             <td>
-                            <MDBBtn className='btn' color='danger' onClick={() => {toggleOpen(); setIdDelete(user.id)}}>Delete</MDBBtn>
+                            <MDBBtn className='btn' color='danger' onClick={() => { setDeleteModalOpen(true); setIdDelete(user.id)}}>Delete</MDBBtn>
                             </td>
                         </tr>
                         ))}
@@ -147,25 +139,9 @@ const ListUsers = () => {
                   </nav>
                 </MDBCard>
             </MDBCol> 
+      {idDelete && (
+         <DeleteUserModal typeUser={Role.ADMIN} id={idDelete} show={deleteModalOpen}  onClose={handleUpdate}/> )}
 
-        <MDBModal open={basicModal} setOpen={setBasicModal} tabIndex='-1'>
-        <MDBModalDialog>
-          <MDBModalContent>
-            <MDBModalHeader>
-              <MDBModalTitle>Delete User</MDBModalTitle>
-              <MDBBtn className='btn-close' color='none' onClick={toggleOpen}></MDBBtn>
-            </MDBModalHeader>
-            <MDBModalBody>Are you sure you want to delete this user ?</MDBModalBody>
-
-            <MDBModalFooter>
-              <MDBBtn color='secondary' onClick={toggleOpen}>
-                Close
-              </MDBBtn>
-              {idDelete && ( <MDBBtn color='danger' onClick={()=>deleteU(idDelete)}> Yes ! </MDBBtn> )}
-            </MDBModalFooter>
-          </MDBModalContent>
-        </MDBModalDialog>
-      </MDBModal>
     </div>
   )
 }

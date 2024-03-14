@@ -1,4 +1,4 @@
-import { MDBBadge, MDBBtn, MDBCard, MDBCardBody, MDBCardImage, MDBCol, MDBModal, MDBModalBody, MDBModalContent, MDBModalDialog, MDBModalFooter, MDBModalHeader, MDBModalTitle, MDBPagination, MDBPaginationItem, MDBPaginationLink, MDBRow, MDBTable, MDBTableBody, MDBTableHead } from 'mdb-react-ui-kit'
+import { MDBBadge, MDBBtn, MDBCard, MDBCardBody, MDBCardImage, MDBCol, MDBModal, MDBModalBody, MDBModalContent, MDBModalDialog, MDBModalFooter, MDBModalHeader, MDBModalTitle, MDBPagination, MDBPaginationItem, MDBPaginationLink, MDBRow, MDBTable, MDBTableBody, MDBTableHead, MDBTextArea } from 'mdb-react-ui-kit'
 import './ListEmails.css'
 import { useEffect, useRef, useState } from 'react'
 import { useDeleteTemplateMutation, useGetAllEmailTemplatesMutation, useGetDesignTemplateMutation } from '../../../../redux/services/emailApi';
@@ -78,7 +78,7 @@ const ListEmails = () => {
   return (
     <div>
        <BreadcrumSection />
-       <MDBRow>
+       <MDBRow className='mt-5 pt-5'>
           <MDBCol md="9" className="list_container mb-4 d-flex align-items-center">
           <MDBCardImage src="../assets/listEmails.gif" position="top" fluid className="size_imgg" />
               <MDBCard>
@@ -143,7 +143,8 @@ const ListEmails = () => {
               </MDBCard>
           </MDBCol>
           { templateDesign && (
-                <div className='view'>
+                <div className='view d-flex flex-column align-items-center'>
+                  <MDBBtn className='mb-2' onClick={()=>setTemplateDesign(null)}>Close Preview From here</MDBBtn>
                      <EmailEditor
                       ref={emailEditorRef}
                       onLoad={onLoad}
@@ -164,7 +165,7 @@ const ListEmails = () => {
             {selectedTemplate && (
               <div className="d-grid gap-2">
                 <p> <strong>Subject:</strong> {selectedTemplate.templateBody.subject}</p>
-                  <p> <strong>Body:</strong> {selectedTemplate.templateBody.content}</p>
+                <MDBTextArea disabled value={selectedTemplate.templateBody.content} />
                 </div>
               )}
             </MDBModalBody>

@@ -1,17 +1,3 @@
-/* body , html{
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  width: 100%;
-  overflow-x: hidden;
-}
-
-
-.purple{
-  color: #E1BEE7  ;
-}
- */
-
  body{
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
@@ -45,6 +31,7 @@ main {
 }
 
 .sidebar-fixed {
+  position: absolute;
   left: 0;
   top: 0;
   height: 100vh;
@@ -221,6 +208,10 @@ main {
 
 .purple{
   color: #d797d5 !important;
+}
+
+.color-profile{
+  background-color: #6873C8;
 }
 
 

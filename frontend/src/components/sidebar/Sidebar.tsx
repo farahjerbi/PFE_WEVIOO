@@ -68,7 +68,10 @@ const Sidebar = () => {
                          <span>Dashboard</span> 
                     </MDBListGroupItem>
 
-
+                    <MDBListGroupItem  className='sidebar-item' onClick={()=>navigate('/profile')}>
+                        <MDBIcon icon="book-reader" className='sidebar-icon'/>
+                         <span>Profile</span> 
+                    </MDBListGroupItem>
 
                     <MDBListGroupItem  className='sidebar-item' onClick={handleUsers}>
                         <MDBIcon icon="users" className='sidebar-icon '/>

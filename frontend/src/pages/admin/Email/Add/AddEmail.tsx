@@ -7,7 +7,7 @@ const AddEmail = () => {
   return (
     <>
       <BreadcrumSection />
-    <MDBRow className="add_email_container d-flex justify-content-center">
+    <MDBRow className="add_email_container d-flex justify-content-center pt-5">
     <MDBCol xl="5" >
       <MDBCard >
       <div className="center-image">
