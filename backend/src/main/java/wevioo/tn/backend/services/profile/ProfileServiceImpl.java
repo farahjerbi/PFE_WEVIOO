@@ -5,11 +5,13 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import wevioo.tn.backend.dtos.request.ChangePasswordRequest;
 import wevioo.tn.backend.dtos.request.UpdateUser;
 import wevioo.tn.backend.dtos.response.UserResponse;
 import wevioo.tn.backend.entities.UserEntity;
 import wevioo.tn.backend.repositories.UserRepository;
+import wevioo.tn.backend.services.uploadFiles.FileStorageService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +24,7 @@ public class ProfileServiceImpl implements ProfileService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final FileStorageService fileStorageService;
 
 
 
@@ -50,15 +53,21 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
 
-    public String UpdateProfile(UpdateUser userEntity , Long id){
+    public UserResponse UpdateProfile(UpdateUser userEntity , Long id){
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException("User not found"));
 
         user.setLastName(userEntity.getLastName());
         user.setFirstName(userEntity.getFirstName());
+        user.setEmailSecret(userEntity.getEmailSecret());
+        user.setSignature(fileStorageService.storeFile(userEntity.getSignature()));
+
         userRepository.save(user);
 
-        return "User Updated successfully";
+        UserResponse userResponse = modelMapper.map(user, UserResponse.class);
+
+
+        return userResponse;
     }
 
 

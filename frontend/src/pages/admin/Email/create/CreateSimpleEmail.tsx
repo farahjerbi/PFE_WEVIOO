@@ -57,7 +57,7 @@ const CreateSimpleEmail = () => {
               <MDBInput  name='subject' value={subject} onChange={handleChange} wrapperClass='mb-4' label='Subject' id='form1' type='text'/>
               <MDBTextArea name='content' value={content} onChange={handleChange} wrapperClass='mb-4' label='content' id='textAreaExample' rows={4} />
               <div style={{display:"flex" ,justifyContent:"space-between"}}>
-              <MDBBtn color='info'>View Template</MDBBtn>
+              <MDBBtn onClick={()=>navigate('/addEmailTemplate')} color='info'>Go Back</MDBBtn>
               <MDBBtn type='submit'>Add Template</MDBBtn>
               </div>
               </form>

@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { EmailTemplate } from '../../../../models/EmailTemplate'
 import BreadcrumSection from '../../../../components/BreadcrumSection/BreadcrumSection';
 import EmailEditor ,{EmailEditorProps,EditorRef} from 'react-email-editor';
+import { useNavigate } from 'react-router-dom';
 const ListEmails = () => {
   const emailEditorRef = useRef<EditorRef|null>(null); 
   const[getAllEmailTemplates]=useGetAllEmailTemplatesMutation();
@@ -20,7 +21,8 @@ const ListEmails = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = templates.slice(indexOfFirstItem, indexOfLastItem);
-
+  const [update,setUpdate]= useState<boolean>(false);
+  const navigate=useNavigate();
   const handlePageChange = (page:any) => {
     setCurrentPage(page);
   };
@@ -30,7 +32,7 @@ const ListEmails = () => {
 
   useEffect(() => {
     fetchData(); 
-  }, []);
+  }, [update]);
 
   const fetchData = async () => {
     try {
@@ -70,6 +72,7 @@ const ListEmails = () => {
     if (id !== undefined) {
       const response= await deleteTemplate(id);
       toast.success("Template Deleted Successfully");
+      setUpdate(!update)
     }}catch(error){
       toast.error("Error! Yikes");
       console.error("🚀 ~ error:", error);    }
@@ -91,6 +94,7 @@ const ListEmails = () => {
                           <th>Language</th>
                           <th>State</th>
                           <th> View / Update / Delete </th>
+                          <th> Send </th>
                         </tr>
                       </MDBTableHead>
                       <MDBTableBody>
@@ -119,6 +123,9 @@ const ListEmails = () => {
                             <MDBBtn className='btn' color='warning'  >Update </MDBBtn> 
                             <MDBBtn className='btn' color='danger' onClick={()=>handleDelete(template.id)} >Delete </MDBBtn>
                             </div>
+                           </td>
+                           <td>
+                           <MDBBtn className='btn' color='primary' onClick={()=>navigate(`/sendSimpleEmail/${template.id}`)} >Send </MDBBtn> 
                            </td>
                         </tr>
                       ))}

@@ -1,4 +1,4 @@
-package wevioo.tn.backend.config;
+/*package wevioo.tn.backend.config;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.quartz.JobDataMap;
@@ -18,7 +18,7 @@ public class EmailJob extends QuartzJobBean {
     private EmailTemplateService emailTemplateService;
 
 
-    @Override
+   @Override
     protected void executeInternal(JobExecutionContext jobExecutionContext) {
 
         JobDataMap jobDataMap = jobExecutionContext.getMergedJobDataMap();
@@ -34,4 +34,4 @@ public class EmailJob extends QuartzJobBean {
 
 
     }
-}
+}*/

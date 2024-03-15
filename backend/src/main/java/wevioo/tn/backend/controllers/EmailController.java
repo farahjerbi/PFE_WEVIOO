@@ -1,16 +1,22 @@
 package wevioo.tn.backend.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.quartz.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import wevioo.tn.backend.config.EmailJob;
+//import wevioo.tn.backend.config.EmailJob;
 import wevioo.tn.backend.dtos.request.ScheduleEmailRequest;
+import wevioo.tn.backend.dtos.request.SendEmail;
+import wevioo.tn.backend.dtos.request.UpdateUser;
 import wevioo.tn.backend.dtos.response.ScheduleEmailResponse;
 import wevioo.tn.backend.entities.EmailTemplate;
 import wevioo.tn.backend.entities.Image;
@@ -23,10 +29,7 @@ import wevioo.tn.backend.services.email.TemplateUtils;
 import java.io.IOException;
 
 import java.time.ZonedDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 
 @RestController
@@ -70,7 +73,7 @@ public class EmailController {
         return ResponseEntity.ok(emailTemplate);
     }
 
-    @PostMapping("sendEmail/{emailTemplateId}")
+  /*  @PostMapping("sendEmail/{emailTemplateId}")
     public ResponseEntity<?> sendEmailWithAttachment(@PathVariable Long emailTemplateId,
                                                      @RequestPart("requestBody") Map<String, String> requestBody ,
                                                      @RequestPart(value = "attachment", required = false) MultipartFile attachment,
@@ -88,6 +91,28 @@ public class EmailController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Failed to send email: " + e.getMessage());
         }
+    }*/
+
+    @PostMapping(value ="sendEmail/{emailTemplateId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<?> sendEmailWithAttachment(@PathVariable Long emailTemplateId, @ModelAttribute SendEmail email )
+    {
+        try {
+            EmailTemplate emailTemplate = emailTemplateRepository.findEmailTemplateWithDetails(emailTemplateId);
+
+            if (emailTemplate == null) {
+                return ResponseEntity.ok("Email template not found.");
+            }
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, String> requestBody = mapper.readValue(email.getRequestBody(), new TypeReference<Map<String, String>>() {});
+            System.out.println("Converted Request Body: " + requestBody.toString());
+
+            emailService.sendEmail(emailTemplate.getTemplateBody(),requestBody, email.getAttachment(),
+                    email.getRecipients() ,email.getCc(),email.getBb(),email.getReplyTo());
+            return ResponseEntity.ok().body("Email sent successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to send email: " + e.getMessage());
+        }
     }
 
     @PostMapping("test")
@@ -98,7 +123,17 @@ public class EmailController {
 
     }
 
-    @PostMapping("/scheduleEmail")
+    @GetMapping("getTemplatePlaceholders/{id}")
+    @Transactional
+    public Set<String> getTemplatePlaceholders(@PathVariable Long id ) {
+        EmailTemplate emailTemplate = emailTemplateRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("EmailTemplate not found with id: " + id));
+
+        String emailTemplateContent = emailTemplate.getTemplateBody().getContent();
+        return templateUtils.extractPlaceholders(emailTemplateContent);
+    }
+
+    /*@PostMapping("/scheduleEmail")
     public ResponseEntity<ScheduleEmailResponse> scheduleEmail(@Valid @RequestBody ScheduleEmailRequest scheduleEmailRequest) {
         try {
             ZonedDateTime dateTime = ZonedDateTime.of(scheduleEmailRequest.getDateTime(), scheduleEmailRequest.getTimeZone());
@@ -122,9 +157,9 @@ public class EmailController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(scheduleEmailResponse);
         }
     }
+*/
 
-
-
+/*
     public JobDetail buildJobDetail(ScheduleEmailRequest scheduleEmailRequest) {
         JobDataMap jobDataMap = new JobDataMap();
         ObjectMapper objectMapper = new ObjectMapper();
@@ -155,7 +190,7 @@ public class EmailController {
                 .withSchedule(SimpleScheduleBuilder.simpleSchedule().withMisfireHandlingInstructionFireNow())
                 .build();
     }
-
+*/
     @DeleteMapping("deleteTemplate/{id}")
     public String deleteEmailTemplate(@PathVariable Long id){
        return emailTemplateService.deleteEmailTemplate(id);

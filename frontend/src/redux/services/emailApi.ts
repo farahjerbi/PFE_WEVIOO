@@ -40,6 +40,14 @@ export const emailApi = createApi({
                 method: "GET",
             }),
         }),
+        
+        getTemplatePlaceholders: builder.mutation({
+            query: ( id ) => ({
+                url: `/getTemplatePlaceholders/${id}`,
+                method: "GET",
+            }),
+        }),
+
         deleteTemplate: builder.mutation({
             query: ( id: number ) => ({
                 url: `/deleteTemplate/${id}`,
@@ -49,5 +57,5 @@ export const emailApi = createApi({
     })
 })
 
-export const {useAddTemplateEmailMutation,useGetAllEmailTemplatesMutation,
+export const {useAddTemplateEmailMutation,useGetAllEmailTemplatesMutation,useGetTemplatePlaceholdersMutation,
                 useAddDesignTemplateMutation,useGetDesignTemplateMutation,useDeleteTemplateMutation}=emailApi;

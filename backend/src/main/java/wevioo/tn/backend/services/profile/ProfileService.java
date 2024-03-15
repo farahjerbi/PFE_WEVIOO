@@ -1,5 +1,6 @@
 package wevioo.tn.backend.services.profile;
 
+import org.springframework.web.multipart.MultipartFile;
 import wevioo.tn.backend.dtos.request.ChangePasswordRequest;
 import wevioo.tn.backend.dtos.request.UpdateUser;
 import wevioo.tn.backend.dtos.response.UserResponse;
@@ -13,6 +14,6 @@ public interface ProfileService {
     String forgotPassword(String email);
     String deleteProfile(long id);
 
-     String UpdateProfile(UpdateUser userEntity , Long id);
+    UserResponse UpdateProfile(UpdateUser userEntity , Long id );
     List<UserResponse> getAllUsers();
 }

@@ -34,7 +34,7 @@ public class ImageServiceImpl implements ImageService {
             imageRepository.save(image);
 
             if ("signature".equals(type)) {
-                emailTemplate.getTemplateBody().setSignature(image);
+               // emailTemplate.getTemplateBody().setSignature(image);
             } else {
                 emailTemplate.getTemplateBody().setLogo(image);
             }

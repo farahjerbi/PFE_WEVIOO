@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
 import lombok.AllArgsConstructor;
@@ -22,6 +23,7 @@ import wevioo.tn.backend.repositories.EmailTemplateRepository;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Map;
 
 import static wevioo.tn.backend.services.email.TemplateUtils.DIRECTORYPATH;
@@ -54,7 +56,11 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
     public void sendEmail(TemplateBody emailTemplate,
                           Map<String, String> requestBody,
                           MultipartFile attachment,
-                          String recipients) {
+                          String[] recipients,
+                          String[] cc,
+                          String[] bb,
+                          String replyTo
+                          ) {
 
         try {
             MimeMessage message = emailSender.createMimeMessage();
@@ -63,8 +69,18 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
             helper.setSubject(emailTemplate.getSubject());
             helper.setFrom("farah.jeerbi@gmail.com");
             helper.setTo(recipients);
-            helper.addCc("farah.jerbi@esprit.tn");
-            helper.setReplyTo("farah.jeerbi@gmail.com");
+            if (cc != null) {
+                for (String ccRecipient : cc) {
+                    helper.addCc(ccRecipient);
+                }
+            }
+
+            if (bb != null) {
+                for (String bccRecipient : bb) {
+                    helper.addBcc(bccRecipient);
+                }
+            }
+            helper.setReplyTo(replyTo);
 
             String templateContent = emailTemplate.getContent();
             String result = templateUtils.replacePlaceholders(templateContent, requestBody);
@@ -81,7 +97,7 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
 
 
             // Add images to the email body
-            templateUtils.addImagesToEmailBody(emailTemplate.getSignature().getValue(),mimeMultipart);
+            //templateUtils.addImagesToEmailBody(emailTemplate.getSignature().getValue(),mimeMultipart);
 
             //AddAttachment
             if (attachment != null && !attachment.isEmpty()) {
@@ -96,7 +112,7 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
     }
 
 
-    public void sendScheduledEmail(Long idTemplate, String requestBody, String recipients) throws JsonProcessingException {
+    /*public void sendScheduledEmail(Long idTemplate, String requestBody, String recipients) throws JsonProcessingException {
         EmailTemplate emailTemplate = emailTemplateRepository.findEmailTemplateWithDetails(idTemplate);
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -107,7 +123,7 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
         } catch (Exception exception) {
             throw new EmailSendingException("Failed to send scheduled email", exception);
         }
-    }
+    }*/
 
 
     public String deleteEmailTemplate(Long id){

@@ -10,4 +10,6 @@ public class UserResponse {
     private String role;
     private String enabled;
     private String mfaEnabled;
+    private String emailSecret;
+    private String signature;
 }

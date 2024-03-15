@@ -2,12 +2,12 @@ package wevioo.tn.backend.controllers;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import wevioo.tn.backend.dtos.request.ChangePasswordRequest;
 import wevioo.tn.backend.dtos.request.UpdateUser;
 import wevioo.tn.backend.dtos.response.UserResponse;
-import wevioo.tn.backend.entities.UserEntity;
 import wevioo.tn.backend.repositories.UserRepository;
 import wevioo.tn.backend.services.auth.AuthenticationService;
 import wevioo.tn.backend.services.profile.ProfileService;
@@ -30,9 +30,11 @@ public class ProfileController {
         return new ResponseEntity<>(profileService.forgotPassword(email), HttpStatus.OK);
     }
 
-    @PutMapping("updateProfile/{id}")
-    public ResponseEntity<String> updateUser (@RequestBody UpdateUser user , @PathVariable Long id){
-        return new ResponseEntity<>(profileService.UpdateProfile(user,id), HttpStatus.OK);
+    @PostMapping(value = "updateProfile/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<UserResponse> updateUser (@ModelAttribute UpdateUser user ,
+                                             /* @RequestPart("signature") MultipartFile signature,*/
+                                              @PathVariable Long id){
+        return ResponseEntity.ok(profileService.UpdateProfile(user,id));
     }
 
     @DeleteMapping("deleteProfile/{id}")
