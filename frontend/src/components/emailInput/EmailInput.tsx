@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { MDBBtn, MDBIcon, MDBInput } from 'mdb-react-ui-kit';
 import './EmailInput.css';
+import *as xlsx from 'xlsx';
+
 interface EmailInputProps {
   label: string;
   onChange: (emails: string[]) => void;
@@ -9,6 +11,7 @@ interface EmailInputProps {
 
 const EmailInput: React.FC<EmailInputProps> = ({ label,onChange }) => {
   const [emails, setEmails] = useState<string[]>(['']);  
+  console.log("🚀 ~ emails:", emails)
   
   useEffect(() => {
     onChange(emails);
@@ -32,6 +35,49 @@ const EmailInput: React.FC<EmailInputProps> = ({ label,onChange }) => {
     setEmails(newEmails);
   };
 
+  const readExcel = async (e: ChangeEvent<HTMLInputElement>) => {
+    try {
+      const file = e.target.files && e.target.files[0];
+      console.log("🚀 ~ readExcel ~ file:", file);
+      if (!file) return;
+  
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        if (!event.target) return;
+  
+        const data = event.target.result;
+        console.log("🚀 ~ reader.onload= ~ data:", data);
+        if (!data) return;
+  
+        const buffer = new Uint8Array(data as ArrayBuffer);
+        const workbook = xlsx.read(buffer, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        console.log("🚀 ~ reader.onload= ~ sheet:", sheet);
+        const exceljson: any[] = xlsx.utils.sheet_to_json(sheet, { defval: "" }); 
+        
+        // Extract values from each row
+        const rowValuesArray = exceljson.map(row => Object.values(row));
+        
+        // Flatten the array of arrays to get a single array of all values
+        const allValues = rowValuesArray.flat();
+        
+        // Filter out empty or undefined values
+        const filteredValues = allValues.filter((value: unknown): value is string => 
+          typeof value === 'string' && value.trim() !== ""
+        );
+    
+        console.log("🚀 ~ reader.onload= ~ filteredValues:", filteredValues);
+        setEmails(filteredValues); 
+      };
+    
+      reader.readAsArrayBuffer(file);
+    } catch (error) {
+      console.error('Error reading Excel file:', error);
+    }
+  };
+  
+
   return (
     <div className='container-input'>
       <label>{label}</label>
@@ -53,10 +99,20 @@ const EmailInput: React.FC<EmailInputProps> = ({ label,onChange }) => {
         </div>
         <div>
            {emails.length- 1 === index && emails.length < 4 && (
-        <MDBBtn type="button" onClick={addEmailField} className="add-btn">
-         <MDBIcon icon="add" style={{marginRight:"3px"}}/>
-          Add 
-        </MDBBtn>
+            <>
+               <MDBBtn type="button" onClick={addEmailField} className="add-btn">
+                <MDBIcon icon="add" style={{marginRight:"3px"}}/>
+                  Add 
+              </MDBBtn>
+
+              <MDBBtn type="button" color='info'>
+                <input type="file"  onChange={(e) => readExcel(e)} />
+                <MDBIcon icon="file-excel" style={{marginRight:"3px"}}/>
+                  Download Excel 
+              </MDBBtn>
+            </>
+     
+        
       )}
         </div>
         </>

@@ -13,7 +13,9 @@ public interface EmailTemplateService {
     EmailTemplate createEmailTemplate(EmailTemplate emailTemplate);
     void assignTemplateBodyToEmailTemplate(TemplateBody templateBody, EmailTemplate emailTemplate);
     void sendEmail(TemplateBody emailTemplate,
-                       Map<String, String> requestBody, MultipartFile attachment,String[] recipients ,String[] cc,String[] bb,String replyTo);
+                   Map<String, String> requestBody, MultipartFile attachment,
+                   String[] recipients ,String[] cc,String replyTo,Long id,
+                   String addSignature );
     /* void sendScheduledEmail(Long idTemplate, String requestBody,String recipients) throws JsonProcessingException;*/
     String deleteEmailTemplate(Long id);
      void sendHtmlEmail(String to, String subject, String htmlBody);

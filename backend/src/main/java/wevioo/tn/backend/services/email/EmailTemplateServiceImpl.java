@@ -18,7 +18,9 @@ import org.springframework.web.multipart.MultipartFile;
 import wevioo.tn.backend.dtos.exceptions.EmailSendingException;
 import wevioo.tn.backend.entities.EmailTemplate;
 import wevioo.tn.backend.entities.TemplateBody;
+import wevioo.tn.backend.entities.UserEntity;
 import wevioo.tn.backend.repositories.EmailTemplateRepository;
+import wevioo.tn.backend.repositories.UserRepository;
 
 
 import java.io.File;
@@ -41,6 +43,7 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
 
 
     public static final String UTF_8_ENCODING = "UTF-8";
+    private final UserRepository userRepository;
 
 
 
@@ -58,8 +61,9 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
                           MultipartFile attachment,
                           String[] recipients,
                           String[] cc,
-                          String[] bb,
-                          String replyTo
+                          String replyTo,
+                          Long id,
+                          String addSignature
                           ) {
 
         try {
@@ -74,19 +78,16 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
                     helper.addCc(ccRecipient);
                 }
             }
-
-            if (bb != null) {
-                for (String bccRecipient : bb) {
-                    helper.addBcc(bccRecipient);
-                }
-            }
             helper.setReplyTo(replyTo);
 
             String templateContent = emailTemplate.getContent();
             String result = templateUtils.replacePlaceholders(templateContent, requestBody);
             emailTemplate.setContent(result);
 
+            UserEntity user = userRepository.findById(id)
+                    .orElseThrow(() -> new IllegalStateException("User not found"));
 
+            String signature = user.getSignature();
 
 
             MimeMultipart mimeMultipart = new MimeMultipart("related");
@@ -96,8 +97,9 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
 
 
 
-            // Add images to the email body
-            //templateUtils.addImagesToEmailBody(emailTemplate.getSignature().getValue(),mimeMultipart);
+            // Add signature to the email body
+            if(addSignature.equals("true")){
+            templateUtils.addImagesToEmailBody(signature,mimeMultipart);}
 
             //AddAttachment
             if (attachment != null && !attachment.isEmpty()) {

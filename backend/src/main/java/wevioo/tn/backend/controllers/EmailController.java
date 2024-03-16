@@ -21,7 +21,9 @@ import wevioo.tn.backend.dtos.response.ScheduleEmailResponse;
 import wevioo.tn.backend.entities.EmailTemplate;
 import wevioo.tn.backend.entities.Image;
 import wevioo.tn.backend.entities.TemplateBody;
+import wevioo.tn.backend.entities.UserEntity;
 import wevioo.tn.backend.repositories.EmailTemplateRepository;
+import wevioo.tn.backend.repositories.UserRepository;
 import wevioo.tn.backend.services.email.EmailTemplateService;
 import wevioo.tn.backend.services.email.ImageService;
 import wevioo.tn.backend.services.email.TemplateUtils;
@@ -94,11 +96,11 @@ public class EmailController {
     }*/
 
     @PostMapping(value ="sendEmail/{emailTemplateId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<?> sendEmailWithAttachment(@PathVariable Long emailTemplateId, @ModelAttribute SendEmail email )
+    public ResponseEntity<?> sendEmailWithAttachment(
+            @PathVariable Long emailTemplateId, @ModelAttribute SendEmail email )
     {
         try {
             EmailTemplate emailTemplate = emailTemplateRepository.findEmailTemplateWithDetails(emailTemplateId);
-
             if (emailTemplate == null) {
                 return ResponseEntity.ok("Email template not found.");
             }
@@ -107,7 +109,7 @@ public class EmailController {
             System.out.println("Converted Request Body: " + requestBody.toString());
 
             emailService.sendEmail(emailTemplate.getTemplateBody(),requestBody, email.getAttachment(),
-                    email.getRecipients() ,email.getCc(),email.getBb(),email.getReplyTo());
+                    email.getRecipients() ,email.getCc(),email.getReplyTo(),email.getId(),email.getAddSignature());
             return ResponseEntity.ok().body("Email sent successfully.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

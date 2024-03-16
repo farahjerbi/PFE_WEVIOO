@@ -132,6 +132,16 @@ public class TemplateUtils {
         return objectMapper.readValue(file, Object.class);
     }
 
+    public  String extractFullName(String email) {
+        String[] parts = email.split("@")[0].split("\\.");
+        StringBuilder fullName = new StringBuilder();
+        for (String part : parts) {
+            fullName.append(part.substring(0, 1).toUpperCase())
+                    .append(part.substring(1))
+                    .append(" ");
+        }
+        return fullName.toString().trim();
+    }
 }
 
 
