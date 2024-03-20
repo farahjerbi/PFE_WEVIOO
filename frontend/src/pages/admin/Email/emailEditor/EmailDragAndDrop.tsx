@@ -95,7 +95,7 @@ const EmailDragAndDrop: React.FC = () => {
       toast.success("Template added successfully");
       setFormData(initialState);
       setBasicModal(!basicModal);
-      navigate('/lisEmailTemplates')
+      navigate('/listEmailTemplates')
     } catch (error) {
       toast.error("Error! Yikes");
       console.error("🚀 ~ error:", error);

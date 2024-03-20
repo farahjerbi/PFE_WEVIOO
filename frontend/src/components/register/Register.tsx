@@ -53,8 +53,8 @@ const Register=()=> {
       {!isMfaEnabled  && (
       <MDBContainer >
       <form onSubmit={handleRegister} >
-        <MDBInput name='firstName' value={firstName} onChange={handleChange} className='mb-4' id='form8Example1' label='FirstName' />
-        <MDBInput name='lastName' value={lastName} onChange={handleChange} className='mb-4' id='form8Example2' label='LastName' />
+        <MDBInput name='firstName' value={firstName} onChange={handleChange} className='mb-4' id='form8Example1' label='First name' />
+        <MDBInput name='lastName' value={lastName} onChange={handleChange} className='mb-4' id='form8Example2' label='Last name' />
         <MDBInput name='email' value={email} onChange={handleChange} className='mb-4' type='email' id='form8Example3' label='Email address' />
         <MDBInput name='password' value={password} onChange={handleChange} className='mb-4' type='password' id='form8Example4' label='Password' />
         <MDBInput name='confirmPassword' value={confirmPassword} onChange={handleChange} className='mb-4' type='password' id='form8Example5' label='Repeat password' />

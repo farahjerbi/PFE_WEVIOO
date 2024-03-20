@@ -8,22 +8,21 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.quartz.*;
+import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-//import wevioo.tn.backend.config.EmailJob;
+import wevioo.tn.backend.config.EmailJob;
 import wevioo.tn.backend.dtos.request.ScheduleEmailRequest;
 import wevioo.tn.backend.dtos.request.SendEmail;
-import wevioo.tn.backend.dtos.request.UpdateUser;
 import wevioo.tn.backend.dtos.response.ScheduleEmailResponse;
+import wevioo.tn.backend.dtos.response.ScheduledEmailInfo;
 import wevioo.tn.backend.entities.EmailTemplate;
 import wevioo.tn.backend.entities.Image;
 import wevioo.tn.backend.entities.TemplateBody;
-import wevioo.tn.backend.entities.UserEntity;
 import wevioo.tn.backend.repositories.EmailTemplateRepository;
-import wevioo.tn.backend.repositories.UserRepository;
 import wevioo.tn.backend.services.email.EmailTemplateService;
 import wevioo.tn.backend.services.email.ImageService;
 import wevioo.tn.backend.services.email.TemplateUtils;
@@ -48,10 +47,11 @@ public class EmailController {
 
 
     @PostMapping("addTemplate")
-    public ResponseEntity<EmailTemplate> createEmailTemplate(@RequestBody EmailTemplate emailTemplate ,Object jsonObject ) {
+    public ResponseEntity<EmailTemplate> createEmailTemplate(@RequestBody EmailTemplate emailTemplate, Object jsonObject) {
         EmailTemplate createdEmailTemplate = emailTemplateService.createEmailTemplate(emailTemplate);
         return ResponseEntity.ok(createdEmailTemplate);
     }
+
     @PostMapping("assignTemplateBody/{emailTemplateId}")
     public ResponseEntity<String> assignTemplateBodyToEmailTemplate(@PathVariable Long emailTemplateId, @RequestBody TemplateBody templateBody) {
 
@@ -64,52 +64,33 @@ public class EmailController {
 
     @PostMapping("/createAndAssignImage/{emailTemplateId}")
     public String createAndAssignImageToTemplate(
-            @PathVariable Long emailTemplateId ,
+            @PathVariable Long emailTemplateId,
             @RequestPart("Image") Image image,
             @RequestPart("file") MultipartFile file, @RequestPart("type") String type) {
-        return imageService.createAndAssignImageToTemplate(emailTemplateId,image,file,type);
+        return imageService.createAndAssignImageToTemplate(emailTemplateId, image, file, type);
     }
+
     @GetMapping("getById/{emailTemplateId}")
     public ResponseEntity<EmailTemplate> getEmailById(@PathVariable Long emailTemplateId) {
         EmailTemplate emailTemplate = emailTemplateRepository.findEmailTemplateWithDetails(emailTemplateId);
         return ResponseEntity.ok(emailTemplate);
     }
 
-  /*  @PostMapping("sendEmail/{emailTemplateId}")
-    public ResponseEntity<?> sendEmailWithAttachment(@PathVariable Long emailTemplateId,
-                                                     @RequestPart("requestBody") Map<String, String> requestBody ,
-                                                     @RequestPart(value = "attachment", required = false) MultipartFile attachment,
-                                                     @RequestPart("recipients") String recipients
-                                       ) {
-        try {
-            EmailTemplate emailTemplate = emailTemplateRepository.findEmailTemplateWithDetails(emailTemplateId);
-
-            if (emailTemplate == null) {
-                return ResponseEntity.ok("Email template not found.");
-            }
-            emailService.sendEmail(emailTemplate.getTemplateBody(),requestBody,attachment,recipients);
-            return ResponseEntity.ok().body("Email sent successfully.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Failed to send email: " + e.getMessage());
-        }
-    }*/
-
-    @PostMapping(value ="sendEmail/{emailTemplateId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "sendEmail/{emailTemplateId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> sendEmailWithAttachment(
-            @PathVariable Long emailTemplateId, @ModelAttribute SendEmail email )
-    {
+            @PathVariable Long emailTemplateId, @ModelAttribute SendEmail email) {
         try {
             EmailTemplate emailTemplate = emailTemplateRepository.findEmailTemplateWithDetails(emailTemplateId);
             if (emailTemplate == null) {
                 return ResponseEntity.ok("Email template not found.");
             }
             ObjectMapper mapper = new ObjectMapper();
-            Map<String, String> requestBody = mapper.readValue(email.getRequestBody(), new TypeReference<Map<String, String>>() {});
+            Map<String, String> requestBody = mapper.readValue(email.getRequestBody(), new TypeReference<Map<String, String>>() {
+            });
             System.out.println("Converted Request Body: " + requestBody.toString());
 
-            emailService.sendEmail(emailTemplate.getTemplateBody(),requestBody, email.getAttachment(),
-                    email.getRecipients() ,email.getCc(),email.getReplyTo(),email.getId(),email.getAddSignature());
+            emailService.sendEmail(emailTemplate.getTemplateBody(), requestBody, email.getAttachment(),
+                    email.getRecipients(), email.getCc(), email.getReplyTo(), email.getId(), email.getAddSignature());
             return ResponseEntity.ok().body("Email sent successfully.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -127,7 +108,7 @@ public class EmailController {
 
     @GetMapping("getTemplatePlaceholders/{id}")
     @Transactional
-    public Set<String> getTemplatePlaceholders(@PathVariable Long id ) {
+    public Set<String> getTemplatePlaceholders(@PathVariable Long id) {
         EmailTemplate emailTemplate = emailTemplateRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("EmailTemplate not found with id: " + id));
 
@@ -135,11 +116,11 @@ public class EmailController {
         return templateUtils.extractPlaceholders(emailTemplateContent);
     }
 
-    /*@PostMapping("/scheduleEmail")
+    @PostMapping("/scheduleEmail")
     public ResponseEntity<ScheduleEmailResponse> scheduleEmail(@Valid @RequestBody ScheduleEmailRequest scheduleEmailRequest) {
         try {
             ZonedDateTime dateTime = ZonedDateTime.of(scheduleEmailRequest.getDateTime(), scheduleEmailRequest.getTimeZone());
-            if(dateTime.isBefore(ZonedDateTime.now())) {
+            if (dateTime.isBefore(ZonedDateTime.now())) {
                 ScheduleEmailResponse scheduleEmailResponse = new ScheduleEmailResponse(false,
                         "dateTime must be after current time");
                 return ResponseEntity.badRequest().body(scheduleEmailResponse);
@@ -159,21 +140,25 @@ public class EmailController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(scheduleEmailResponse);
         }
     }
-*/
 
-/*
+
     public JobDetail buildJobDetail(ScheduleEmailRequest scheduleEmailRequest) {
         JobDataMap jobDataMap = new JobDataMap();
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             String placeHoldersJson = objectMapper.writeValueAsString(scheduleEmailRequest.getPlaceHolders());
             jobDataMap.put("requestBody", placeHoldersJson);
+            String recipientsString = String.join(",", scheduleEmailRequest.getRecipients());
+            jobDataMap.put("recipients", recipientsString);
+            String ccString = String.join(",", scheduleEmailRequest.getCc());
+            jobDataMap.put("cc", ccString);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        jobDataMap.put("email", scheduleEmailRequest.getEmail());
         jobDataMap.put("templateId", scheduleEmailRequest.getTemplateId());
-
+        jobDataMap.put("userId", scheduleEmailRequest.getUserId());
+        jobDataMap.put("replyTo", scheduleEmailRequest.getReplyTo());
+        jobDataMap.put("addSignature", scheduleEmailRequest.getAddSignature());
 
         return JobBuilder.newJob(EmailJob.class)
                 .withIdentity(UUID.randomUUID().toString(), "email-jobs")
@@ -192,40 +177,136 @@ public class EmailController {
                 .withSchedule(SimpleScheduleBuilder.simpleSchedule().withMisfireHandlingInstructionFireNow())
                 .build();
     }
-*/
+
     @DeleteMapping("deleteTemplate/{id}")
-    public String deleteEmailTemplate(@PathVariable Long id){
-       return emailTemplateService.deleteEmailTemplate(id);
+    public String deleteEmailTemplate(@PathVariable Long id) {
+        return emailTemplateService.deleteEmailTemplate(id);
     }
 
 
     @GetMapping("getAll")
-    public List<EmailTemplate> getAllEmailTemplates(){
+    public List<EmailTemplate> getAllEmailTemplates() {
         return emailTemplateRepository.findAll();
     }
 
     @PostMapping("sendHtml/{id}")
-    public String sendHtmlEmail(@PathVariable Long id){
+    public String sendHtmlEmail(@PathVariable Long id) {
         EmailTemplate emailTemplate = emailTemplateRepository.findEmailTemplateWithDetails(id);
-        emailTemplateService.sendHtmlEmail("farah.jeerbi@gmail.com","Lol",emailTemplate.getTemplateBody().getContent());
+        emailTemplateService.sendHtmlEmail("farah.jeerbi@gmail.com", "Lol", emailTemplate.getTemplateBody().getContent());
         return "Will it work  all the time ? find out next on MBC action";
     }
 
 
     @PostMapping("add")
     public String add(@RequestParam String content) throws IOException {
-       return templateUtils.saveEmailHtmlTemplate(content);
+        return templateUtils.saveEmailHtmlTemplate(content);
     }
 
 
     @PostMapping("addDesignTemplate/{id}")
-    public String addDesignTemplate(@RequestBody Object jsonObject ,@PathVariable Long id) throws IOException {
-        return templateUtils.addDesignTemplate(jsonObject,id);
+    public String addDesignTemplate(@RequestBody Object jsonObject, @PathVariable Long id) throws IOException {
+        return templateUtils.addDesignTemplate(jsonObject, id);
     }
 
     @GetMapping("getDesignTemplate/{id}")
     public Object getDesignTemplate(@PathVariable Long id) throws IOException {
         return templateUtils.readDesignFile(id);
     }
+
+
+    @GetMapping("getScheduledEmails")
+    public ResponseEntity<List<ScheduledEmailInfo>> listScheduledEmails() {
+        List<ScheduledEmailInfo> scheduledEmails = new ArrayList<>();
+
+        try {
+            for (String groupName : scheduler.getJobGroupNames()) {
+                for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
+                    String jobName = jobKey.getName();
+
+                    // Get job's triggers
+                    List<? extends Trigger> triggers = scheduler.getTriggersOfJob(jobKey);
+
+                    if (!triggers.isEmpty()) {
+                        Date nextFireTime = triggers.get(0).getNextFireTime();
+
+                        JobDetail jobDetail = scheduler.getJobDetail(jobKey);
+
+                        JobDataMap jobDataMap = jobDetail.getJobDataMap();
+                        Long templateId = jobDataMap.getLongValue("templateId");
+                        Long userId = jobDataMap.getLongValue("userId");
+                        String replyTo = jobDataMap.getString("replyTo");
+                        String addSignature = jobDataMap.getString("addSignature");
+                        String requestBody = jobDataMap.getString("requestBody");
+                        String[] recipients = jobDataMap.getString("recipients").split(",");
+                        String[] cc = jobDataMap.getString("cc").split(",");
+
+                        // Create ScheduledEmailInfo object
+                        ScheduledEmailInfo emailInfo = new ScheduledEmailInfo();
+                        emailInfo.setJobId(jobName);
+                        emailInfo.setTemplateId(templateId);
+                        emailInfo.setUserId(userId);
+                        emailInfo.setReplyTo(replyTo);
+                        emailInfo.setAddSignature(addSignature);
+                        emailInfo.setRequestBody(requestBody);
+                        emailInfo.setRecipients(recipients);
+                        emailInfo.setCc(cc);
+                        emailInfo.setNextTimeFired(nextFireTime);
+
+
+                        // Add ScheduledEmailInfo to the list
+                        scheduledEmails.add(emailInfo);
+                    }
+                }
+            }
+
+            return ResponseEntity.ok(scheduledEmails);
+        } catch (SchedulerException ex) {
+            ex.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
+    @DeleteMapping("deleteScheduledEmail/{jobName}")
+    public ResponseEntity<String> deleteScheduledEmail(@PathVariable String jobName) {
+        try {
+            if (scheduler.checkExists(JobKey.jobKey(jobName, "email-jobs"))) {
+                scheduler.deleteJob(JobKey.jobKey(jobName, "email-jobs"));
+                return ResponseEntity.ok("Job deleted successfully.");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Job not found.");
+            }
+        } catch (SchedulerException ex) {
+            ex.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting job.");
+        }
+    }
+
+    @PutMapping("updateScheduledEmail/{jobName}")
+    public ResponseEntity<String> updateScheduledEmail(@PathVariable String jobName, @RequestBody ScheduleEmailRequest updatedRequest) {
+        try {
+            if (scheduler.checkExists(JobKey.jobKey(jobName, "email-jobs"))) {
+                // Delete the existing job
+                scheduler.deleteJob(JobKey.jobKey(jobName, "email-jobs"));
+
+                // Build a new job with updated parameters
+                JobDetail updatedJobDetail = buildJobDetail(updatedRequest);
+                Trigger updatedTrigger = buildJobTrigger(updatedJobDetail, ZonedDateTime.now());
+
+                scheduler.scheduleJob(updatedJobDetail, updatedTrigger);
+
+                return ResponseEntity.ok("Job updated successfully.");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Job not found.");
+            }
+        } catch (SchedulerException ex) {
+            ex.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating job.");
+        }
+    }
+
+
+
 }
+
 

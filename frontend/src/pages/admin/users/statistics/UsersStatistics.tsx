@@ -3,13 +3,13 @@ import './UsersStatistics.css'
 import { MDBRow } from 'mdb-react-ui-kit'
 import { Bar } from '@ant-design/plots';
 import { useGetAllUsersMutation } from '../../../../redux/services/usersApi';
-import { User } from '../../../../models/User';
+import { IUser } from '../../../../models/User';
 import { toast } from 'sonner';
 import BreadcrumSection from '../../../../components/BreadcrumSection/BreadcrumSection';
 
 const UsersStatistics = () => {
   const [getAllUsers] = useGetAllUsersMutation();
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<IUser[]>([]);
   const [numberOfUsers, setNumberOfUsers] = useState<number>(0);
   const [numberOfEnabledUsers, setNumberOfEnabledUsers] = useState<number>(0);
   const [numberOfMFAEnabledUsers, setNumberOfMFAEnabledUsers] = useState<number>(0);
@@ -43,9 +43,9 @@ const UsersStatistics = () => {
       const response = await getAllUsers({}).unwrap();
       console.log("🚀 ~ fetchData ~ response:", response);
       setUsers(response);
-      const enabledUsers = response.filter((user: User) => user.enabled === "true");
-      const unEnabledUsers = response.filter((user: User) => user.enabled === "false");
-      const mfaEnabledUsers = response.filter((user: User)  => user.mfaEnabled === "true");
+      const enabledUsers = response.filter((user: IUser) => user.enabled === "true");
+      const unEnabledUsers = response.filter((user: IUser) => user.enabled === "false");
+      const mfaEnabledUsers = response.filter((user: IUser)  => user.mfaEnabled === "true");
 
       setNumberOfUsers(response.length);
       setNumberOfEnabledUsers(enabledUsers.length);

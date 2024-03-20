@@ -47,6 +47,12 @@ export const emailApi = createApi({
                 method: "GET",
             }),
         }),
+        getTemplateById: builder.mutation({
+            query: ( id ) => ({
+                url: `/getById/${id}`,
+                method: "GET",
+            }),
+        }),
 
         deleteTemplate: builder.mutation({
             query: ( id: number ) => ({
@@ -58,4 +64,4 @@ export const emailApi = createApi({
 })
 
 export const {useAddTemplateEmailMutation,useGetAllEmailTemplatesMutation,useGetTemplatePlaceholdersMutation,
-                useAddDesignTemplateMutation,useGetDesignTemplateMutation,useDeleteTemplateMutation}=emailApi;
+                useAddDesignTemplateMutation,useGetDesignTemplateMutation,useDeleteTemplateMutation,useGetTemplateByIdMutation}=emailApi;

@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react';
 import { EmailTemplate } from '../../models/EmailTemplate';
 import { useGetAllEmailTemplatesMutation } from '../../redux/services/emailApi';
 import { toast } from 'sonner';
-import { User } from '../../models/User';
+import { IUser } from '../../models/User';
 import { useGetAllUsersMutation } from '../../redux/services/usersApi';
 const Section1 = () => {
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<IUser[]>([]);
   const [templates, setTemplates] = useState<EmailTemplate[]>([]);
   const [numberOfUsers, setNumberOfUsers] = useState<number>(0);
   const [numberOfTemplatesEmail, setNumberOfTemplatesEmail] = useState<number>(0);

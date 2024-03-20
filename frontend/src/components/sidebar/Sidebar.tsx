@@ -1,14 +1,25 @@
 import { MDBCard, MDBCardBody, MDBCol, MDBIcon, MDBListGroup, MDBListGroupItem } from 'mdb-react-ui-kit';
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './Sidebar.css'
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 const Sidebar = () => {
     const [basicActive, setBasicActive] = useState('home');
     const [showEmail, setShowEmail] = useState(false);
     const [showSMS, setShowSMS] = useState(false);
     const [showPush, setShowPush] = useState(false);
     const [showUsers, setShowUsers] = useState(false);
+    const location = useLocation();
+    const [dashboardName, setDashboardName] = useState('');
+  
+    useEffect(() => {
+      const pathname = location.pathname;
+      const dashboardNameFromPath = pathname.split('/')[1];
+      const formattedDashboardName = dashboardNameFromPath.charAt(0)+ dashboardNameFromPath.slice(1);
+      setDashboardName(formattedDashboardName);
+      console.log("🚀 ~ useEffect ~ formattedDashboardName:", formattedDashboardName)
 
+    }, [location.pathname]);
+    
     const navigate=useNavigate();
     const handleEmail=()=>{
         setShowEmail(!showEmail)
@@ -63,12 +74,12 @@ const Sidebar = () => {
         </MDBCol>
              
           <MDBListGroup className="list-group-flush">
-                    <MDBListGroupItem  className='sidebar-item' onClick={()=>navigate('/dashboard')}>
+                    <MDBListGroupItem className={dashboardName === "dashboard" ? 'sidebar-item-active' : 'sidebar-item'} onClick={() => navigate('/dashboard')}>
                         <MDBIcon icon="chart-pie" className='sidebar-icon'/>
                          <span>Dashboard</span> 
                     </MDBListGroupItem>
 
-                    <MDBListGroupItem  className='sidebar-item' onClick={()=>navigate('/profile')}>
+                    <MDBListGroupItem  className={dashboardName === "profile" ? 'sidebar-item-active' : 'sidebar-item'}  onClick={()=>navigate('/profile')}>
                         <MDBIcon icon="book-reader" className='sidebar-icon'/>
                          <span>Profile</span> 
                     </MDBListGroupItem>
@@ -76,18 +87,18 @@ const Sidebar = () => {
                     <MDBListGroupItem  className='sidebar-item' onClick={handleUsers}>
                         <MDBIcon icon="users" className='sidebar-icon '/>
                         <span>Users Management </span>
-                        {!showUsers? <MDBIcon style={{marginLeft:"5px" , color:"gray"}} icon="caret-down" /> :<MDBIcon style={{marginLeft:"5px" , color:"gray"}} icon="caret-up" />} 
+                        {!showUsers? <MDBIcon style={{marginLeft:"5px" , color:"rgb(231, 233, 236)"}} icon="caret-down" /> :<MDBIcon style={{marginLeft:"5px" , color:"rgb(231, 233, 236)"}} icon="caret-up" />} 
                     </MDBListGroupItem>
                 {showUsers && (
                     <>                        
                      <NavLink to="/listUsers" >
-                              <MDBListGroupItem noBorders className='sidebar-item'>
+                              <MDBListGroupItem noBorders className={dashboardName === "listUsers" ? 'sidebar-item-active' : 'sidebar-item'} >
                                   <MDBIcon icon="list-ol" className='sidebar-icon-secondary  '/>
                                   <span className='span-secondary'>List</span>
                               </MDBListGroupItem>
                           </NavLink>
                           <NavLink to="/usersStatistics" >
-                              <MDBListGroupItem noBorders className='sidebar-item'>
+                              <MDBListGroupItem noBorders className={dashboardName === "usersStatistics" ? 'sidebar-item-active' : 'sidebar-item'}>
                                   <MDBIcon icon="chart-bar" className='sidebar-icon-secondary '/>
                                   <span className='span-secondary'>Statistics</span>
                               </MDBListGroupItem>
@@ -98,24 +109,24 @@ const Sidebar = () => {
                     <MDBListGroupItem  className='sidebar-item' onClick={handleEmail}>
                         <MDBIcon icon="envelope" className='sidebar-icon ' />
                         <span>Email Templates</span>
-                    {!showEmail? <MDBIcon style={{marginLeft:"5px" , color:"gray"}} icon="caret-down" /> :<MDBIcon style={{marginLeft:"5px" , color:"gray"}} icon="caret-up" />} 
+                    {!showEmail? <MDBIcon style={{marginLeft:"5px" , color:"rgb(231, 233, 236)"}} icon="caret-down" /> :<MDBIcon style={{marginLeft:"5px" , color:"rgb(231, 233, 236)"}} icon="caret-up" />} 
                     </MDBListGroupItem>
                     {showEmail && (
                     <>
                          <NavLink to="/listEmailTemplates" >
-                              <MDBListGroupItem noBorders className='sidebar-item'>
+                              <MDBListGroupItem noBorders className={dashboardName === "listEmailTemplates" ? 'sidebar-item-active' : 'sidebar-item'}>
                                   <MDBIcon icon="list-ol" className='sidebar-icon-secondary '/>
                                   <span className='span-secondary'>List</span>
                               </MDBListGroupItem>
                           </NavLink>
                           <NavLink to="/addEmailTemplate" >
-                              <MDBListGroupItem noBorders className='sidebar-item'>
+                              <MDBListGroupItem noBorders className={dashboardName === "addEmailTemplate" ? 'sidebar-item-active' : 'sidebar-item'}>
                                   <MDBIcon icon="plus" className='sidebar-icon-secondary  '/>
                                   <span className='span-secondary'>Add </span>
                               </MDBListGroupItem>
                           </NavLink>
                           <NavLink to="/emailsStatistics" >
-                              <MDBListGroupItem noBorders className='sidebar-item'>
+                              <MDBListGroupItem noBorders  className={dashboardName === "emailsStatistics" ? 'sidebar-item-active' : 'sidebar-item'}>
                                   <MDBIcon icon="chart-bar" className='sidebar-icon-secondary  '/>
                                   <span className='span-secondary'>Statistics</span>
                               </MDBListGroupItem>
@@ -126,7 +137,7 @@ const Sidebar = () => {
                     <MDBListGroupItem  className='sidebar-item' onClick={handleSMS}>
                         <MDBIcon icon="comment" className='sidebar-icon '/>
                         <span>SMS Templates</span>
-                        {!showSMS? <MDBIcon style={{marginLeft:"5px" , color:"gray"}} icon="caret-down" /> :<MDBIcon style={{marginLeft:"5px" , color:"gray"}} icon="caret-up" />} 
+                        {!showSMS? <MDBIcon style={{marginLeft:"5px" , color:"rgb(231, 233, 236)"}} icon="caret-down" /> :<MDBIcon style={{marginLeft:"5px" , color:"rgb(231, 233, 236)"}} icon="caret-up" />} 
                     </MDBListGroupItem>
                 {showSMS && (
                     <>                        
@@ -152,7 +163,7 @@ const Sidebar = () => {
                     <MDBListGroupItem  className='sidebar-item' onClick={handlePush}>
                         <MDBIcon icon="bell" className='sidebar-icon '/>
                         <span>Push Templates</span>
-                        {!showPush? <MDBIcon style={{marginLeft:"5px" , color:"gray"}} icon="caret-down" /> :<MDBIcon style={{marginLeft:"5px" , color:"gray"}} icon="caret-up" />} 
+                        {!showPush? <MDBIcon style={{marginLeft:"5px" , color:"rgb(231, 233, 236)"}} icon="caret-down" /> :<MDBIcon style={{marginLeft:"5px" , color:"rgb(231, 233, 236)"}} icon="caret-up" />} 
                     </MDBListGroupItem>
                 {showPush && (
                     <>     

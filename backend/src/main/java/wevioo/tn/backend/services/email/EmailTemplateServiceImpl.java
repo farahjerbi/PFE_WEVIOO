@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 import jakarta.mail.MessagingException;
-import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
 import lombok.AllArgsConstructor;
@@ -25,7 +24,7 @@ import wevioo.tn.backend.repositories.UserRepository;
 
 import java.io.File;
 import java.nio.file.Paths;
-import java.util.List;
+
 import java.util.Map;
 
 import static wevioo.tn.backend.services.email.TemplateUtils.DIRECTORYPATH;
@@ -114,18 +113,22 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
     }
 
 
-    /*public void sendScheduledEmail(Long idTemplate, String requestBody, String recipients) throws JsonProcessingException {
+
+
+    public void sendScheduledEmail(Long idTemplate,Long idUser, String requestBody,
+                                   String[] recipients , String[] cc,String replyTo,
+                                   String addSignature) throws JsonProcessingException {
         EmailTemplate emailTemplate = emailTemplateRepository.findEmailTemplateWithDetails(idTemplate);
 
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, String> requestBodyMap = objectMapper.readValue(requestBody, Map.class);
 
         try {
-            sendEmail(emailTemplate.getTemplateBody(), requestBodyMap, null, recipients);
+            sendEmail(emailTemplate.getTemplateBody(),requestBodyMap,null,recipients,cc,replyTo,idUser,addSignature);
         } catch (Exception exception) {
             throw new EmailSendingException("Failed to send scheduled email", exception);
         }
-    }*/
+    }
 
 
     public String deleteEmailTemplate(Long id){
@@ -150,10 +153,6 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
             e.printStackTrace();
         }
     }
-
-
-
-
 
 
 

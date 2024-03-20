@@ -24,3 +24,7 @@
   .gradient-form{
     margin-left: 13% !important;
   }
+
+  .email-editor-wrapper {
+    max-width:220px !important;
+}

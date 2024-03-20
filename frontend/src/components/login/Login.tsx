@@ -66,29 +66,8 @@ const Login=()=> {
     return (
       <>
             {!isMfaEnabled  && (
-              <MDBContainer >
+              <MDBContainer className='mt-5' >
                 <form onSubmit={handleLogin}>
-                  <div className='text-center mb-3'>
-                    <p>Sign up with:</p>
-
-                    <MDBBtn floating color="secondary" className='mx-1'>
-                      <MDBIcon fab icon='facebook-f' />
-                    </MDBBtn>
-
-                    <MDBBtn floating color="secondary" className='mx-1'>
-                      <MDBIcon fab icon='google' />
-                    </MDBBtn>
-
-                    <MDBBtn floating color="secondary" className='mx-1'>
-                      <MDBIcon fab icon='twitter' />
-                    </MDBBtn>
-
-                    <MDBBtn floating color="secondary" className='mx-1'>
-                      <MDBIcon fab icon='github' />
-                    </MDBBtn>
-                  </div>
-
-                  <p className='text-center'>or:</p>
 
                   <MDBInput name='email' value={email} onChange={handleChange} className='mb-4' type='email' id='form7Example1' label='Email address' />
                   <MDBInput name='password' value={password} onChange={handleChange} className='mb-4' type='password' id='form7Example2' label='Password' />

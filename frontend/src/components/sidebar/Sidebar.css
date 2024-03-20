@@ -16,8 +16,6 @@ span{
 
 .sidebar-container{
   width: 15% !important;
-  position: absolute;
-  z-index: 100;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19) !important;
 }
 
@@ -37,9 +35,12 @@ h4 {
 .sidebar-item{
   background-color: transparent !important;
 }
+.sidebar-item-active{
+  background-color: rgb(187, 192, 236) !important;
+}
 
 .sidebar-item:hover{
-  background-color: rgb(135, 137, 161) !important;
+  background-color: rgb(187, 192, 236) !important;
   cursor: pointer;
 }
 
@@ -71,3 +72,7 @@ h4 {
   margin-left: 5%;
 }
 
+.icon-Style{
+  margin-left:"5px" ;
+   color:"rgb(231, 233, 236)";
+}

@@ -1,0 +1,9 @@
+export const DASHBOARD = "/dashboard";
+// export const ADD_EMAIL_TEMPLATE = "/addEmailTemplate";
+// export const DASHBOARD = "/dashboard";
+// export const DASHBOARD = "/dashboard";
+// export const DASHBOARD = "/dashboard";
+// export const DASHBOARD = "/dashboard";
+// export const DASHBOARD = "/dashboard";
+// export const DASHBOARD = "/dashboard";
+// export const DASHBOARD = "/dashboard";

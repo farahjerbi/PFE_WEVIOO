@@ -1,4 +1,4 @@
-/*package wevioo.tn.backend.config;
+package wevioo.tn.backend.config;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.quartz.JobDataMap;
@@ -23,15 +23,22 @@ public class EmailJob extends QuartzJobBean {
 
         JobDataMap jobDataMap = jobExecutionContext.getMergedJobDataMap();
         Long idTemplate = jobDataMap.getLongValue("templateId");
+        Long userId = jobDataMap.getLongValue("userId");
         String requestBody = jobDataMap.getString("requestBody");
-        String recipientEmail = jobDataMap.getString("email");
+        String recipientEmail = jobDataMap.getString("recipients");
+        String cc = jobDataMap.getString("cc");
+        String replyTo=jobDataMap.getString("replyTo");
+        String addSignature=jobDataMap.getString("addSignature");
+        String[] recipientsArray = recipientEmail.split(",");
+        String[] ccArray = cc.split(",");
 
-        try {
-            emailTemplateService.sendScheduledEmail(idTemplate,requestBody,recipientEmail);
+
+       try {
+            emailTemplateService.sendScheduledEmail(idTemplate,userId,requestBody,recipientsArray,ccArray,replyTo,addSignature);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
 
 
     }
-}*/
+}

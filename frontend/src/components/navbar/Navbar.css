@@ -11,6 +11,7 @@
     background-color:transparent;
 }
 .flexible-navbar{
+    width: 87.4%;
     height: 60px;
     position: relative;  
     margin-left: 15% !important;

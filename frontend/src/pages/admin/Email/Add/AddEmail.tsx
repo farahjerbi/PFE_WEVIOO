@@ -2,6 +2,9 @@ import { MDBBtn, MDBCard, MDBCardBody, MDBCardFooter, MDBCardImage, MDBCardText,
 import BreadcrumSection from '../../../../components/BreadcrumSection/BreadcrumSection'
 import './AddEmail.css'
 import { useNavigate } from 'react-router-dom'
+import PostAdd from "@mui/icons-material/PostAdd";
+import { Button, Tooltip } from '@mui/material';
+
 const AddEmail = () => {
     const navigate=useNavigate();
   return (
@@ -20,12 +23,12 @@ const AddEmail = () => {
           <MDBCardText>Some quick example text to build on the card title and make up the bulk of the card's content.</MDBCardText>
         </MDBCardBody>
         <MDBCardFooter className="links-light profile-card-footer">
-          <span className="right">
-            <MDBBtn type='submit' color='info' className='mb-4' block onClick={()=>navigate('/addSimpleEmail')}>
-            <MDBIcon icon="plus" className="ml-1" style={{marginRight:"4px"}}  />
-                    Add now
-            </MDBBtn>
-            </span>
+         
+        <Tooltip  style={{width:"100%"}} title="Add Simple Template" className="color_baby_blue" >
+                          <Button  onClick={()=>navigate('/createTemplate')} >
+                          <PostAdd style={{color:"whitesmoke"}}  />
+                          </Button>                           
+                          </Tooltip>
         </MDBCardFooter>
       </MDBCard>
     </MDBCol>
@@ -36,17 +39,17 @@ const AddEmail = () => {
          </div>
         <MDBCardBody>
           <MDBCardTitle className="font-bold mb-3">
-            <strong>Complex Template</strong>
+            <strong>Advanced Template</strong>
           </MDBCardTitle>
           <MDBCardText>Some quick example text to build on the card title and make up the bulk of the card's content.</MDBCardText>
         </MDBCardBody>
         <MDBCardFooter className="links-light profile-card-footer">
-          <span className="right">
-          <MDBBtn type='submit' color='primary' className='button mb-4' block onClick={()=>navigate('/createTemplate')}>
-            <MDBIcon icon="plus" className="ml-1" style={{marginRight:"4px"}}/>
-                    Add now
-            </MDBBtn>
-          </span>
+       
+            <Tooltip  style={{width:"100%"}} title="Add Advanced Template" className="color_blue" >
+                          <Button  onClick={()=>navigate('/createTemplate')} >
+                          <PostAdd style={{color:"whitesmoke"}}  />
+                          </Button>                           
+                          </Tooltip>
         </MDBCardFooter>
       </MDBCard>
     </MDBCol>

@@ -10,6 +10,7 @@ import wevioo.tn.backend.dtos.request.SignInRequest;
 import wevioo.tn.backend.dtos.request.SignUpRequest;
 import wevioo.tn.backend.dtos.request.VerificationRequest;
 import wevioo.tn.backend.repositories.UserRepository;
+import wevioo.tn.backend.security.JwtGenerator;
 import wevioo.tn.backend.services.auth.AuthenticationService;
 
 
@@ -20,6 +21,7 @@ import wevioo.tn.backend.services.auth.AuthenticationService;
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
     private final UserRepository userRepository;
+    private final JwtGenerator jwtGenerator;
 
 
     @PostMapping("register")
@@ -54,6 +56,10 @@ public class AuthenticationController {
     }
 
 
+    @PostMapping("verifyToken")
+    public ResponseEntity<?> verifyToken(@RequestBody String token) {
+        return ResponseEntity.ok(jwtGenerator.validateToken(token));
+    }
 
 
 }

@@ -2,17 +2,22 @@ import { MDBBadge, MDBBtn, MDBCard, MDBCardBody, MDBCol, MDBPagination, MDBPagin
 import  { useEffect, useState } from 'react'
 import { useActivateUserMutation, useDesActivateUserMutation, useGetAllUsersMutation } from '../../../../redux/services/usersApi';
 import { toast } from 'sonner';
-import { User } from '../../../../models/User';
+import { IUser } from '../../../../models/User';
 import BreadcrumSection from '../../../../components/BreadcrumSection/BreadcrumSection';
 import './ListUsers.css'
 import DeleteUserModal from '../../../../components/modals/DeleteUserModal';
 import { Role } from '../../../../models/Role';
+import Delete from '@mui/icons-material/Delete';
+import PersonOff from '@mui/icons-material/PersonOff';
+import PersonOutline from '@mui/icons-material/PersonOutline';
+import { Button, Tooltip } from '@mui/material';
+
 const ListUsers = () => {
   const [updated, setUpdated] = useState<boolean>(false);
     useEffect(() => {
         fetchData(); 
       }, [updated]);
-      const [users, setUsers] = useState<User[]>([]);
+      const [users, setUsers] = useState<IUser[]>([]);
       const [idDelete, setIdDelete] = useState<number>();
       const[getAllUsers]=useGetAllUsersMutation();
       const[desActivateUser]=useDesActivateUserMutation();
@@ -47,7 +52,7 @@ const ListUsers = () => {
         try {
           await activateUser(email);
           toast.success("User Activated !");
-          setUpdated(true)
+          setUpdated(!updated)
         } catch (error) {
           toast.error("Error! Yikes");
           console.error("🚀 ~ error:", error);
@@ -58,7 +63,7 @@ const ListUsers = () => {
         try {
           await desActivateUser(email);
           toast.success("User DesActivated !");
-          setUpdated(true)
+          setUpdated(!updated)
         } catch (error) {
           toast.error("Error! Yikes");
           console.error("🚀 ~ error:", error);
@@ -111,11 +116,31 @@ const ListUsers = () => {
                             )}
                             <td>
                             <div className='buttons'>
-                            {user.enabled ==="false"&& ( <MDBBtn className='btn' color='primary' onClick={()=>activate(user.email)} >Activate </MDBBtn>  )}
-                            {user.enabled ==="true"&& ( <MDBBtn className='btn' color='info' onClick={()=>desactivate(user.email)} >Desactivate </MDBBtn>  )}                            </div>
+                            {user.enabled ==="false"&& ( 
+                               <Tooltip  style={{width:"100%"}} title="Activate Account" className="color_blue" >
+                               <Button  onClick={()=>activate(user.email)} >
+                               <PersonOutline style={{color:"whitesmoke"}}  />
+                               </Button>                           
+                               </Tooltip>
+                            )}
+                            {user.enabled ==="true"&& (
+                                      <Tooltip  style={{width:"100%"}} title="Desactivate Account" className="color_baby_blue" >
+                                      <Button  onClick={()=>desactivate(user.email)}  >
+                                      <PersonOff style={{color:"whitesmoke"}}  />
+                                      </Button>                           
+                                      </Tooltip>
+                                 )}                           
+                                 
+                                
+                             </div>
                             </td>
                             <td>
-                            <MDBBtn className='btn' color='danger' onClick={() => { setDeleteModalOpen(true); setIdDelete(user.id)}}>Delete</MDBBtn>
+                              
+                          <Tooltip title="Delete" className="color_red" >
+                          <Button  onClick={() => { setDeleteModalOpen(true); setIdDelete(user.id)}}>
+                          <Delete style={{color:"whitesmoke"}}  />
+                          </Button>                           
+                          </Tooltip>
                             </td>
                         </tr>
                         ))}

@@ -1,17 +1,24 @@
-import {MDBBtn, MDBCheckbox, MDBCol, MDBContainer, MDBIcon, MDBInput, MDBRow, MDBSpinner } from 'mdb-react-ui-kit'
+import {MDBBadge, MDBBtn, MDBCard, MDBCardBody, MDBCheckbox, MDBCol, MDBContainer, MDBIcon, MDBInput, MDBRow, MDBSpinner, MDBTable, MDBTableBody, MDBTableHead } from 'mdb-react-ui-kit'
 import './SendSimpleEmail.css'
 import EmailInput from '../../../../components/emailInput/EmailInput'
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
-import { useGetTemplatePlaceholdersMutation } from '../../../../redux/services/emailApi';
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
+import { useGetDesignTemplateMutation, useGetTemplateByIdMutation, useGetTemplatePlaceholdersMutation } from '../../../../redux/services/emailApi';
 import { toast } from 'sonner';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-const SendSimpleEmail = () => {
+import { EmailTemplate } from '../../../../models/EmailTemplate';
+import EmailEditor ,{EmailEditorProps,EditorRef} from 'react-email-editor';
+import ScheduleModal from '../../../../components/modals/ScheduleModal';
+interface SendSimpleEmailProps {
+  isScheduled: boolean;
+}
+const SendSimpleEmail : React.FC<SendSimpleEmailProps> = ({isScheduled }) => {
     const { id } = useParams();
     const storedUser = localStorage.getItem('user');
     const user = storedUser ? JSON.parse(storedUser) : null;
     const [isSignatureEnabled, setIsSignatureEnabled] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
+    const [schedularModal, setSchedularModal] = useState<boolean>(false);
     const [recipientEmails, setRecipientEmails] = useState<string[]>([]);
     const [ccEmails, setCCEmails] = useState<string[]>([]);
     const[placeholders,setPlaceholders]= useState<string[]>([]);
@@ -19,8 +26,13 @@ const SendSimpleEmail = () => {
     const [placeholdersValues, setPlaceholdersValues] = useState<{ [key: string]: string }>({});
     const [fileInput, setFileInput] = useState<File | null>(null);
     const [replyTo,setReplyTo]=useState<string>('');
+    const[template,setTemplate]=useState<EmailTemplate>();
+    const emailEditorRef = useRef<EditorRef|null>(null); 
+    const [templateDesign,setTemplateDesign]= useState<any>();
     const navigate=useNavigate()
     const[getTemplatePlaceholders]=useGetTemplatePlaceholdersMutation()
+    const[getTemplateById]=useGetTemplateByIdMutation()
+    const[getDesignTemplate]=useGetDesignTemplateMutation();
 
     useEffect(() => {
         fetchData();
@@ -29,8 +41,13 @@ const SendSimpleEmail = () => {
     const fetchData = async () => {
         try {
           const response = await getTemplatePlaceholders(id).unwrap();
-          console.log("🚀 ~ fetchData ~ response:", response)
+          const responseTemplate = await getTemplateById(id).unwrap();
           setPlaceholders(response); 
+          setTemplate(responseTemplate)
+          if(responseTemplate.state ==="COMPLEX"){
+            const design = await getDesignTemplate(Number(id)).unwrap();
+            setTemplateDesign(design);
+          }
           console.error("🚀 ~ error:", placeholders);
         } catch (error) {
           toast.error("Error! Yikes");
@@ -82,21 +99,44 @@ const SendSimpleEmail = () => {
         }
 
       }
+
+     
+      const onLoad: EmailEditorProps['onLoad'] = (unlayer) => {
+        console.log('onLoad', unlayer);
+        unlayer.loadDesign(templateDesign);
+        unlayer?.showPreview('desktop');
+      };
     
+      const handleUpdate = () => {
+        setSchedularModal(false)
+            };
 
   return (
     
     <MDBContainer className="my-5 gradient-form">
-
     <MDBRow>
-
+    {templateDesign && (
+              <MDBCard className='mb-4' >
+              <MDBCardBody>
+            <div style={{ width: "30%" }} className='d-flex flex-column align-items-center'>
+              <div className="email-editor-wrapper">
+              <EmailEditor
+                  ref={emailEditorRef}
+                  onLoad={onLoad}
+                  minHeight={"70vh"}
+              />
+          </div>
+            </div>
+            </MDBCardBody>
+            </MDBCard>
+        )}
     <MDBCol col='6' className="mb-5">
         <div className="d-flex flex-column ms-5">
 
         <div className="text-center">
             <img src="../../../assets/sendMail.png"
             style={{width: '185px'}} alt="logo" />
-            <h2>Send Simple Email</h2>
+            <h2>Send Email</h2>
         </div>
         <form encType="multipart/form-data" method='POST'  onSubmit={handleSubmit} >
 
@@ -105,21 +145,22 @@ const SendSimpleEmail = () => {
             <EmailInput label="CC:" onChange={setCCEmails} />
             <MDBInput value={replyTo} onChange={(e)=>setReplyTo(e.target.value)} wrapperClass='mb-4 mt-4' label='Reply To' name="email" type="text"/>
             <div className='d-flex'>
-                <div className='text-center'>
-                    <MDBCheckbox
-                    wrapperClass='d-flex mb-3 mt-4'
-                    label='Add my signature'
-                    name='isSignatureEnabled'
-                    checked={isSignatureEnabled}
-                    onChange={handleCheckboxChange}
-                    />
-                    <p>(if exists)</p>
+              <div className='text-center'>
+                  <MDBCheckbox
+                  wrapperClass='d-flex mb-3 mt-4'
+                  label='Add my signature'
+                  name='isSignatureEnabled'
+                  checked={isSignatureEnabled}
+                  onChange={handleCheckboxChange}
+                  />
+                  <p>(if exists)</p>
+              </div>
+              {isScheduled && (
+                <div className='text-center mt-4' style={{marginLeft:"60px"}}>
+                <p>Add Attachement : </p>
+                <input type='file'  accept="*/*" onChange={(e) => setFileInput(e.target.files && e.target.files[0])}  className='mb-4' />
                 </div>
-            <div className='text-center mt-4' style={{marginLeft:"60px"}}>
-            <p>Add Attachement : </p>
-            <input type='file'  accept="*/*" onChange={(e) => setFileInput(e.target.files && e.target.files[0])}  className='mb-4' />
-            </div>
-        
+              )}  
             </div>
             <MDBBtn onClick={()=>setPage(!page)} className='btn' color='secondary' >Next <MDBIcon  icon="arrow-right" style={{marginLeft:"5px"}} /> </MDBBtn> 
             </>
@@ -151,13 +192,28 @@ const SendSimpleEmail = () => {
             )}
             {!loading && (
             <div className='d-flex justify-content-between mt-4'>
+            {isScheduled && (
+              <>
+                <MDBBtn className='btn w-50 ' color='primary' type='submit'> <MDBIcon  icon="envelope" style={{marginRight:"5px"}} /> Send  </MDBBtn>  
+                <MDBBtn className='btn ' color='secondary' onClick={()=>setPage(!page)} > <MDBIcon  icon="arrow-left" style={{marginRight:"5px"}} /> Previous  </MDBBtn>
 
-            <MDBBtn className='btn w-50 ' color='primary' type='submit'> <MDBIcon  icon="envelope" style={{marginRight:"5px"}} /> Send  </MDBBtn>  
-            <MDBBtn className='btn ' color='secondary' onClick={()=>setPage(!page)} > <MDBIcon  icon="arrow-left" style={{marginRight:"5px"}} /> Previous  </MDBBtn>
+              </>
+            )}
+              {!isScheduled && (
+                <>  
+                <MDBBtn onClick={(e) => { e.preventDefault(); setSchedularModal(true)}} className='btn w-50 ' color='primary' > 
+                <MDBIcon  icon="envelope" style={{marginRight:"5px"}} /> Schedule  </MDBBtn>  
+                <MDBBtn className='btn ' color='secondary' onClick={()=>setPage(!page)} > <MDBIcon  icon="arrow-left" style={{marginRight:"5px"}} /> Previous  </MDBBtn>
+                  </>
+            
+            )}
             </div>
             
              )}
-           
+              <ScheduleModal templateId={id} recipientEmails={recipientEmails} cc={ccEmails} id={user.id} replyTo={replyTo}
+              addSignature={isSignatureEnabled} show={schedularModal} placeholdersValues={placeholdersValues} 
+                onClose={handleUpdate} /> 
+
             </>
             )}
 
@@ -175,16 +231,47 @@ const SendSimpleEmail = () => {
 
     <MDBCol col='6' className="mb-5">
         <div className="d-flex flex-column  justify-content-center gradient-custom-2 h-100 mb-4">
-
         <div className="text-white px-3 py-4 p-md-5 mx-md-4">
-            <h4 className="mb-4">We are more than just a company</h4>
-            <p className="small mb-0">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-            </p>
+            <h4 className="mb-4">Email Template Here !</h4>
+            <p>Below is a customizable email template. Any content enclosed within double curly braces (<code>{"{{" + "}}"}</code>) is a dynamic input that you can customize it based on  your preferences.</p>
+        </div>
+    
+        {template?.state==="SIMPLE" &&(
+                 <MDBCard style={{width:"70%",marginLeft:"19%"}}>
+                 <MDBCardBody>
+                   <MDBTable striped hover bordered >
+                     <MDBTableHead color="blue lighten-4">
+                     </MDBTableHead>
+                     <MDBTableBody>
+                       <tr>
+                         <td>   
+                           <div className='mb-4'>
+                           <MDBBadge color='secondary' pill style={{marginRight:"20px"}}>
+                                   Subject : 
+                           </MDBBadge>
+                           {template.templateBody.subject }
+                           </div>
+                           <div className='mb-4'>
+                           <MDBBadge color='danger'  pill style={{marginRight:"20px"}}>
+                                   Email Content : 
+                           </MDBBadge>
+                           </div>
+                        
+                           <p>
+                           {template.templateBody.content}
+                           </p>
+                         </td>
+                        
+                       </tr>
+              
+                     </MDBTableBody>
+                   </MDBTable>
+                 </MDBCardBody>
+             </MDBCard>
+        )}
         </div>
 
-        </div>
+
 
     </MDBCol>
 

@@ -1,19 +1,21 @@
 import {createSlice , PayloadAction} from "@reduxjs/toolkit"
 import {RootState} from "../store"
-import { User } from "../../models/User";
+import { IUser, UserPayload } from "../../models/User";
 import { Role } from "../../models/Role";
 
 
 export interface AuthState{
-    user: User | null;
-    token:string | null;
-    role:Role | null;
+    user: IUser | null;
+    isAuthorized: boolean;
+    token: string | null;
+    role: Role | null;
 }
 
 
 const initialState: AuthState={
     user:null,
-    token:null,
+    token: localStorage.getItem("token"),
+    isAuthorized: true,
     role:null
 }
 
@@ -23,7 +25,7 @@ export const authSlice = createSlice({
     reducers:{
         setUser:(
             state, 
-            action : PayloadAction<{user:User;token:string;role:Role}>
+            action : PayloadAction<UserPayload>
             )=>{
             localStorage.setItem("user",JSON.stringify(action.payload.user));
             localStorage.setItem("token",JSON.stringify(action.payload.token));

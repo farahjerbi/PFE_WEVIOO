@@ -15,8 +15,9 @@ import EmailStatistics from './pages/admin/Email/statistics/EmailStatistics';
 import ProtectedRoute from './routes/ProtectedRoute';
 import { Role } from '../src/models/Role';
 import Profile from "./pages/user/profile/Profile";
-import ChangePassword from "./pages/user/changePassword/ChangePassword";
 import SendSimpleEmail from "./pages/user/email/sendSimpleEmail/SendSimpleEmail";
+import ScheduleModal from "./components/modals/ScheduleModal";
+import UpdateEmail from "./pages/admin/Email/update/UpdateEmail";
 function App() {
   return (
     <div className="App">
@@ -35,10 +36,12 @@ function App() {
             <Route path='/usersStatistics' element={<UsersStatistics />} />
             <Route path='/emailsStatistics' element={<EmailStatistics />} />
             <Route path='/profile' element={<Profile />} />
-            <Route path='/sendSimpleEmail/:id' element={<SendSimpleEmail />} />
+            <Route path='/sendSimpleEmail/:id' element={<SendSimpleEmail isScheduled={true} />} />
+            <Route path='/sendScheduledEmail/:id' element={<SendSimpleEmail isScheduled={false} />} />
+            <Route path='/editTemplateEmail/:id' element={<UpdateEmail />} />
+
           </Route> 
           <Route path='/authentication' element={<Authentication />} />
-
         </Routes>
       </BrowserRouter>
     </div>
