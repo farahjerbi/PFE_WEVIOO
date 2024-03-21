@@ -60,8 +60,16 @@ export const emailApi = createApi({
                 method: "DELETE",
             }),
         }),
+        getScheduledEmails: builder.mutation({
+            query:  () => ({
+                url: `/getScheduledEmails`,
+                method: "GET",
+            }),
+        }),
     })
 })
 
 export const {useAddTemplateEmailMutation,useGetAllEmailTemplatesMutation,useGetTemplatePlaceholdersMutation,
-                useAddDesignTemplateMutation,useGetDesignTemplateMutation,useDeleteTemplateMutation,useGetTemplateByIdMutation}=emailApi;
+                useAddDesignTemplateMutation,useGetDesignTemplateMutation,useDeleteTemplateMutation,useGetTemplateByIdMutation,
+                useGetScheduledEmailsMutation
+            }=emailApi;

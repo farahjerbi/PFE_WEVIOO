@@ -16,8 +16,8 @@ import ProtectedRoute from './routes/ProtectedRoute';
 import { Role } from '../src/models/Role';
 import Profile from "./pages/user/profile/Profile";
 import SendSimpleEmail from "./pages/user/email/sendSimpleEmail/SendSimpleEmail";
-import ScheduleModal from "./components/modals/ScheduleModal";
 import UpdateEmail from "./pages/admin/Email/update/UpdateEmail";
+import Calendar from "./pages/admin/Email/calendar/Calendar";
 function App() {
   return (
     <div className="App">
@@ -39,6 +39,7 @@ function App() {
             <Route path='/sendSimpleEmail/:id' element={<SendSimpleEmail isScheduled={true} />} />
             <Route path='/sendScheduledEmail/:id' element={<SendSimpleEmail isScheduled={false} />} />
             <Route path='/editTemplateEmail/:id' element={<UpdateEmail />} />
+            <Route path='/emailCalendar' element={<Calendar />} />
 
           </Route> 
           <Route path='/authentication' element={<Authentication />} />

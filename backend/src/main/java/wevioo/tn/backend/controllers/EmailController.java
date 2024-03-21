@@ -22,7 +22,9 @@ import wevioo.tn.backend.dtos.response.ScheduledEmailInfo;
 import wevioo.tn.backend.entities.EmailTemplate;
 import wevioo.tn.backend.entities.Image;
 import wevioo.tn.backend.entities.TemplateBody;
+import wevioo.tn.backend.entities.UserEntity;
 import wevioo.tn.backend.repositories.EmailTemplateRepository;
+import wevioo.tn.backend.repositories.UserRepository;
 import wevioo.tn.backend.services.email.EmailTemplateService;
 import wevioo.tn.backend.services.email.ImageService;
 import wevioo.tn.backend.services.email.TemplateUtils;
@@ -44,6 +46,7 @@ public class EmailController {
     private final TemplateUtils templateUtils;
     private final Scheduler scheduler;
     private final ImageService imageService;
+    private final UserRepository userRepository;
 
 
     @PostMapping("addTemplate")
@@ -234,23 +237,20 @@ public class EmailController {
                         JobDataMap jobDataMap = jobDetail.getJobDataMap();
                         Long templateId = jobDataMap.getLongValue("templateId");
                         Long userId = jobDataMap.getLongValue("userId");
-                        String replyTo = jobDataMap.getString("replyTo");
-                        String addSignature = jobDataMap.getString("addSignature");
-                        String requestBody = jobDataMap.getString("requestBody");
-                        String[] recipients = jobDataMap.getString("recipients").split(",");
-                        String[] cc = jobDataMap.getString("cc").split(",");
 
+                        //Get info
+                        EmailTemplate emailTemplate = emailTemplateRepository.findEmailTemplateWithDetails(templateId);
+
+                        UserEntity user = userRepository.findById(userId)
+                                .orElseThrow(() -> new IllegalStateException("User not found"));
                         // Create ScheduledEmailInfo object
                         ScheduledEmailInfo emailInfo = new ScheduledEmailInfo();
                         emailInfo.setJobId(jobName);
                         emailInfo.setTemplateId(templateId);
                         emailInfo.setUserId(userId);
-                        emailInfo.setReplyTo(replyTo);
-                        emailInfo.setAddSignature(addSignature);
-                        emailInfo.setRequestBody(requestBody);
-                        emailInfo.setRecipients(recipients);
-                        emailInfo.setCc(cc);
                         emailInfo.setNextTimeFired(nextFireTime);
+                        emailInfo.setTemplateName(emailTemplate.getName());
+                        emailInfo.setUsername(user.getFirstName() +"" +user.getLastName());
 
 
                         // Add ScheduledEmailInfo to the list
@@ -265,6 +265,62 @@ public class EmailController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @GetMapping("getScheduledEmailsByUser/{userId}")
+    public ResponseEntity<List<ScheduledEmailInfo>> listScheduledEmails(@PathVariable Long userId) {
+        List<ScheduledEmailInfo> scheduledEmails = new ArrayList<>();
+
+        try {
+            for (String groupName : scheduler.getJobGroupNames()) {
+                for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
+                    String jobName = jobKey.getName();
+
+                    // Get job's triggers
+                    List<? extends Trigger> triggers = scheduler.getTriggersOfJob(jobKey);
+
+                    if (!triggers.isEmpty()) {
+                        JobDetail jobDetail = scheduler.getJobDetail(jobKey);
+
+                        JobDataMap jobDataMap = jobDetail.getJobDataMap();
+                        Long templateId = jobDataMap.getLongValue("templateId");
+                        Long userIdFromJob = jobDataMap.getLongValue("userId");
+                        if (userId.equals(userIdFromJob)) {
+                            Date nextFireTime = triggers.get(0).getNextFireTime();
+
+                            //Get info
+                            EmailTemplate emailTemplate = emailTemplateRepository.findEmailTemplateWithDetails(templateId);
+
+                            UserEntity user = userRepository.findById(userId)
+                                    .orElseThrow(() -> new IllegalStateException("User not found"));
+
+                            // Create ScheduledEmailInfo object
+                            ScheduledEmailInfo emailInfo = new ScheduledEmailInfo();
+                            emailInfo.setJobId(jobName);
+                            emailInfo.setTemplateId(templateId);
+                            emailInfo.setUserId(userId);
+                            emailInfo.setReplyTo(jobDataMap.getString("replyTo"));
+                            emailInfo.setAddSignature(jobDataMap.getString("addSignature"));
+                            emailInfo.setRequestBody(jobDataMap.getString("requestBody"));
+                            emailInfo.setRecipients(jobDataMap.getString("recipients").split(","));
+                            emailInfo.setCc(jobDataMap.getString("cc").split(","));
+                            emailInfo.setNextTimeFired(nextFireTime);
+                            emailInfo.setTemplateName(emailTemplate.getName());
+                            emailInfo.setUsername(user.getFirstName() + " " + user.getLastName());
+
+                            // Add ScheduledEmailInfo to the list
+                            scheduledEmails.add(emailInfo);
+                        }
+                    }
+                }
+            }
+
+            return ResponseEntity.ok(scheduledEmails);
+        } catch (SchedulerException ex) {
+            ex.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 
 
     @DeleteMapping("deleteScheduledEmail/{jobName}")

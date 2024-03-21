@@ -12,6 +12,8 @@ import java.util.Date;
 public class ScheduledEmailInfo {
     private String jobId;
     private Long templateId;
+    private String templateName;
+    private String username;
     private Long userId;
     private String requestBody;
     private  String[]  recipients;
