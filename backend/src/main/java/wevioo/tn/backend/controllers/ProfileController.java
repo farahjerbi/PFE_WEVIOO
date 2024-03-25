@@ -32,7 +32,6 @@ public class ProfileController {
 
     @PostMapping(value = "updateProfile/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<UserResponse> updateUser (@ModelAttribute UpdateUser user ,
-                                             /* @RequestPart("signature") MultipartFile signature,*/
                                               @PathVariable Long id){
         return ResponseEntity.ok(profileService.UpdateProfile(user,id));
     }

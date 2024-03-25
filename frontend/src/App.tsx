@@ -39,7 +39,7 @@ function App() {
             <Route path='/sendSimpleEmail/:id' element={<SendSimpleEmail isScheduled={true} />} />
             <Route path='/sendScheduledEmail/:id' element={<SendSimpleEmail isScheduled={false} />} />
             <Route path='/editTemplateEmail/:id' element={<UpdateEmail />} />
-            <Route path='/emailCalendar' element={<Calendar />} />
+            <Route path='/calendar' element={<Calendar isAdmin={true} />} />
 
           </Route> 
           <Route path='/authentication' element={<Authentication />} />

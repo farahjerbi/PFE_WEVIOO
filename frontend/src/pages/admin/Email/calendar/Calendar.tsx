@@ -1,24 +1,40 @@
-import React, { useEffect, useState } from 'react'
+import  { useEffect, useState } from 'react'
 import './Calendar.css'
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from '@fullcalendar/timegrid';
-import interactionPlugin from "@fullcalendar/interaction"
-import { useGetScheduledEmailsMutation } from '../../../../redux/services/emailApi';
+import { useGetScheduledEmailsByUserMutation, useGetScheduledEmailsMutation } from '../../../../redux/services/emailApi';
 import { toast } from 'sonner';
-import { Button, Card, Tooltip } from '@mui/material';
+import { Button, Tooltip } from '@mui/material';
 import { DateSelectArg, EventClickArg, EventContentArg } from '@fullcalendar/core';
-import { MDBBadge, MDBCard } from 'mdb-react-ui-kit';
-import AutoAwesome from "@mui/icons-material/AutoAwesome";
-
-const Calendar = () => {
+import ForwardToInbox from "@mui/icons-material/ForwardToInbox";
+import styled from '@emotion/styled';
+export const StyleWrapper = styled.div`
+  .fc-button.fc-prev-button, .fc-button.fc-next-button, .fc-button.fc-button-primary{
+    background: #7EB4DA;
+    border:none;
+    background-image: none;
+}
+.fc-scroller-harness{
+  background:transparent;
+}
+.fc .fc-button-primary:not(:disabled).fc-button-active{
+  background:#377dbc;
+}
+`
+interface calendarProps {
+  isAdmin: boolean;
+}
+const Calendar  : React.FC<calendarProps> = ({isAdmin }) => {
 const[getScheduledEmails]=useGetScheduledEmailsMutation()
+const[getScheduledEmailsByUser]=useGetScheduledEmailsByUserMutation()
 const[data,setData]=useState();
+
     useEffect(() => {
-        fetchData();
+      fetchDataAdmin();
       }, []);
     
-      const fetchData = async () => {
+      const fetchDataAdmin = async () => {
         try {
           const response = await getScheduledEmails({}).unwrap();
           console.log("🚀 ~ fetchData ~ response:", response);
@@ -29,10 +45,24 @@ const[data,setData]=useState();
           console.error("🚀 ~ error:", error);
         }
       };
+
+      // const fetchDataUser = async () => {
+      //   try {
+      //     const response = await getScheduledEmailsByUser({}).unwrap();
+      //     console.log("🚀 ~ fetchData ~ response:", response);
+      //     populateData(response);
+      //     console.error("🚀 ~ error:", data);
+      //   } catch (error) {
+      //     toast.error("Error! Yikes");
+      //     console.error("🚀 ~ error:", error);
+      //   }
+      // };
+
       function populateData(data:any) {
         const newData = data.map((e:any) => ({
           title:"Template " + e.templateName + " used by " + e.username,
           date:e.nextTimeFired,
+          type:"Email"
         }));
         setData(newData);
       }
@@ -44,7 +74,15 @@ const[data,setData]=useState();
           }
       
   return (
-    <div className='mt-5' style={{width:"80%",marginLeft:"18%"}}>
+        <div className='mt-5' style={{
+          backgroundImage: "url('/assets/Schedule.gif')",
+          backgroundPosition: "center",
+          backgroundSize: "contain",
+          backgroundRepeat: "no-repeat",
+          width: "80%",
+          marginLeft: "18%"
+        }}>
+            <StyleWrapper>
       <FullCalendar
           plugins={[dayGridPlugin, timeGridPlugin]}
           initialView={"dayGridMonth"}
@@ -62,6 +100,7 @@ const[data,setData]=useState();
           eventClick={handleEventClick}
 
         />
+            </StyleWrapper>
     </div>
   
       )
@@ -71,13 +110,15 @@ function renderEventContent(eventContent: EventContentArg) {
       <>
       <div >
       
-        <Tooltip style={{color:"whitesmoke"}}   title={eventContent.event.title} className="color_blue" >
+        <Tooltip style={{color:"whitesmoke"}}   title={eventContent.event.title} className="color_baby_blue" >
                 <Button >
-                <AutoAwesome />
+                <ForwardToInbox style={{marginRight:"3px"}} />
                     {eventContent.timeText}
-                 <AutoAwesome />
                   </Button>                           
          </Tooltip>
+         
+    
+
       </div>
      
       </>

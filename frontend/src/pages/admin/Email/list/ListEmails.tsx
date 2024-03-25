@@ -33,7 +33,7 @@ import EmailEditor, { EmailEditorProps, EditorRef } from "react-email-editor";
 import { useNavigate } from "react-router-dom";
 import Update from '@mui/icons-material/Update';
 import Delete from '@mui/icons-material/Delete';
-import { Button, IconButton, Tooltip } from "@mui/material";
+import { Button, Tooltip } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import Send from "@mui/icons-material/Send";
 import ScheduleSend from "@mui/icons-material/ScheduleSend";

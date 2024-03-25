@@ -2,10 +2,10 @@ package wevioo.tn.backend.services.email;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.web.multipart.MultipartFile;
+import wevioo.tn.backend.dtos.request.UpdateEmailTemplateRequest;
 import wevioo.tn.backend.entities.EmailTemplate;
 import wevioo.tn.backend.entities.TemplateBody;
 
-import java.util.List;
 import java.util.Map;
 
 
@@ -21,4 +21,5 @@ public interface EmailTemplateService {
                             String addSignature)throws JsonProcessingException ;
     String deleteEmailTemplate(Long id);
      void sendHtmlEmail(String to, String subject, String htmlBody);
+     String updateEmailTemplate(Long id, UpdateEmailTemplateRequest updatedTemplate, Object jsonObject) ;
 }

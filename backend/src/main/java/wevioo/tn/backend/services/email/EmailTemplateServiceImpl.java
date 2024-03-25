@@ -15,6 +15,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import wevioo.tn.backend.dtos.exceptions.EmailSendingException;
+import wevioo.tn.backend.dtos.request.UpdateEmailTemplateRequest;
 import wevioo.tn.backend.entities.EmailTemplate;
 import wevioo.tn.backend.entities.TemplateBody;
 import wevioo.tn.backend.entities.UserEntity;
@@ -152,6 +153,30 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
         } catch (MessagingException e) {
             e.printStackTrace();
         }
+    }
+
+    public String updateEmailTemplate(Long id, UpdateEmailTemplateRequest updatedTemplate, Object jsonObject)  {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String json = objectMapper.writeValueAsString(jsonObject);
+            System.out.println("JSON String: " + json); // Debugging statement
+            System.out.println("JSON String: " + updatedTemplate); // Debugging statement
+
+        EmailTemplate emailTemplate = emailTemplateRepository.findEmailTemplateWithDetails(id);
+        emailTemplate.setName(updatedTemplate.getName());
+        emailTemplate.setLanguage(updatedTemplate.getLanguage());
+        emailTemplate.getTemplateBody().setContent(updatedTemplate.getContent());
+        emailTemplate.getTemplateBody().setSubject(updatedTemplate.getSubject());
+
+        if(updatedTemplate.getState().equals("COMPLEX")){
+
+            templateUtils.updateDesignTemplate(jsonObject,id);
+        }
+        emailTemplateRepository.save(emailTemplate);
+        } catch (Exception exception) {
+            throw new EmailSendingException("Failed to update template", exception);
+        }
+        return "Template updated successfully";
     }
 
 

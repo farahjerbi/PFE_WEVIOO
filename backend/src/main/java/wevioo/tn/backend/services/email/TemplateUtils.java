@@ -122,6 +122,26 @@ public class TemplateUtils {
 
         return fileName;
     }
+    public String updateDesignTemplate(Object jsonObject, Long id) throws IOException {
+        String fileName = id + ".json";
+        String filePath = Paths.get(DIRECTORYPATH, fileName).toString();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonString = objectMapper.writeValueAsString(jsonObject);
+
+        System.out.println("JSON String: " + jsonString); // Debugging statement
+
+        // Ensure the directory exists before writing the file
+        Files.createDirectories(Paths.get(DIRECTORYPATH));
+
+        try (FileWriter writer = new FileWriter(filePath)) {
+            // Write the new design template to the file, overwriting existing content
+            writer.write(jsonString);
+        }
+
+        return fileName;
+    }
+
 
     public static Object readDesignFile(Long fileName) throws IOException {
         String filePath = Paths.get(DIRECTORYPATH, fileName.toString()).toString();

@@ -17,6 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 import wevioo.tn.backend.config.EmailJob;
 import wevioo.tn.backend.dtos.request.ScheduleEmailRequest;
 import wevioo.tn.backend.dtos.request.SendEmail;
+import wevioo.tn.backend.dtos.request.UpdateEmailTemplateRequest;
+import wevioo.tn.backend.dtos.request.UpdateTemplateRequest;
 import wevioo.tn.backend.dtos.response.ScheduleEmailResponse;
 import wevioo.tn.backend.dtos.response.ScheduledEmailInfo;
 import wevioo.tn.backend.entities.EmailTemplate;
@@ -198,6 +200,12 @@ public class EmailController {
         emailTemplateService.sendHtmlEmail("farah.jeerbi@gmail.com", "Lol", emailTemplate.getTemplateBody().getContent());
         return "Will it work  all the time ? find out next on MBC action";
     }
+    @PostMapping("updateTemplate/{id}")
+    public String updateTemplate(@PathVariable Long id,@RequestBody UpdateTemplateRequest request) {
+        return emailTemplateService.updateEmailTemplate(id,request.getEmailTemplate(), request.getJsonObject());
+    }
+
+
 
 
     @PostMapping("add")
