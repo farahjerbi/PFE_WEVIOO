@@ -2,6 +2,7 @@ import { MDBCard, MDBCardBody, MDBCol, MDBIcon, MDBListGroup, MDBListGroupItem }
 import { useEffect, useState } from 'react'
 import './Sidebar.css'
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { Role } from '../../models/Role';
 const Sidebar = () => {
     const [basicActive, setBasicActive] = useState('home');
     const [showEmail, setShowEmail] = useState(false);
@@ -10,7 +11,10 @@ const Sidebar = () => {
     const [showUsers, setShowUsers] = useState(false);
     const location = useLocation();
     const [dashboardName, setDashboardName] = useState('');
-  
+    const storedUser = localStorage.getItem('user');
+    const user = storedUser ? JSON.parse(storedUser) : null;
+    const role:Role=user.role;
+
     useEffect(() => {
       const pathname = location.pathname;
       const dashboardNameFromPath = pathname.split('/')[1];
@@ -56,6 +60,8 @@ const Sidebar = () => {
             setBasicActive(value);
         }
 
+        
+
     return (
         <> 
          <div className="sidebar-fixed position-fixed sidebar-container">                  
@@ -83,8 +89,8 @@ const Sidebar = () => {
                         <MDBIcon icon="book-reader" className='sidebar-icon'/>
                          <span>Profile</span> 
                     </MDBListGroupItem>
-
-                    <MDBListGroupItem  className='sidebar-item' onClick={handleUsers}>
+        {role===Role.ADMIN && (<>
+         <MDBListGroupItem  className='sidebar-item' onClick={handleUsers}>
                         <MDBIcon icon="users" className='sidebar-icon '/>
                         <span>Users Management </span>
                         {!showUsers? <MDBIcon style={{marginLeft:"5px" , color:"rgb(231, 233, 236)"}} icon="caret-down" /> :<MDBIcon style={{marginLeft:"5px" , color:"rgb(231, 233, 236)"}} icon="caret-up" />} 
@@ -104,6 +110,8 @@ const Sidebar = () => {
                               </MDBListGroupItem>
                           </NavLink>
                 </>)}
+                </>)}
+                 
 
 
                     <MDBListGroupItem  className='sidebar-item' onClick={handleEmail}>
@@ -119,12 +127,14 @@ const Sidebar = () => {
                                   <span className='span-secondary'>List</span>
                               </MDBListGroupItem>
                           </NavLink>
-                          <NavLink to="/addEmailTemplate" >
-                              <MDBListGroupItem noBorders className={dashboardName === "addEmailTemplate" ? 'sidebar-item-active' : 'sidebar-item'}>
-                                  <MDBIcon icon="plus" className='sidebar-icon-secondary  '/>
-                                  <span className='span-secondary'>Add </span>
-                              </MDBListGroupItem>
-                          </NavLink>
+                          {role===Role.ADMIN && ( 
+                                <NavLink to="/addEmailTemplate" >
+                                <MDBListGroupItem noBorders className={dashboardName === "addEmailTemplate" ? 'sidebar-item-active' : 'sidebar-item'}>
+                                    <MDBIcon icon="plus" className='sidebar-icon-secondary  '/>
+                                    <span className='span-secondary'>Add </span>
+                                </MDBListGroupItem>
+                            </NavLink>
+                          )}             
                           <NavLink to="/emailsStatistics" >
                               <MDBListGroupItem noBorders  className={dashboardName === "emailsStatistics" ? 'sidebar-item-active' : 'sidebar-item'}>
                                   <MDBIcon icon="chart-bar" className='sidebar-icon-secondary  '/>
@@ -147,12 +157,14 @@ const Sidebar = () => {
                                   <span className='span-secondary'>List</span>
                               </MDBListGroupItem>
                           </NavLink>
+                          {role===Role.ADMIN && ( 
+
                           <NavLink to="/tables" >
                               <MDBListGroupItem noBorders className='sidebar-item'>
                                   <MDBIcon icon="plus" className='sidebar-icon-secondary '/>
                                   <span className='span-secondary'>Add </span>
                               </MDBListGroupItem>
-                          </NavLink>
+                          </NavLink>)}
                           <NavLink to="/tables" >
                               <MDBListGroupItem noBorders className='sidebar-item'>
                                   <MDBIcon icon="chart-bar" className='sidebar-icon-secondary '/>
@@ -173,12 +185,13 @@ const Sidebar = () => {
                                   <span className='span-secondary'>List</span>
                               </MDBListGroupItem>
                           </NavLink>
+                          {role===Role.ADMIN && ( 
                           <NavLink to="/tables" >
                               <MDBListGroupItem noBorders className='sidebar-item'>
                                   <MDBIcon icon="plus" className='sidebar-icon-secondary  '/>
                                   <span className='span-secondary'>Add </span>
                               </MDBListGroupItem>
-                          </NavLink>
+                          </NavLink>)}
                           <NavLink to="/tables" >
                               <MDBListGroupItem noBorders className='sidebar-item'>
                                   <MDBIcon icon="chart-bar" className='sidebar-icon-secondary  '/>

@@ -1,12 +1,28 @@
 import { MDBCard, MDBCardBody, MDBCardImage, MDBCol, MDBRow, MDBTabs, MDBTabsItem, MDBTabsLink } from 'mdb-react-ui-kit'
-import {useState}from 'react'
+import {useEffect, useState}from 'react'
 import Register from '../../components/register/Register';
 import Login from '../../components/login/Login';
 import './Authentication.css'
+import { useNavigate, useParams } from 'react-router-dom';
 
 
 const Authentication = () => {
-    const [loginRegisterActive, setLoginRegisterActive] = useState<string>("login"); 
+    const { emailUser } = useParams();
+    const [loginRegisterActive, setLoginRegisterActive] = useState<string>("login");
+
+    const storedToken = localStorage.getItem('token');
+    const token = storedToken ? storedToken.substring(1, storedToken.length - 1) : null;
+    const navigate = useNavigate();
+
+    useEffect(() => {
+      if(token){
+          navigate('/dashboard');
+        }
+      if(emailUser){
+        setLoginRegisterActive('register')
+      }
+    }, []);
+  
     return (
     <div className="container">
     <MDBCard className='my-5'  >

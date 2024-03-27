@@ -1,25 +1,18 @@
-package wevioo.tn.backend.services.auth;
+package wevioo.tn.backend.services.profile;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import lombok.AllArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-
+@AllArgsConstructor
 @Service
-public class EmailAuthVerification {
-
+public class EmailForgetPassword {
     private final JavaMailSender mailSender;
 
-
-    public EmailAuthVerification(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
-    }
-
-
-
-    public void sendEmailAuthVerification(String toEmail ){
-        String activationLink = "http://localhost:3000/authentication/" + toEmail;
+    public void sendEmailForgotPassword(String toEmail ){
+        String activationLink = "http://localhost:3000/forgotPassword/" + toEmail;
         String body = "<!DOCTYPE html>\n" +
                 "<html lang=\"en\">\n" +
                 "<head>\n" +
@@ -61,11 +54,11 @@ public class EmailAuthVerification {
                 "</head>\n" +
                 "<body>\n" +
                 "    <div class=\"container\">\n" +
-                "        <h1>Account Activation</h1>\n" +
+                "        <h1>Reset Password</h1>\n" +
                 "        <p>Dear User,</p>\n" +
-                "        <p>Thank you for registering an account with our Notification Platform! To activate your account and start using our services, please click on the following link:</p>\n" +
-                "        <p><a class=\"cta-button\" href=\"" + activationLink + "\">Activate Account</a></p>\n" +
-                "        <p>If you did not create an account , please disregard this email.</p>\n" +
+                "        <p>In order to reset your account password, please click on the following link:</p>\n" +
+                "        <p><a class=\"cta-button\" href=\"" + activationLink + "\">Reset Password</a></p>\n" +
+                "        <p>If you did not ask for a change in the password , please disregard this email.</p>\n" +
                 "        <p>Thank you for choosing our Platform!</p>\n" +
                 "        <p>Sincerely, Wevioo Team</p>\n" +
                 "    </div>\n" +
@@ -76,7 +69,7 @@ public class EmailAuthVerification {
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setFrom("farah.jeerbi@gmail.com");
             helper.setTo(toEmail);
-            helper.setSubject("Account Activation");
+            helper.setSubject("Reset Password");
             helper.setText(body, true);
 
             mailSender.send(message);
@@ -84,6 +77,5 @@ public class EmailAuthVerification {
 
         }
     }
-
 
 }

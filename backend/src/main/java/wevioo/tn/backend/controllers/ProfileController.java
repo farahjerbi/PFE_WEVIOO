@@ -6,9 +6,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import wevioo.tn.backend.dtos.request.ChangePasswordRequest;
+import wevioo.tn.backend.dtos.request.ForgotPassword;
 import wevioo.tn.backend.dtos.request.UpdateUser;
 import wevioo.tn.backend.dtos.response.UserResponse;
-import wevioo.tn.backend.repositories.UserRepository;
 import wevioo.tn.backend.services.auth.AuthenticationService;
 import wevioo.tn.backend.services.profile.ProfileService;
 
@@ -22,12 +22,11 @@ public class ProfileController {
     private final ProfileService profileService;
 
     private final AuthenticationService authenticationService;
-    private final UserRepository userRepository;
 
 
-    @PutMapping("forgot_password")
-    public ResponseEntity<String> forgetPassword(@RequestBody String email){
-        return new ResponseEntity<>(profileService.forgotPassword(email), HttpStatus.OK);
+    @PostMapping ("forgotPassword")
+    public void forgetPassword(@RequestBody ForgotPassword forgotPassword){
+        profileService.forgotPassword(forgotPassword);
     }
 
     @PostMapping(value = "updateProfile/{id}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})

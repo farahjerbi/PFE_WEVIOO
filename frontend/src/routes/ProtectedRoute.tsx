@@ -1,12 +1,12 @@
 // ProtectedRouteWrapper.tsx
-import React from 'react';
-import { Navigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { Role } from '../models/Role';
 import { useVerifyTokenMutation } from '../redux/services/authApi';
 
 interface ProtectedRouteWrapperProps {
   path:string,
-  requiredRole: Role;
+  requiredRole: Role[];
   element: React.ReactNode;
 }
 
@@ -15,23 +15,34 @@ const ProtectedRoute: React.FC<ProtectedRouteWrapperProps> =  ({  requiredRole, 
   const user = storedUser ? JSON.parse(storedUser) : null;
 
   const storedToken = localStorage.getItem('token');
-  const token = storedToken ? JSON.parse(storedToken) : null;
+  const token = storedToken ? storedToken.substring(1, storedToken.length - 1) : null;
 
-  // const[verifyToken]=useVerifyTokenMutation()
 
-  // const handleTokenVerification = async () => {
-  //   try {
-  //     const response = await verifyToken({ token });
-  //     console.log('Token verified successfully:', response);
-  //     return true;
-  //   } catch (error) {
-  //     console.error('Token verification failed:', error);
-  //     return false;
-  //   }
-  // };
-  // const resultat = handleTokenVerification();
+  const navigate = useNavigate();
 
-  if (!token || ( user.role !== requiredRole) ) {
+  const[isVerified,setIsVerified]=useState<boolean>()
+  const [verifyToken] = useVerifyTokenMutation();
+
+  useEffect(() => {
+    if(token){
+      verifyTokenAndNavigate();
+    }
+  }, []);
+
+  const verifyTokenAndNavigate = async () => {
+    if (token) {
+      try {
+        const res=await verifyToken({token}).unwrap();
+        console.log("🚀 ~ verifyTokenAndNavigate ~ res:", res)
+        setIsVerified(res)
+      } 
+      catch (error) {
+        navigate('/authentication');
+      }
+    } 
+  };
+  if (!token || ( !requiredRole.includes(user.role) || isVerified===false) ) {
+    console.log("🚀 ~ isVerified:", isVerified)
     return <Navigate to="/authentication" />;
   }
 

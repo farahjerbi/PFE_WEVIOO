@@ -12,6 +12,8 @@ import wevioo.tn.backend.dtos.request.VerificationRequest;
 import wevioo.tn.backend.repositories.UserRepository;
 import wevioo.tn.backend.security.JwtGenerator;
 import wevioo.tn.backend.services.auth.AuthenticationService;
+import wevioo.tn.backend.services.auth.EmailAuthVerification;
+import wevioo.tn.backend.services.profile.EmailForgetPassword;
 
 
 @Tag(name = "Authentication", description = "Authentication")
@@ -22,6 +24,8 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
     private final UserRepository userRepository;
     private final JwtGenerator jwtGenerator;
+    private final EmailAuthVerification emailAuthVerification;
+    private final EmailForgetPassword emailForgetPassword;
 
 
     @PostMapping("register")
@@ -61,5 +65,13 @@ public class AuthenticationController {
         return ResponseEntity.ok(jwtGenerator.validateToken(token));
     }
 
+    @PostMapping("verifyEmail")
+    public void verifyEmail(@RequestBody String email){
+         emailAuthVerification.sendEmailAuthVerification(email);
+    }
 
+    @PostMapping("sendEmailForgotPassword")
+    public void sendEmailForgotPassword(@RequestBody String email){
+        emailForgetPassword.sendEmailForgotPassword(email);
+    }
 }

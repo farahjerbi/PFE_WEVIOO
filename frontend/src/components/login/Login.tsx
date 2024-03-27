@@ -8,11 +8,18 @@ import {
   MDBCheckbox,
   MDBIcon,
   MDBContainer,
+  MDBModal,
+  MDBModalDialog,
+  MDBModalContent,
+  MDBModalHeader,
+  MDBModalTitle,
+  MDBModalBody,
+  MDBModalFooter,
 }from 'mdb-react-ui-kit';
-import { useLoginUserMutation } from '../../redux/services/authApi';
+import { useForgotPasswordMutation, useLoginUserMutation } from '../../redux/services/authApi';
 import { toast } from 'sonner';
 import Code from '../otp_code/Code';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { setUser } from '../../redux/state/authSlice';
 import { useDispatch } from 'react-redux';
 
@@ -26,13 +33,28 @@ const Login=()=> {
   const {email,password}=formData;
   const [isMfaEnabled,setIsMfaEnabled]=useState<boolean>();
   const [isEnabled,setIsEnabled]=useState<boolean>();
+  const [emailForgotten,setEmailForgotten]=useState<string>("");
   const navigate=useNavigate();
   const dispatch = useDispatch();
   const[loginUser]=useLoginUserMutation();
-
+  const [basicModal, setBasicModal] = useState(false);
+  const toggleOpen = () => setBasicModal(!basicModal);
+  const[forgotPassword]=useForgotPasswordMutation()
   const handleChange=(e: React.ChangeEvent<HTMLInputElement>)=>{
     setFormData({...formData,[e.target.name]:e.target.value})
   }
+
+  const forgotPasswordEmail = async () => {
+    try {
+        setBasicModal(!basicModal)
+        setEmailForgotten("")
+        await forgotPassword({email:emailForgotten});
+        toast.success("Check your email to reset your password !");
+    } catch (error) {
+      toast.error("Error! Yikes");
+      console.error("🚀 ~ error:", error);
+    }
+  };
 
   const handleLogin: (evt: FormEvent<HTMLFormElement>) => void = async (
     e: FormEvent<HTMLFormElement>
@@ -77,7 +99,7 @@ const Login=()=> {
                       <MDBCheckbox id='form7Example3' label='Remember me' defaultChecked />
                     </MDBCol>
                     <MDBCol>
-                      <a href='#!'>Forgot password?</a>
+                      <Link to='' onClick={()=>setBasicModal(!basicModal)}>Forgot password?</Link>
                     </MDBCol>
                   </MDBRow>
 
@@ -100,6 +122,33 @@ const Login=()=> {
                 <Code email={email} password={password} stage={stage} />
                 </>
       )}
+
+      <MDBModal open={basicModal} setOpen={setBasicModal} tabIndex='-1'>
+          <MDBModalDialog>
+            <MDBModalContent>
+              <MDBModalHeader>
+                <MDBModalTitle>Forgotten Password</MDBModalTitle>
+                <MDBBtn className='btn-close' color='none' onClick={toggleOpen}></MDBBtn>
+              </MDBModalHeader>
+              <MDBModalBody>
+              <img src="../../../assets/fg.png" alt="" style={{width:"70%",marginLeft:"20%"}} />
+                <MDBInput 
+                label='Please Enter your email'
+                name="email"
+                type="text"
+                value={emailForgotten}
+                onChange={(e) => setEmailForgotten(e.target.value)}
+                required />
+              </MDBModalBody>
+              <MDBModalFooter>
+                <MDBBtn color='secondary' onClick={toggleOpen}>
+                  Close
+                </MDBBtn>
+              <MDBBtn color='info' onClick={()=>forgotPasswordEmail()}> Send Email ! </MDBBtn> 
+              </MDBModalFooter>
+            </MDBModalContent>
+          </MDBModalDialog>
+        </MDBModal>  
 
       </>
 

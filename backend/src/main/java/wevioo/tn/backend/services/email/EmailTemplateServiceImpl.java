@@ -157,10 +157,6 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
 
     public String updateEmailTemplate(Long id, UpdateEmailTemplateRequest updatedTemplate, Object jsonObject)  {
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            String json = objectMapper.writeValueAsString(jsonObject);
-            System.out.println("JSON String: " + json); // Debugging statement
-            System.out.println("JSON String: " + updatedTemplate); // Debugging statement
 
         EmailTemplate emailTemplate = emailTemplateRepository.findEmailTemplateWithDetails(id);
         emailTemplate.setName(updatedTemplate.getName());

@@ -3,6 +3,7 @@ import {
   MDBBtn,
   MDBCard,
   MDBCardBody,
+  MDBCardImage,
   MDBCol,
   MDBModal,
   MDBModalBody,
@@ -37,6 +38,7 @@ import { Button, Tooltip } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import Send from "@mui/icons-material/Send";
 import ScheduleSend from "@mui/icons-material/ScheduleSend";
+import { Role } from "../../../../models/Role";
 
 
 const ListEmails = () => {
@@ -55,6 +57,9 @@ const ListEmails = () => {
   const currentItems = templates.slice(indexOfFirstItem, indexOfLastItem);
   const [update, setUpdate] = useState<boolean>(false);
   const navigate = useNavigate();
+  const storedUser = localStorage.getItem('user');
+  const user = storedUser ? JSON.parse(storedUser) : null;
+  const role:Role=user.role;
   const handlePageChange = (page: any) => {
     setCurrentPage(page);
   };
@@ -118,25 +123,28 @@ const ListEmails = () => {
           md="9"
           className="list_container mb-4 d-flex align-items-center"
         >
-          {/* <MDBCardImage src="../assets/listEmails.gif" position="top" fluid className="size_imgg" /> */}
+          <MDBCardImage src="../assets/listEmails.gif" position="top" fluid className="size_imgg" />
           <MDBCard>
             <MDBCardBody>
               <MDBTable striped hover bordered>
                 <MDBTableHead color="blue lighten-4">
                   <tr>
-                    <th>#id</th>
                     <th>Name</th>
                     <th>Language</th>
                     <th>State</th>
-                    <th> View / Update / Delete </th>
+                    {role===Role.ADMIN && ( <th> View / Update / Delete </th>)}
+                    {role===Role.USER && ( <th> View </th>)}
+                    {role===Role.USER && 
+                    (<>
                     <th> Send Immediatly </th>
                     <th> Schedule </th>
+                    </>)}
+
                   </tr>
                 </MDBTableHead>
                 <MDBTableBody>
                   {currentItems.map((template) => (
                     <tr key={template.id}>
-                      <td>{template.id}</td>
                       <td>{template.name}</td>
                       <td>{template.language}</td>
                       {template.state === "SIMPLE" && (
@@ -161,8 +169,9 @@ const ListEmails = () => {
                           <Visibility style={{color:"whitesmoke"}}  />
                           </Button>                           
                           </Tooltip>
-
-                          <Tooltip style={{marginRight:"5px"}}  title="Update" className="color_orange" >
+                        {role===Role.ADMIN && (
+                          <>
+                              <Tooltip style={{marginRight:"5px"}}  title="Update" className="color_orange" >
                           <Button onClick={() =>
                               navigate(`/editTemplateEmail/${template.id}`)
                             } >
@@ -176,11 +185,14 @@ const ListEmails = () => {
                           </Button>                           
                           </Tooltip>
 
-                          
+                          </>
+                        )}
                       
                         </div>
                       </td>
-                      <td>
+                      {role===Role.USER && (
+                        <>
+                         <td>
                         <Tooltip style={{marginRight:"5px"}} title="Send" className="color_blue" >
                           <Button     onClick={() =>
                             navigate(`/sendSimpleEmail/${template.id}`)
@@ -198,6 +210,9 @@ const ListEmails = () => {
                           </Button>                           
                           </Tooltip>
                       </td>
+                        </>
+                      )}
+                     
                     </tr>
                   ))}
                 </MDBTableBody>

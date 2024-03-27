@@ -55,16 +55,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public AuthenticationResponse singUp(SignUpRequest signUpRequest){
 
         UserEntity user = modelMapper.map(signUpRequest, UserEntity.class);
+        user.setEnabled(true);
         user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
         if(signUpRequest.isMfaEnabled()){
             user.setSecret(tfaService.generateNewSecret());
-            user.setEnabled(true);
         }
 
         userRepository.save(user);
 
-        if(!user.isEnabled()){
-        emailAuthVerification.sendEmailAuthVerification(user.getEmail());
+        if(!user.isMfaEnabled()){
         return AuthenticationResponse.builder().mfaEnabled(user.isMfaEnabled()).build();
         }
 

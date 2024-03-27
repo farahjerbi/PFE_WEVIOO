@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import wevioo.tn.backend.dtos.request.ChangePasswordRequest;
+import wevioo.tn.backend.dtos.request.ForgotPassword;
 import wevioo.tn.backend.dtos.request.UpdateUser;
 import wevioo.tn.backend.dtos.response.UserResponse;
 import wevioo.tn.backend.entities.UserEntity;
@@ -46,10 +46,16 @@ public class ProfileServiceImpl implements ProfileService {
         }
 
 
-        public String forgotPassword(String email){
-           /* UserEntity user =  userRepository.findByEmail(email)
-                    .orElseThrow(() -> new IllegalStateException("User not found"));        */
-            return " ";
+        public void forgotPassword(ForgotPassword forgotPassword){
+            UserEntity user = userRepository.findByEmail(forgotPassword.getEmail())
+                    .orElseThrow(() -> new IllegalStateException("User not found"));
+
+            if (!forgotPassword.getNewPassword().equals(forgotPassword.getConfirmNewPassword())) {
+                throw new IllegalStateException("Passwords do not match");
+            }
+            user.setPassword(passwordEncoder.encode(forgotPassword.getNewPassword()));
+
+            userRepository.save(user);
     }
 
 
@@ -64,10 +70,7 @@ public class ProfileServiceImpl implements ProfileService {
 
         userRepository.save(user);
 
-        UserResponse userResponse = modelMapper.map(user, UserResponse.class);
-
-
-        return userResponse;
+        return modelMapper.map(user, UserResponse.class);
     }
 
 

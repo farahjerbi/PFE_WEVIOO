@@ -84,7 +84,6 @@ const ListUsers = () => {
                     <MDBTable striped hover bordered >
                         <MDBTableHead color="blue lighten-4">
                         <tr>
-                            <th>#id</th>
                             <th>FirstName</th>
                             <th>LastName</th>
                             <th>Email</th>
@@ -96,7 +95,6 @@ const ListUsers = () => {
                         <MDBTableBody>
                         {currentItems.map(user => (
                         <tr key={user.id}>
-                            <td>{user.id}</td>
                             <td>{user.firstName}</td>
                             <td>{user.lastName}</td>
                             <td>{user.email}</td>

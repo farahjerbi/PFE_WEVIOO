@@ -18,7 +18,10 @@ import Profile from "./pages/user/profile/Profile";
 import SendSimpleEmail from "./pages/user/email/sendSimpleEmail/SendSimpleEmail";
 import UpdateEmail from "./pages/admin/Email/update/UpdateEmail";
 import Calendar from "./pages/admin/Email/calendar/Calendar";
+import ForgotPassword from "./pages/authentication/forgotPassword/ForgotPassword";
 function App() {
+
+
   return (
     <div className="App">
       <Toaster richColors position="top-right"  />
@@ -26,7 +29,7 @@ function App() {
         <Routes>
           <Route element={<Layout/>}>
             <Route index element={<Home/>} />
-            <Route path="/dashboard" element={ <ProtectedRoute path="/dashboard" requiredRole={Role.ADMIN} element={<Dashboard />}/> } />
+            <Route path="/dashboard" element={ <ProtectedRoute path="/dashboard" requiredRole={[Role.ADMIN,Role.USER]} element={<Dashboard />}/> } />
             <Route path='/addEmailTemplate' element={<AddEmail />} />
             <Route path='/home' element={<Home />} />
             <Route path='/addSimpleEmail' element={<CreateSimpleEmail />} />
@@ -40,9 +43,11 @@ function App() {
             <Route path='/sendScheduledEmail/:id' element={<SendSimpleEmail isScheduled={false} />} />
             <Route path='/editTemplateEmail/:id' element={<UpdateEmail />} />
             <Route path='/calendar' element={<Calendar isAdmin={true} />} />
-
           </Route> 
           <Route path='/authentication' element={<Authentication />} />
+          <Route path='/forgotPassword/:email' element={<ForgotPassword />} />
+          <Route path='/authentication/:emailUser' element={<Authentication />} />
+
         </Routes>
       </BrowserRouter>
     </div>
