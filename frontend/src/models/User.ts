@@ -8,6 +8,8 @@ export interface IUser {
     role:Role
     enabled:string
     mfaEnabled:string
+    signature:string
+    emailSecret:string
 }
 
 export type UserPayload = {

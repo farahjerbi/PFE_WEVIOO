@@ -14,6 +14,7 @@ import { logout } from '../../redux/state/authSlice';
 import { Link, useNavigate } from 'react-router-dom';
 import { IconButton, Tooltip } from '@mui/material';
 import LogOut from '@mui/icons-material/Logout';
+import { DASHBOARD, LIST_EMAIL_TEMPLATES, LIST_PUSH_TEMPLATES, LIST_SMS_TEMPLATES } from '../../routes/paths';
 
 const Navbar = () => {
     const dispatch = useDispatch();
@@ -32,23 +33,22 @@ const Navbar = () => {
                 <div className="nav-content">
                   <ul className="navbar-nav mr-auto">
                         <li>
-                            {/* <Link></Link> */}
-                            <a className="menu-items" onClick={()=>navigate('dashboard')}>Dashboard</a>
+                            <Link className="menu-items" to={DASHBOARD}>Dashboard</Link>
                         </li>
                         <li>
-                            <a className="menu-items" onClick={()=>navigate('listEmailTemplates')}>Email</a>
+                            <Link className="menu-items" to={LIST_EMAIL_TEMPLATES}>Email</Link>
                         </li>
                         <li>
-                            <a className="menu-items">SMS</a>
+                             <Link className="menu-items" to={LIST_SMS_TEMPLATES}>SMS</Link>
                         </li>
                         <li>
-                            <a className="menu-items">Push</a>
+                             <Link className="menu-items" to={LIST_PUSH_TEMPLATES}>Push</Link>
                         </li>
                     </ul>
                 </div>
                     <MDBNavbarNav  className='justify-content-end' style={{marginRight:"2%"}} >
-                        <MDBNavbarItem>
-                        <Tooltip title="Logout" style={{ background: 'linear-gradient(90deg, rgba(106, 15, 255, 1) 0%, rgba(131, 89, 255, 1) 15%, rgba(131, 118, 230, 1) 35%, rgba(186, 155, 227, 1) 67%, rgba(234, 219, 255, 1) 100%)'}}>
+                        <MDBNavbarItem className='color_blue'>
+                        <Tooltip title="Logout"  >
                         <IconButton onClick={()=>handleLogout()}>
                             <LogOut style={{ color: 'white'}} />
                         </IconButton>

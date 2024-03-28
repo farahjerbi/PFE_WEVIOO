@@ -4,6 +4,7 @@ import './AddEmail.css'
 import { useNavigate } from 'react-router-dom'
 import PostAdd from "@mui/icons-material/PostAdd";
 import { Button, Tooltip } from '@mui/material';
+import { ADD_ADVANCED_EMAIL_TEMPLATE, ADD_SIMPLE_EMAIL_TEMPLATE } from '../../../../routes/paths';
 
 const AddEmail = () => {
     const navigate=useNavigate();
@@ -25,7 +26,7 @@ const AddEmail = () => {
         <MDBCardFooter className="links-light profile-card-footer">
          
         <Tooltip  style={{width:"100%"}} title="Add Simple Template" className="color_baby_blue" >
-                          <Button  onClick={()=>navigate('/createTemplate')} >
+                          <Button  onClick={()=>navigate(ADD_SIMPLE_EMAIL_TEMPLATE)} >
                           <PostAdd style={{color:"whitesmoke"}}  />
                           </Button>                           
                           </Tooltip>
@@ -46,7 +47,7 @@ const AddEmail = () => {
         <MDBCardFooter className="links-light profile-card-footer">
        
             <Tooltip  style={{width:"100%"}} title="Add Advanced Template" className="color_blue" >
-                          <Button  onClick={()=>navigate('/createTemplate')} >
+                          <Button  onClick={()=>navigate(ADD_ADVANCED_EMAIL_TEMPLATE)} >
                           <PostAdd style={{color:"whitesmoke"}}  />
                           </Button>                           
                           </Tooltip>

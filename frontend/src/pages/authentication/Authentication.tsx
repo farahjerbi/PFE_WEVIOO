@@ -4,18 +4,20 @@ import Register from '../../components/register/Register';
 import Login from '../../components/login/Login';
 import './Authentication.css'
 import { useNavigate, useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectIsAuth } from '../../redux/state/authSlice';
 
 
 const Authentication = () => {
     const { emailUser } = useParams();
     const [loginRegisterActive, setLoginRegisterActive] = useState<string>("login");
 
-    const storedToken = localStorage.getItem('token');
-    const token = storedToken ? storedToken.substring(1, storedToken.length - 1) : null;
+    const isAuth = useSelector(selectIsAuth);
+
     const navigate = useNavigate();
 
     useEffect(() => {
-      if(token){
+      if(isAuth){
           navigate('/dashboard');
         }
       if(emailUser){

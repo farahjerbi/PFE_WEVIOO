@@ -5,47 +5,74 @@ import BreadcrumSection from '../../../components/BreadcrumSection/BreadcrumSect
 import { MDBBtn, MDBCard, MDBCardBody, MDBCol, MDBContainer, MDBIcon, MDBInput, MDBRow } from 'mdb-react-ui-kit'
 import DeleteUserModal from '../../../components/modals/DeleteUserModal';
 import { Role } from '../../../models/Role';
-import { useNavigate } from 'react-router-dom';
 import ChangePassword from '../changePassword/ChangePassword';
 import { toast } from 'sonner';
-import { useDispatch } from 'react-redux';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../../../redux/state/authSlice';
+import Button from '@mui/material/Button';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { styled } from '@mui/material/styles';
 
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
+});
 const Profile = () => {
+    const user = useSelector(selectUser);
     const [updated, setUpdated] = useState<boolean>(false);
     const [signatureInput, setSignatureInput] = useState<File | null>(null);
-    const storedUser = localStorage.getItem('user');
-    const user = storedUser ? JSON.parse(storedUser) : null;
+    const [formData, setFormData] = useState({
+        email: "" ,
+        emailSecret: "" ,
+        firstName: "",
+        lastName: "",
+    });
+    const { email, emailSecret, firstName, lastName } = formData;
+    const [idDelete, setIdDelete] = useState<number>();
+    const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
+    const [resetPassword, setResetPassword] = useState<boolean>(false);
+    const [signatureUrl, setSignatureUrl] = useState<string>("");
     useEffect(() => {
       const fetchSignatureImage = async () => {
         try {
-          setSignatureUrl(`http://localhost:8088/uploads/${user.signature}`); 
+          if(user){ 
+            setSignatureUrl(`http://localhost:8088/uploads/${user.signature}`);   
+              }
         } catch (error) {
           console.error('Error fetching signature image:', error);
         }
       };
-  
+    
       if (user && user.signature) {
         fetchSignatureImage();
       }
-    }, [updated]);
+    
+      if (user) {
+        setFormData({  
+          email: user.email,
+          emailSecret: user.emailSecret,
+          firstName: user.firstName,
+          lastName: user.lastName,
+        });
+      }
+    
+    }, [user,updated]); 
+    
+
+  
+    if (!user) {
+      return <div>Loading user...</div>;
+    }
    
     const name = user.firstName +' '+ user.lastName;
-    const initialState={
-        email: user.email,
-        emailSecret:user.emailSecret || "",
-        firstName:user.firstName,
-        lastName:user.lastName,
-      }
-    const [formData, setFormData] = useState(initialState);
-    const {email,emailSecret,firstName,lastName}=formData;
-    const [idDelete, setIdDelete] = useState<number>();
-    const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
-    const [resetPassword, setResetPassword] = useState<boolean>(false);
-    const[signatureUrl,setSignatureUrl]=useState<string>("");
-    const navigate=useNavigate();
-
-
     const handleChange=(e: React.ChangeEvent<HTMLInputElement>)=>{
         setFormData({...formData,[e.target.name]:e.target.value})
       }
@@ -128,9 +155,18 @@ const Profile = () => {
             
                             <MDBInput disabled name='email' value={email} onChange={handleChange} wrapperClass='mb-4' label='Email' type='email'/>
                             <MDBInput name='emailSecret' value={emailSecret} onChange={handleChange}  wrapperClass='mb-4' label='Email Secret' type='password'/>
-                            <p>Electronic Signature : </p>
-                            <input type='file'  accept="*/*" onChange={(e) => setSignatureInput(e.target.files && e.target.files[0])}  className='mb-4' />
-
+                            <Button
+                                className='mb-4'
+                                component="label"
+                                role={undefined}
+                                variant="contained"
+                                tabIndex={-1}
+                                color='secondary'
+                                startIcon={<CloudUploadIcon />}
+                              >
+                                Upload Electronic Signature
+                                <VisuallyHiddenInput accept="*/*" onChange={(e) => setSignatureInput(e.target.files && e.target.files[0])}  className='mb-4'  type="file" />
+                              </Button>
                             {signatureUrl && (
                                   <img src={signatureUrl} alt="Signature" style={{ maxWidth: '40%', height: 'auto' }} />
 

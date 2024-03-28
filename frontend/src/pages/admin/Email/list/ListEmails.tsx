@@ -39,6 +39,9 @@ import Visibility from "@mui/icons-material/Visibility";
 import Send from "@mui/icons-material/Send";
 import ScheduleSend from "@mui/icons-material/ScheduleSend";
 import { Role } from "../../../../models/Role";
+import { selectRole } from "../../../../redux/state/authSlice";
+import { useSelector } from "react-redux";
+import { EDIT_EMAIL_TEMPLATE, SEND_EMAIL } from "../../../../routes/paths";
 
 
 const ListEmails = () => {
@@ -57,9 +60,8 @@ const ListEmails = () => {
   const currentItems = templates.slice(indexOfFirstItem, indexOfLastItem);
   const [update, setUpdate] = useState<boolean>(false);
   const navigate = useNavigate();
-  const storedUser = localStorage.getItem('user');
-  const user = storedUser ? JSON.parse(storedUser) : null;
-  const role:Role=user.role;
+  const role = useSelector(selectRole);
+
   const handlePageChange = (page: any) => {
     setCurrentPage(page);
   };
@@ -120,7 +122,7 @@ const ListEmails = () => {
       <BreadcrumSection />
       <MDBRow className="mt-5 pt-5">
         <MDBCol
-          md="9"
+          md="10"
           className="list_container mb-4 d-flex align-items-center"
         >
           <MDBCardImage src="../assets/listEmails.gif" position="top" fluid className="size_imgg" />
@@ -173,7 +175,7 @@ const ListEmails = () => {
                           <>
                               <Tooltip style={{marginRight:"5px"}}  title="Update" className="color_orange" >
                           <Button onClick={() =>
-                              navigate(`/editTemplateEmail/${template.id}`)
+                              navigate(`${EDIT_EMAIL_TEMPLATE}/${template.id}`)
                             } >
                           <Update style={{color:"whitesmoke"}}  />
                           </Button>                           
@@ -195,7 +197,7 @@ const ListEmails = () => {
                          <td>
                         <Tooltip style={{marginRight:"5px"}} title="Send" className="color_blue" >
                           <Button     onClick={() =>
-                            navigate(`/sendSimpleEmail/${template.id}`)
+                            navigate(`${SEND_EMAIL}/${template.id}`)
                           }>
                           <Send style={{color:"whitesmoke"}}  />
                           </Button>                           
@@ -204,8 +206,8 @@ const ListEmails = () => {
                       <td>
                         <Tooltip style={{marginRight:"5px"}} title="ScheduleSend" className="color_green" >
                           <Button   onClick={() =>
-                            navigate(`/sendScheduledEmail/${template.id}`)
-                          }>
+                             navigate(`${SEND_EMAIL}/${template.id}`)     
+                                                  }>
                           <ScheduleSend style={{color:"whitesmoke"}}  />
                           </Button>                           
                           </Tooltip>

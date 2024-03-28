@@ -1,6 +1,7 @@
 package wevioo.tn.backend.controllers;
 
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,8 @@ import wevioo.tn.backend.dtos.request.ChangePasswordRequest;
 import wevioo.tn.backend.dtos.request.ForgotPassword;
 import wevioo.tn.backend.dtos.request.UpdateUser;
 import wevioo.tn.backend.dtos.response.UserResponse;
+import wevioo.tn.backend.entities.UserEntity;
+import wevioo.tn.backend.repositories.UserRepository;
 import wevioo.tn.backend.services.auth.AuthenticationService;
 import wevioo.tn.backend.services.profile.ProfileService;
 
@@ -22,6 +25,9 @@ public class ProfileController {
     private final ProfileService profileService;
 
     private final AuthenticationService authenticationService;
+
+    private final ModelMapper modelMapper;
+    private final UserRepository userRepository;
 
 
     @PostMapping ("forgotPassword")
@@ -59,6 +65,14 @@ public class ProfileController {
     @PutMapping("deactivateUser/{email}")
     public String deactivateUserByEmail(@PathVariable String email) {
         return authenticationService.deactivateUser(email);
+    }
+
+    @GetMapping("getUserByEmail/{email}")
+    public UserResponse getUserByEmail(@PathVariable String email){
+        UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalStateException("User not found"));
+        return  modelMapper.map(user, UserResponse.class);
+
     }
 
 }

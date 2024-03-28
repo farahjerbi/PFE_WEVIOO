@@ -22,10 +22,7 @@ export const StyleWrapper = styled.div`
   background:#377dbc;
 }
 `
-interface calendarProps {
-  isAdmin: boolean;
-}
-const Calendar  : React.FC<calendarProps> = ({isAdmin }) => {
+const Calendar  : React.FC= () => {
 const[getScheduledEmails]=useGetScheduledEmailsMutation()
 const[getScheduledEmailsByUser]=useGetScheduledEmailsByUserMutation()
 const[data,setData]=useState();

@@ -71,7 +71,7 @@ const Login=()=> {
             if(userData.user){
               dispatch(setUser({ user: userData.user, token: userData.token ,role:userData.user.role}));   
               toast.success("User logged In successfully !")
-              navigate('/dashboard') 
+              navigate('/profile') 
             }
           }
     })
