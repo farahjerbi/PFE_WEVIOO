@@ -38,10 +38,15 @@ import { Button, Tooltip } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import Send from "@mui/icons-material/Send";
 import ScheduleSend from "@mui/icons-material/ScheduleSend";
+import Subject from "@mui/icons-material/Subject";
+import AlternateEmail from "@mui/icons-material/AlternateEmail";
+import Image from "@mui/icons-material/Image";
+
+
 import { Role } from "../../../../models/Role";
 import { selectRole } from "../../../../redux/state/authSlice";
 import { useSelector } from "react-redux";
-import { EDIT_EMAIL_TEMPLATE, SEND_EMAIL } from "../../../../routes/paths";
+import { EDIT_EMAIL_TEMPLATE, SEND_EMAIL, SEND_EMAIL_SCHEDULED } from "../../../../routes/paths";
 
 
 const ListEmails = () => {
@@ -206,7 +211,7 @@ const ListEmails = () => {
                       <td>
                         <Tooltip style={{marginRight:"5px"}} title="ScheduleSend" className="color_green" >
                           <Button   onClick={() =>
-                             navigate(`${SEND_EMAIL}/${template.id}`)     
+                             navigate(`${SEND_EMAIL_SCHEDULED}/${template.id}`)     
                                                   }>
                           <ScheduleSend style={{color:"whitesmoke"}}  />
                           </Button>                           
@@ -278,7 +283,7 @@ const ListEmails = () => {
         )}
       </MDBRow>
       <MDBModal open={basicModal} setOpen={setBasicModal} tabIndex="-1">
-        <MDBModalDialog>
+        <MDBModalDialog >
           <MDBModalContent>
             <MDBModalHeader>
               <MDBBtn
@@ -289,38 +294,37 @@ const ListEmails = () => {
             </MDBModalHeader>
             <MDBModalBody>
               {selectedTemplate && (
-                <MDBTable bordered>
-                  <MDBTableHead color="blue lighten-4"></MDBTableHead>
-                  <MDBTableBody>
-                    <tr>
-                      <div className="mb-4 d-flex">
-                        <MDBBadge
-                          color="info"
-                          pill
-                          style={{ marginRight: "20px" }}
-                        >
-                          Subject :
-                        </MDBBadge>
-                        {selectedTemplate.templateBody.subject}
-                      </div>
-                    </tr>
-                    <tr>
-                      <div className="mb-4">
-                        <MDBBadge
-                          color="info"
-                          pill
-                          style={{ marginRight: "20px" }}
-                        >
-                          Email Content :
-                        </MDBBadge>
-                      </div>
-                      <MDBTextArea
-                        disabled
-                        value={selectedTemplate.templateBody.content}
-                      />
-                    </tr>
-                  </MDBTableBody>
-                </MDBTable>
+                <div style={{border: "1px solid black", boxShadow: "0px 2px 5px rgba(0, 0, 1, 0.1)" }}>
+            <div style={{ border: "1px solid black", padding: "5px", maxHeight: "30px"}} className="d-flex justify-content-between color_blue">
+              <b style={{ fontSize: "13px" ,color:"snow" }}>Name Template:</b>
+              <p style={{ fontSize: "13px",color:"snow"  }}>{selectedTemplate.name}</p>
+            </div>
+
+            <div style={{ border: "1px solid black", padding: "5px", maxHeight: "30px" }} className="d-flex justify-content-between ">
+              <b style={{ fontSize: "13px" }}> Subject :</b>
+              <p style={{ fontSize: "13px" }}>{selectedTemplate.templateBody.subject}</p>
+            </div>
+
+            <div style={{ border: "1px solid black", padding: "5px", minHeight: "300px" }} className="d-flex justify-content-between position-relative">
+              <p className="mt-2" style={{ fontSize: "13px" }}>{selectedTemplate.templateBody.content}</p>
+              <div style={{ position: "absolute", bottom: "3%", left: "4%" }}>
+                <b style={{ marginRight: "3px" }}>B</b>
+                <i style={{ marginRight: "5px" }}>I</i>
+                <u>U</u>
+
+              </div>
+              <div style={{ position: "absolute", bottom: "3%", right: "4%" }}>
+                  <Subject style={{ marginRight: "3px" ,fontSize:"16px"}}/>
+                  <AlternateEmail style={{fontSize:"16px"}}/>
+                  <Image style={{ marginLeft: "3px" ,fontSize:"16px"}}/>
+
+                </div>
+            </div>
+
+                    
+              
+                </div>
+              
               )}
             </MDBModalBody>
             <MDBModalFooter>

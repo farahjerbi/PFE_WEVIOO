@@ -47,10 +47,10 @@ const Navbar = () => {
                     </ul>
                 </div>
                     <MDBNavbarNav  className='justify-content-end' style={{marginRight:"2%"}} >
-                        <MDBNavbarItem className='color_blue'>
+                        <MDBNavbarItem >
                         <Tooltip title="Logout"  >
                         <IconButton onClick={()=>handleLogout()}>
-                            <LogOut style={{ color: 'white'}} />
+                            <LogOut style={{color:"#6873C8"}}  />
                         </IconButton>
                         </Tooltip>
                      </MDBNavbarItem>

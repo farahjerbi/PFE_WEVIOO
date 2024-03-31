@@ -6,6 +6,7 @@ import { useAddTemplateEmailMutation } from '../../../../redux/services/emailApi
 import { toast } from 'sonner'
 import { EmailTemplate } from '../../../../models/EmailTemplate'
 import { useNavigate } from 'react-router-dom'
+import { ADD_EMAIL_TEMPLATE, LIST_EMAIL_TEMPLATES } from '../../../../routes/paths'
 const CreateSimpleEmail = () => {
   const initialState={
     name: '',
@@ -38,7 +39,7 @@ const CreateSimpleEmail = () => {
       console.log("🚀 ~ emailData:", userData);
       toast.success("Template added successfully");
       setFormData(initialState);
-      navigate('/lisEmailTemplates')
+      navigate(LIST_EMAIL_TEMPLATES)
     } catch (error) {
       toast.error("Error! Yikes");
       console.error("🚀 ~ error:", error);
@@ -57,7 +58,7 @@ const CreateSimpleEmail = () => {
               <MDBInput  name='subject' value={subject} onChange={handleChange} wrapperClass='mb-4' label='Subject' id='form1' type='text'/>
               <MDBTextArea name='content' value={content} onChange={handleChange} wrapperClass='mb-4' label='content' id='textAreaExample' rows={4} />
               <div style={{display:"flex" ,justifyContent:"space-between"}}>
-              <MDBBtn onClick={()=>navigate('/addEmailTemplate')} color='info'>Go Back</MDBBtn>
+              <MDBBtn onClick={()=>navigate(ADD_EMAIL_TEMPLATE)} color='info'>Go Back</MDBBtn>
               <MDBBtn type='submit'>Add Template</MDBBtn>
               </div>
               </form>

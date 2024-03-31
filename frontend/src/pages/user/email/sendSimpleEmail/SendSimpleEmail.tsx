@@ -9,13 +9,16 @@ import axios from 'axios';
 import { EmailTemplate } from '../../../../models/EmailTemplate';
 import EmailEditor ,{EmailEditorProps,EditorRef} from 'react-email-editor';
 import ScheduleModal from '../../../../components/modals/ScheduleModal';
+import { selectUser } from '../../../../redux/state/authSlice';
+import { useSelector } from 'react-redux';
+import ListEmails from '../../../admin/Email/list/ListEmails';
+import { LIST_EMAIL_TEMPLATES } from '../../../../routes/paths';
 interface SendSimpleEmailProps {
   isScheduled: boolean;
 }
 const SendSimpleEmail : React.FC<SendSimpleEmailProps> = ({isScheduled }) => {
     const { id } = useParams();
-    const storedUser = localStorage.getItem('user');
-    const user = storedUser ? JSON.parse(storedUser) : null;
+    const user=useSelector(selectUser)
     const [isSignatureEnabled, setIsSignatureEnabled] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [schedularModal, setSchedularModal] = useState<boolean>(false);
@@ -80,7 +83,7 @@ const SendSimpleEmail : React.FC<SendSimpleEmailProps> = ({isScheduled }) => {
             formData.append('attachment', fileInput);
         }
         formData.append('requestBody',JSON.stringify(placeholdersValues))
-        formData.append('id',user.id)
+        formData.append('id',String(user?.id))
         formData.append('addSignature',String(isSignatureEnabled))
         try {
           const response = await axios.post(`http://localhost:8088/api/email/sendEmail/${id}`, formData);
@@ -88,7 +91,7 @@ const SendSimpleEmail : React.FC<SendSimpleEmailProps> = ({isScheduled }) => {
           if (response.status === 200) {
             console.log("🚀 ~ Profile ~ response:", response);
             toast.success("Email sent Successfully !");
-            navigate('/listEmailTemplates')
+            navigate(LIST_EMAIL_TEMPLATES)
           }
         } catch (err) {
           toast.error('Error!')
@@ -155,7 +158,7 @@ const SendSimpleEmail : React.FC<SendSimpleEmailProps> = ({isScheduled }) => {
                   />
                   <p>(if exists)</p>
               </div>
-              {isScheduled && (
+              {!isScheduled && (
                 <div className='text-center mt-4' style={{marginLeft:"60px"}}>
                 <p>Add Attachement : </p>
                 <input type='file'  accept="*/*" onChange={(e) => setFileInput(e.target.files && e.target.files[0])}  className='mb-4' />
@@ -192,14 +195,14 @@ const SendSimpleEmail : React.FC<SendSimpleEmailProps> = ({isScheduled }) => {
             )}
             {!loading && (
             <div className='d-flex justify-content-between mt-4'>
-            {isScheduled && (
+            {!isScheduled && (
               <>
                 <MDBBtn className='btn w-50 ' color='primary' type='submit'> <MDBIcon  icon="envelope" style={{marginRight:"5px"}} /> Send  </MDBBtn>  
                 <MDBBtn className='btn ' color='secondary' onClick={()=>setPage(!page)} > <MDBIcon  icon="arrow-left" style={{marginRight:"5px"}} /> Previous  </MDBBtn>
 
               </>
             )}
-              {!isScheduled && (
+              {isScheduled && (
                 <>  
                 <MDBBtn onClick={(e) => { e.preventDefault(); setSchedularModal(true)}} className='btn w-50 ' color='primary' > 
                 <MDBIcon  icon="envelope" style={{marginRight:"5px"}} /> Schedule  </MDBBtn>  
@@ -210,7 +213,7 @@ const SendSimpleEmail : React.FC<SendSimpleEmailProps> = ({isScheduled }) => {
             </div>
             
              )}
-              <ScheduleModal templateId={id} recipientEmails={recipientEmails} cc={ccEmails} id={user.id} replyTo={replyTo}
+              <ScheduleModal templateId={id} recipientEmails={recipientEmails} cc={ccEmails} id={user?.id} replyTo={replyTo}
               addSignature={isSignatureEnabled} show={schedularModal} placeholdersValues={placeholdersValues} 
                 onClose={handleUpdate} /> 
 

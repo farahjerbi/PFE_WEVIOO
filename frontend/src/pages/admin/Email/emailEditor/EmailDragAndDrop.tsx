@@ -6,6 +6,7 @@ import { useAddDesignTemplateMutation, useAddTemplateEmailMutation } from "../..
 import { toast } from "sonner";
 import './EmailTemplate.css'
 import { useNavigate } from "react-router-dom";
+import { LIST_EMAIL_TEMPLATES } from "../../../../routes/paths";
 const EmailDragAndDrop: React.FC = () => {
   const initialState={
     name: '',
@@ -95,7 +96,7 @@ const EmailDragAndDrop: React.FC = () => {
       toast.success("Template added successfully");
       setFormData(initialState);
       setBasicModal(!basicModal);
-      navigate('/listEmailTemplates')
+      navigate(LIST_EMAIL_TEMPLATES)
     } catch (error) {
       toast.error("Error! Yikes");
       console.error("🚀 ~ error:", error);

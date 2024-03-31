@@ -85,7 +85,16 @@ const Register=()=> {
       <MDBContainer >
       {toBeContinued && !Continued && (
         <>
-              <form onSubmit={verifyEmailUser} style={{marginTop:"25%"}} >
+           
+              <form onSubmit={verifyEmailUser} style={{marginTop:"15%"}} >
+              <ReactTyped
+                    strings={[
+                        "Let's Get Started ! First Step Enter your mail address"]}
+                    typeSpeed={50}
+                    backSpeed={100}
+                    loop
+                    style={{ color: '#6873C8', fontSize: '17px', fontWeight: 'bold' }}
+                  />
                 <MDBInput name='email' value={email} onChange={handleChange} className='mb-4 mt-5' type='email' id='form8Example3' label='Email address' />
                 <MDBBtn  type='submit' className='mb-4' block>
                   Sign up

@@ -3,14 +3,16 @@ import './ChangePassword.css'
 import { FormEvent, useState } from 'react';
 import { useChangePasswordMutation } from '../../../redux/services/usersApi';
 import { toast } from 'sonner';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../../../redux/state/authSlice';
 interface Close {
   onClose: () => void;
 }
 const ChangePassword:React.FC<Close> = ({ onClose })=> {
-    const storedUser = localStorage.getItem('user');
-    const user = storedUser ? JSON.parse(storedUser) : null;
+    const user=useSelector(selectUser)
+
     const initialState={
-      email: user.email,
+      email: user?.email,
       oldPassword:"",
       newPassword:"",
       confirmNewPassword:"" 
@@ -28,12 +30,14 @@ const ChangePassword:React.FC<Close> = ({ onClose })=> {
     ) => {
       e.preventDefault();
       try{
-        await changePassword({email,newPassword,oldPassword,confirmNewPassword})
-        .unwrap()
-        .then((userData: any) => {
-          toast.success("Password Changed Successfully !")
-          onClose()
-        })
+        if(email){
+          await changePassword({email,newPassword,oldPassword,confirmNewPassword})   
+          .unwrap()
+          .then((userData: any) => {
+            toast.success("Password Changed Successfully !")
+            onClose()
+          })
+        }
       }catch(error){
         toast.error('Error!')
         console.log("🚀 ~ handleChangePassword ~ error:", error)

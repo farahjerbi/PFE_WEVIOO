@@ -20,8 +20,9 @@ import { useForgotPasswordMutation, useLoginUserMutation } from '../../redux/ser
 import { toast } from 'sonner';
 import Code from '../otp_code/Code';
 import { Link, useNavigate } from 'react-router-dom';
-import { setUser } from '../../redux/state/authSlice';
+import {setUser } from '../../redux/state/authSlice';
 import { useDispatch } from 'react-redux';
+import { DASHBOARD } from '../../routes/paths';
 
 const Login=()=> {
   const stage="login"
@@ -71,7 +72,7 @@ const Login=()=> {
             if(userData.user){
               dispatch(setUser({ user: userData.user, token: userData.token ,role:userData.user.role}));   
               toast.success("User logged In successfully !")
-              navigate('/profile') 
+              navigate(DASHBOARD) 
             }
           }
     })

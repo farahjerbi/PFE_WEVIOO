@@ -17,9 +17,6 @@ const Authentication = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-      if(isAuth){
-          navigate('/dashboard');
-        }
       if(emailUser){
         setLoginRegisterActive('register')
       }

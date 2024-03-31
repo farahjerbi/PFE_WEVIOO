@@ -1,7 +1,5 @@
 import { MDBBtn, MDBIcon, MDBModal, MDBModalBody, MDBModalContent, MDBModalDialog, MDBModalFooter, MDBModalHeader, MDBModalTitle, MDBSpinner } from 'mdb-react-ui-kit'
-import React, { FormEvent, useEffect, useState } from 'react'
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { StaticDatePicker } from '@mui/x-date-pickers';
+import React, { useEffect, useState } from 'react'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
@@ -13,6 +11,7 @@ import timezone from 'dayjs/plugin/timezone';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { LIST_EMAIL_TEMPLATES } from '../../routes/paths';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -81,7 +80,7 @@ interface SchedularProps {
         if (response.status === 200) {
           console.log("🚀 ~ Profile ~ response:", response);
           toast.success("Email scheduled successfully !");
-          navigate('/listEmailTemplates')
+          navigate(LIST_EMAIL_TEMPLATES)
         }
       } catch (err) {
         toast.error('Error!')

@@ -13,6 +13,7 @@ import { selectUser } from '../../../redux/state/authSlice';
 import Button from '@mui/material/Button';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { styled } from '@mui/material/styles';
+import { Tooltip } from '@mui/material';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -155,6 +156,7 @@ const Profile = () => {
             
                             <MDBInput disabled name='email' value={email} onChange={handleChange} wrapperClass='mb-4' label='Email' type='email'/>
                             <MDBInput name='emailSecret' value={emailSecret} onChange={handleChange}  wrapperClass='mb-4' label='Email Secret' type='password'/>
+                            <Tooltip title="  Upload Electronic Signature">
                             <Button
                                 className='mb-4'
                                 component="label"
@@ -164,9 +166,9 @@ const Profile = () => {
                                 color='secondary'
                                 startIcon={<CloudUploadIcon />}
                               >
-                                Upload Electronic Signature
                                 <VisuallyHiddenInput accept="*/*" onChange={(e) => setSignatureInput(e.target.files && e.target.files[0])}  className='mb-4'  type="file" />
                               </Button>
+                            </Tooltip>
                             {signatureUrl && (
                                   <img src={signatureUrl} alt="Signature" style={{ maxWidth: '40%', height: 'auto' }} />
 

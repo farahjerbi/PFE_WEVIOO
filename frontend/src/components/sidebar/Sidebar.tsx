@@ -5,7 +5,7 @@ import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Role } from '../../models/Role';
 import { selectRole } from '../../redux/state/authSlice';
 import { useSelector } from 'react-redux';
-import { ADD_EMAIL_TEMPLATE, DASHBOARD, EMAILS_STATISTICS, LIST_EMAIL_TEMPLATES, LIST_USERS, PROFILE, USERS_STATISTICS } from '../../routes/paths';
+import { ADD_EMAIL_TEMPLATE, CALENDAR, DASHBOARD, EMAILS_STATISTICS, LIST_EMAIL_TEMPLATES, LIST_USERS, PROFILE, USERS_STATISTICS } from '../../routes/paths';
 const Sidebar = () => {
     const [basicActive, setBasicActive] = useState('home');
     const [showEmail, setShowEmail] = useState(false);
@@ -18,8 +18,8 @@ const Sidebar = () => {
 
     useEffect(() => {
       const pathname = location.pathname;
-      const dashboardNameFromPath = pathname.split('/')[1];
-      const formattedDashboardName = dashboardNameFromPath.charAt(0)+ dashboardNameFromPath.slice(1);
+      const dashboardNameFromPath = pathname.split('/');
+      const formattedDashboardName =dashboardNameFromPath.slice(1).join('/');
       setDashboardName(formattedDashboardName);
       console.log("🚀 ~ useEffect ~ formattedDashboardName:", formattedDashboardName)
 
@@ -90,6 +90,13 @@ const Sidebar = () => {
                         <MDBIcon icon="book-reader" className='sidebar-icon'/>
                          <span>Profile</span> 
                     </MDBListGroupItem>
+
+                    <MDBListGroupItem  className={dashboardName === "calendar" ? 'sidebar-item-active' : 'sidebar-item'}  onClick={()=>navigate(CALENDAR)}>
+                        <MDBIcon icon="book-reader" className='sidebar-icon'/>
+                         <span>My Calendar</span> 
+                    </MDBListGroupItem>
+
+
         {role===Role.ADMIN && (<>
          <MDBListGroupItem  className='sidebar-item' onClick={handleUsers}>
                         <MDBIcon icon="users" className='sidebar-icon '/>
@@ -123,21 +130,21 @@ const Sidebar = () => {
                     {showEmail && (
                     <>
                          <NavLink to={LIST_EMAIL_TEMPLATES} >
-                              <MDBListGroupItem noBorders className={dashboardName === "listEmailTemplates" ? 'sidebar-item-active' : 'sidebar-item'}>
+                              <MDBListGroupItem noBorders className={dashboardName === "email/list" ? 'sidebar-item-active' : 'sidebar-item'}>
                                   <MDBIcon icon="list-ol" className='sidebar-icon-secondary '/>
                                   <span className='span-secondary'>List</span>
                               </MDBListGroupItem>
                           </NavLink>
                           {role===Role.ADMIN && ( 
                                 <NavLink to={ADD_EMAIL_TEMPLATE} >
-                                <MDBListGroupItem noBorders className={dashboardName === "addEmailTemplate" ? 'sidebar-item-active' : 'sidebar-item'}>
+                                <MDBListGroupItem noBorders className={dashboardName === "email/add" ? 'sidebar-item-active' : 'sidebar-item'}>
                                     <MDBIcon icon="plus" className='sidebar-icon-secondary  '/>
                                     <span className='span-secondary'>Add </span>
                                 </MDBListGroupItem>
                             </NavLink>
                           )}             
                           <NavLink to={EMAILS_STATISTICS}>
-                              <MDBListGroupItem noBorders  className={dashboardName === "emailsStatistics" ? 'sidebar-item-active' : 'sidebar-item'}>
+                              <MDBListGroupItem noBorders  className={dashboardName === "email/statistics" ? 'sidebar-item-active' : 'sidebar-item'}>
                                   <MDBIcon icon="chart-bar" className='sidebar-icon-secondary  '/>
                                   <span className='span-secondary'>Statistics</span>
                               </MDBListGroupItem>

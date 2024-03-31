@@ -77,12 +77,13 @@ export const authSlice = createSlice({
             state.user=action.payload.user;
             state.token=action.payload.token;
             state.role=action.payload.user.role;
-            state.isAuthorized=!isTokenExpired(state.token);
+            state.isAuthorized=true;
         },
         logout:(state)=>{
             localStorage.clear();
             state.user=null;
             state.role=null;
+            state.isAuthorized=false;
             state.token=null;
         },
         setIsAuthorized: (state, action: PayloadAction<boolean>) => {
