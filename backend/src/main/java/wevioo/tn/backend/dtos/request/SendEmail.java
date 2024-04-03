@@ -12,4 +12,5 @@ public class SendEmail {
     private MultipartFile attachment;
     private Long id ;
     private String addSignature;
+    private String isSentSeparately="false";
 }

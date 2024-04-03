@@ -137,10 +137,10 @@ const handleEventMouseLeave = (eventId: string) => {
           backgroundPosition: "center",
           backgroundSize: "contain",
           backgroundRepeat: "no-repeat",
-          width: "80%",
+          width: "83%",
           marginLeft: "18%"
         }}>
-            <StyleWrapper>
+    <StyleWrapper style={{marginTop:"8%"}}>
       <FullCalendar
           plugins={[dayGridPlugin, timeGridPlugin]}
           initialView={"dayGridMonth"}

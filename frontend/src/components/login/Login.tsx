@@ -110,7 +110,7 @@ const Login=()=> {
 
                   <div className='text-center'>
                     <p>
-                      Not a member? <a href='#!'>Register</a>
+                      Not a member? <p style={{cursor:'pointer'}} >Register</p>
                     </p>
                   </div>
                 </form>

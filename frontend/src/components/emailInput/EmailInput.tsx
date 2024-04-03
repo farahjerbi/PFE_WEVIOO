@@ -2,7 +2,18 @@ import React, { ChangeEvent, useEffect, useState } from 'react';
 import { MDBBtn, MDBIcon, MDBInput } from 'mdb-react-ui-kit';
 import './EmailInput.css';
 import *as xlsx from 'xlsx';
-
+import { styled } from '@mui/material';
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
+});
 interface EmailInputProps {
   label: string;
   onChange: (emails: string[]) => void;
@@ -100,13 +111,13 @@ const EmailInput: React.FC<EmailInputProps> = ({ label,onChange }) => {
         <div>
            {emails.length- 1 === index && emails.length < 4 && (
             <>
-               <MDBBtn type="button" onClick={addEmailField} className="add-btn">
+               <MDBBtn type="button" onClick={addEmailField} className="add-btn me-5" >
                 <MDBIcon icon="add" style={{marginRight:"3px"}}/>
                   Add 
               </MDBBtn>
 
               <MDBBtn type="button" color='info'>
-                <input type="file"  onChange={(e) => readExcel(e)} />
+                <input type="file"  onChange={(e) => readExcel(e)} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }} />
                 <MDBIcon icon="file-excel" style={{marginRight:"3px"}}/>
                   Download Excel 
               </MDBBtn>

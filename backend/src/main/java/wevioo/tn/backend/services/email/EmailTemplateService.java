@@ -20,6 +20,5 @@ public interface EmailTemplateService {
                             String[] recipients , String[] cc,String replyTo,
                             String addSignature)throws JsonProcessingException ;
     String deleteEmailTemplate(Long id);
-     void sendHtmlEmail(String to, String subject, String htmlBody);
      String updateEmailTemplate(Long id, UpdateEmailTemplateRequest updatedTemplate, Object jsonObject) ;
 }

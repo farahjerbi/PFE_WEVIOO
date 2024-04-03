@@ -1,35 +1,45 @@
-import {BrowserRouter,Navigate,Route, Routes } from "react-router-dom"
-import Dashboard from './pages/admin/dashboard/Dashboard';
-import Authentication from './pages/authentication/Authentication';
-import { Toaster } from 'sonner'
-
-import AddEmail from './pages/admin/Email/Add/AddEmail';
-import CreateSimpleEmail from './pages/admin/Email/create/CreateSimpleEmail';
-import EmailDragAndDrop from './pages/admin/Email/emailEditor/EmailDragAndDrop';
-import ListEmails from './pages/admin/Email/list/ListEmails';
-import Layout from './routes/Layout';
-import ListUsers from './pages/admin/users/list/ListUsers';
-import UsersStatistics from './pages/admin/users/statistics/UsersStatistics';
-import EmailStatistics from './pages/admin/Email/statistics/EmailStatistics';
-import ProtectedRoute from './routes/ProtectedRoute';
-import Profile from "./pages/user/profile/Profile";
-import SendSimpleEmail from "./pages/user/email/sendSimpleEmail/SendSimpleEmail";
-import UpdateEmail from "./pages/admin/Email/update/UpdateEmail";
-import Calendar from "./pages/admin/Email/calendar/Calendar";
-import ForgotPassword from "./pages/authentication/forgotPassword/ForgotPassword";
+import React, { Suspense, useEffect } from 'react';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { Toaster } from 'sonner';
 import { ADD_ADVANCED_EMAIL_TEMPLATE, ADD_EMAIL_TEMPLATE, ADD_SIMPLE_EMAIL_TEMPLATE, AUTHENTICATION, CALENDAR, DASHBOARD, EDIT_EMAIL_TEMPLATE, EMAILS_STATISTICS, LIST_EMAIL_TEMPLATES, LIST_USERS, PROFILE, SEND_EMAIL, SEND_EMAIL_SCHEDULED, USERS_STATISTICS } from "./routes/paths";
-import { selectIsAuth, selectRole } from "./redux/state/authSlice";
-import { useSelector } from "react-redux";
+import { decodeToken, selectIsAuth, selectRole } from "./redux/state/authSlice";
+import { useDispatch, useSelector } from "react-redux";
 import { Role } from "./models/Role";
-import NotFound from "./components/404Error/NotFound";
+import { AppDispatch } from "./redux/store";
+import Loading from "./components/loading/Loading"; 
+// Lazy load components
+const Dashboard = React.lazy(() => import('./pages/admin/dashboard/Dashboard'));
+const Authentication = React.lazy(() => import('./pages/authentication/Authentication'));
+const AddEmail = React.lazy(() => import('./pages/admin/Email/Add/AddEmail'));
+const CreateSimpleEmail = React.lazy(() => import('./pages/admin/Email/create/CreateSimpleEmail'));
+const EmailDragAndDrop = React.lazy(() => import('./pages/admin/Email/emailEditor/EmailDragAndDrop'));
+const ListEmails = React.lazy(() => import('./pages/admin/Email/list/ListEmails'));
+const Layout = React.lazy(() => import('./routes/Layout'));
+const ListUsers = React.lazy(() => import('./pages/admin/users/list/ListUsers'));
+const UsersStatistics = React.lazy(() => import('./pages/admin/users/statistics/UsersStatistics'));
+const EmailStatistics = React.lazy(() => import('./pages/admin/Email/statistics/EmailStatistics'));
+const ProtectedRoute = React.lazy(() => import('./routes/ProtectedRoute'));
+const Profile = React.lazy(() => import('./pages/user/profile/Profile'));
+const SendSimpleEmail = React.lazy(() => import('./pages/user/email/sendSimpleEmail/SendSimpleEmail'));
+const UpdateEmail = React.lazy(() => import('./pages/admin/Email/update/UpdateEmail'));
+const Calendar = React.lazy(() => import('./pages/admin/Email/calendar/Calendar'));
+const ForgotPassword = React.lazy(() => import('./pages/authentication/forgotPassword/ForgotPassword'));
+const NotFound = React.lazy(() => import('./components/404Error/NotFound'));
+
+
 
 function App() {
+  const dispatch: AppDispatch = useDispatch(); 
+  useEffect(() => {
+    dispatch(decodeToken());
+  }, [dispatch]);
   const isAuth = useSelector(selectIsAuth);
   const role=useSelector(selectRole)
   return (
     <div className="App">
       <Toaster richColors position="top-right"  />
       <BrowserRouter>
+      <Suspense fallback={<Loading />}>
         <Routes>
           <Route element={<Layout/>}>
                     <Route path={DASHBOARD} element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
@@ -62,6 +72,7 @@ function App() {
               <Route path={`${AUTHENTICATION}/:emailUser`} element={<Authentication />} />
               <Route path="" element={<Navigate to={AUTHENTICATION} replace/> } />
         </Routes>
+        </Suspense>
       </BrowserRouter>
     </div>
   );

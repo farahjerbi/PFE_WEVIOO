@@ -10,13 +10,21 @@
     position: absolute;
     background-color:transparent;
 }
-.flexible-navbar{
-    width: 87.4%;
+.navbar-container {
+    display: flex;
+    justify-content: flex-start; 
+    align-items: center;
+    width: 100%; 
+    position: fixed;
+    top: 0;
+    z-index: 1000; 
+    background-color: #fff; 
+}
+
+.flexible-navbar {
     height: 60px;
-    position: relative;  
-    margin-left: 15% !important;
-    /* border-radius: 18px;  */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19) !important;
+    margin-left: 15%; 
+    width: calc(100% - 15%); 
 }
 
 .nav-link{

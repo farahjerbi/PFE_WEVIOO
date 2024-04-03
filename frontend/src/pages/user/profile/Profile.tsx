@@ -174,9 +174,9 @@ const Profile = () => {
 
                             )}
 
-                            <div className='d-flex'>
-                            <MDBBtn className='w-50 '>Update Profile</MDBBtn>                            
-                            <MDBBtn className='w-50 ' color='info' onClick={()=>setResetPassword(true)}  >Change Password</MDBBtn>
+                            <div className='d-flex '>
+                            <MDBBtn className='w-50 me-2'>Update Profile</MDBBtn>                            
+                            <MDBBtn className='w-50 me-2' color='info' onClick={()=>setResetPassword(true)}  >Change Password</MDBBtn>
                             <MDBBtn className='w-50 ' color='danger' onClick={() => { setDeleteModalOpen(true); setIdDelete(user.id)}}>Delete Profile</MDBBtn>
                             </div>
                             </MDBCardBody>

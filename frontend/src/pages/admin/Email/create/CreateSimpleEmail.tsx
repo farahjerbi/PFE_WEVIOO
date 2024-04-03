@@ -1,12 +1,13 @@
 import React, {  useState } from 'react'
 import './SimpleEmailTemplate.css'
-import { MDBBtn, MDBCard, MDBCardBody, MDBCardHeader, MDBInput, MDBTextArea } from 'mdb-react-ui-kit'
+import { MDBBtn, MDBCard, MDBCardBody, MDBCardHeader, MDBInput, MDBTextArea, MDBValidation, MDBValidationItem } from 'mdb-react-ui-kit'
 import BreadcrumSection from '../../../../components/BreadcrumSection/BreadcrumSection'
 import { useAddTemplateEmailMutation } from '../../../../redux/services/emailApi'
 import { toast } from 'sonner'
 import { EmailTemplate } from '../../../../models/EmailTemplate'
 import { useNavigate } from 'react-router-dom'
 import { ADD_EMAIL_TEMPLATE, LIST_EMAIL_TEMPLATES } from '../../../../routes/paths'
+
 const CreateSimpleEmail = () => {
   const initialState={
     name: '',
@@ -52,16 +53,18 @@ const CreateSimpleEmail = () => {
             <MDBCard className='CardContainer '>
             <MDBCardHeader className='header'>Create new template</MDBCardHeader>
             <MDBCardBody>
+            <MDBValidation className='row g-3'>
               <form onSubmit={handleAddTemplate}>
-              <MDBInput  name='name' value={name} onChange={handleChange} wrapperClass='mb-4' label='Template Name' id='form1' type='text'/>
-              <MDBInput  name='language' value={language} onChange={handleChange} wrapperClass='mb-4' label='Language' id='form1' type='text'/>
-              <MDBInput  name='subject' value={subject} onChange={handleChange} wrapperClass='mb-4' label='Subject' id='form1' type='text'/>
-              <MDBTextArea name='content' value={content} onChange={handleChange} wrapperClass='mb-4' label='content' id='textAreaExample' rows={4} />
+              <MDBInput  name='name' value={name} onChange={handleChange} required wrapperClass='mb-4' label='Template Name' id='form1' type='text'/>
+              <MDBInput  name='language' value={language} onChange={handleChange} required wrapperClass='mb-4' label='Language' id='form1' type='text'/>
+              <MDBInput  name='subject' value={subject} onChange={handleChange} required wrapperClass='mb-4' label='Subject' id='form1' type='text'/>
+              <MDBTextArea name='content' value={content} onChange={handleChange} required wrapperClass='mb-4' label='content' id='textAreaExample' rows={4} />
               <div style={{display:"flex" ,justifyContent:"space-between"}}>
               <MDBBtn onClick={()=>navigate(ADD_EMAIL_TEMPLATE)} color='info'>Go Back</MDBBtn>
               <MDBBtn type='submit'>Add Template</MDBBtn>
               </div>
               </form>
+              </MDBValidation>
             </MDBCardBody>
         </MDBCard>
     </div>

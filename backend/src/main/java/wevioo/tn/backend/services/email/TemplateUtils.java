@@ -11,6 +11,8 @@ import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMultipart;
 import jakarta.mail.util.ByteArrayDataSource;
 import lombok.AllArgsConstructor;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.TemplateEngine;
@@ -23,10 +25,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 @Service
@@ -34,14 +33,14 @@ import java.util.regex.Pattern;
 public class TemplateUtils {
     private final TemplateEngine templateEngine;
 
-    private  final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{\\{([^{}]*)\\}\\}");
+    private final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{\\{([^{}]*)\\}\\}");
     public static final String EMAIL_TEMPLATE = "HtmlTemplateStandards";
     public static final String TEXT_HTML_ENCODING = "text/html";
-    public static final String DIRECTORY="templates";
-    public static final String DIRECTORYPATH=Paths.get("src", "main", "resources", DIRECTORY).toString();
+    public static final String DIRECTORY = "templates";
+    public static final String DIRECTORYPATH = Paths.get("src", "main", "resources", DIRECTORY).toString();
 
     // Method to extract dynamic placeholders from the template
-    public  Set<String> extractPlaceholders(String template) {
+    public Set<String> extractPlaceholders(String template) {
         Set<String> placeholders = new HashSet<>();
         Matcher matcher = PLACEHOLDER_PATTERN.matcher(template);
         while (matcher.find()) {
@@ -49,8 +48,9 @@ public class TemplateUtils {
         }
         return placeholders;
     }
+
     // Method to replace placeholders with actual values
-    public  String replacePlaceholders(String template, Map<String, String> placeholderValues) {
+    public String replacePlaceholders(String template, Map<String, String> placeholderValues) {
         for (Map.Entry<String, String> entry : placeholderValues.entrySet()) {
             String placeholder = entry.getKey();
             String value = entry.getValue();
@@ -59,7 +59,7 @@ public class TemplateUtils {
         return template;
     }
 
-    public void addHtmlContentToEmail(MimeMultipart mimeMultipart , TemplateBody emailTemplate) throws MessagingException {
+    public void addHtmlContentToEmail(MimeMultipart mimeMultipart, TemplateBody emailTemplate) throws MessagingException {
         Context context = new Context();
         context.setVariable("template", emailTemplate);
         String text = templateEngine.process(EMAIL_TEMPLATE, context);
@@ -81,13 +81,13 @@ public class TemplateUtils {
     }
 
     public void addAttachment(MultipartFile attachment, MimeMultipart mimeMultipart) throws MessagingException, IOException {
-            String attachmentFileName = attachment.getOriginalFilename();
-            byte[] attachmentBytes = attachment.getBytes();
-            String attachmentContentType = attachment.getContentType();
-            BodyPart attachmentBodyPart = new MimeBodyPart();
-            attachmentBodyPart.setDataHandler(new DataHandler(new ByteArrayDataSource(attachmentBytes, attachmentContentType)));
-            attachmentBodyPart.setFileName(attachmentFileName);
-            mimeMultipart.addBodyPart(attachmentBodyPart);
+        String attachmentFileName = attachment.getOriginalFilename();
+        byte[] attachmentBytes = attachment.getBytes();
+        String attachmentContentType = attachment.getContentType();
+        BodyPart attachmentBodyPart = new MimeBodyPart();
+        attachmentBodyPart.setDataHandler(new DataHandler(new ByteArrayDataSource(attachmentBytes, attachmentContentType)));
+        attachmentBodyPart.setFileName(attachmentFileName);
+        mimeMultipart.addBodyPart(attachmentBodyPart);
 
     }
 
@@ -122,6 +122,7 @@ public class TemplateUtils {
 
         return fileName;
     }
+
     public String updateDesignTemplate(Object jsonObject, Long id) throws IOException {
         String fileName = id + ".json";
         String filePath = Paths.get(DIRECTORYPATH, fileName).toString();
@@ -147,12 +148,12 @@ public class TemplateUtils {
         String filePath = Paths.get(DIRECTORYPATH, fileName.toString()).toString();
 
         ObjectMapper objectMapper = new ObjectMapper();
-        File file = new File(filePath+".json");
+        File file = new File(filePath + ".json");
 
         return objectMapper.readValue(file, Object.class);
     }
 
-    public  String extractFullName(String email) {
+    public String extractFullName(String email) {
         String[] parts = email.split("@")[0].split("\\.");
         StringBuilder fullName = new StringBuilder();
         for (String part : parts) {
@@ -161,6 +162,33 @@ public class TemplateUtils {
                     .append(" ");
         }
         return fullName.toString().trim();
+    }
+
+    public JavaMailSender personalJavaMailSender(String email, String secretKey) {
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        String host = getSmtpHost(email);
+        mailSender.setHost(host);
+        mailSender.setPort(587);
+        mailSender.setUsername(email);
+        mailSender.setPassword(secretKey);
+
+        Properties props = mailSender.getJavaMailProperties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+
+        return mailSender;
+    }
+
+    public String getSmtpHost(String email) {
+        String domain = email.substring(email.indexOf('@') + 1);
+        switch (domain) {
+            case "gmail.com":
+                return "smtp.gmail.com";
+            case "outlook.com":
+                return "smtp.outlook.com";
+            default:
+                throw new IllegalArgumentException("SMTP server not configured for domain: " + domain);
+        }
     }
 }
 

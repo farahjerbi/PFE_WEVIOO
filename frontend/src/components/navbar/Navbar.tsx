@@ -25,6 +25,8 @@ const Navbar = () => {
     };
   return (
     <>
+    <div className="navbar-container ">
+
           <MDBNavbar className="flexible-navbar" light expand="md" scrolling>
                 <MDBNavbarBrand  href="https://www.wevioo.com/fr" target="_blanc">
                     <strong className='navbar-brand' >WEVIOO</strong>
@@ -57,7 +59,7 @@ const Navbar = () => {
                     </MDBNavbarNav>
                 </MDBCollapse>
             </MDBNavbar>
-     
+     </div>
     </>
 
    )

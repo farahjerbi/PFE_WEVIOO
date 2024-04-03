@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 const NotFound = () => {
   return (
     <div className="not-found-container">
-     <div style={{ margin: "20px" }} >
+     <div  >
     <h4 style={{color:"#6873C8"}}>
       This page you are looking for might have been removed, had its name changed or is temporarily unavailable.
     </h4>

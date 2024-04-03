@@ -10,10 +10,6 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const dispatch: AppDispatch = useDispatch(); 
-  useEffect(() => {
-    dispatch(decodeToken());
-  }, [dispatch]);
   const isAuth = useSelector(selectIsAuth);
   console.log("🚀 ~ isAuth:", isAuth)
   if (!isAuth) {

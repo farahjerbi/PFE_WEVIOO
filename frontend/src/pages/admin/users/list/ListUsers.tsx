@@ -76,10 +76,11 @@ const ListUsers = () => {
             };
 
   return (
-    <div className='users_container'>
-       <BreadcrumSection />
-        <MDBCol md="10" className="list_container mb-4 d-flex align-items-center ">
-                <MDBCard style={{marginTop:"7%" , marginLeft:'4%'}} >
+    <>
+           <BreadcrumSection />
+           <div className='users_container'>
+        <MDBCol md="9" className="list_container mb-4 d-flex align-items-center me-2 ">
+                <MDBCard style={{marginTop:"7%" }} >
                     <MDBCardBody>
                     <MDBTable striped hover bordered >
                         <MDBTableHead color="blue lighten-4">
@@ -164,8 +165,11 @@ const ListUsers = () => {
             </MDBCol> 
       {idDelete && (
          <DeleteUserModal typeUser={Role.ADMIN} id={idDelete} show={deleteModalOpen}  onClose={handleUpdate}/> )}
+      <img src="../../../../assets/users.gif" alt="gif" style={{width:"30%" ,height:"40%",marginTop:"6%"}}/>
 
     </div>
+    </>
+   
   )
 }
 

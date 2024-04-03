@@ -90,12 +90,22 @@ public class EmailController {
                 return ResponseEntity.ok("Email template not found.");
             }
             ObjectMapper mapper = new ObjectMapper();
-            Map<String, String> requestBody = mapper.readValue(email.getRequestBody(), new TypeReference<Map<String, String>>() {
-            });
+            Map<String, String> requestBody = mapper.readValue(email.getRequestBody(), new TypeReference<Map<String, String>>() {});
             System.out.println("Converted Request Body: " + requestBody.toString());
+            boolean isSentSeparately = Boolean.parseBoolean(email.getIsSentSeparately());
+            if (isSentSeparately) {
+                // Send emails separately
+                for (String recipient : email.getRecipients()) {
+                    String[] singleRecipient = {recipient};
+                    emailService.sendEmail(emailTemplate.getTemplateBody(), requestBody, email.getAttachment(),
+                            singleRecipient, email.getCc(), email.getReplyTo(), email.getId(), email.getAddSignature());
+                }
+            } else {
+                // Send email in bulk
+                emailService.sendEmail(emailTemplate.getTemplateBody(), requestBody, email.getAttachment(),
+                        email.getRecipients(), email.getCc(), email.getReplyTo(), email.getId(), email.getAddSignature());
+            }
 
-            emailService.sendEmail(emailTemplate.getTemplateBody(), requestBody, email.getAttachment(),
-                    email.getRecipients(), email.getCc(), email.getReplyTo(), email.getId(), email.getAddSignature());
             return ResponseEntity.ok().body("Email sent successfully.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -194,12 +204,7 @@ public class EmailController {
         return emailTemplateRepository.findAll();
     }
 
-    @PostMapping("sendHtml/{id}")
-    public String sendHtmlEmail(@PathVariable Long id) {
-        EmailTemplate emailTemplate = emailTemplateRepository.findEmailTemplateWithDetails(id);
-        emailTemplateService.sendHtmlEmail("farah.jeerbi@gmail.com", "Lol", emailTemplate.getTemplateBody().getContent());
-        return "Will it work  all the time ? find out next on MBC action";
-    }
+
     @PostMapping("updateTemplate/{id}")
     public String updateTemplate(@PathVariable Long id,@RequestBody UpdateTemplateRequest request) {
         return emailTemplateService.updateEmailTemplate(id,request.getEmailTemplate(), request.getJsonObject());

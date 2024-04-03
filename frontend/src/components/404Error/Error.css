@@ -1,13 +1,9 @@
 .not-found-container {
     display: flex;
-    justify-content: flex-end;
     align-items: center;
     height: 100vh;
     animation: moveBackground 10s linear infinite;
+    margin-right:"17%" ;
   }
   
-  @keyframes moveBackground {
-    0% { background-position: 0% 0%; }
-    100% { background-position: 100% 100%; }
-  }
-  
+ 

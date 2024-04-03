@@ -33,7 +33,7 @@ const AddEmail = () => {
         </MDBCardFooter>
       </MDBCard>
     </MDBCol>
-    <MDBCol lg="6" xl="5" className="mb-3">
+    <MDBCol lg="6" xl="5" className="mb-3 ms-5">
       <MDBCard className="d-flex mb-5">
       <div className="center-image">
       <MDBCardImage src="../assets/Font.gif" position="top" fluid className="size_img" /> 

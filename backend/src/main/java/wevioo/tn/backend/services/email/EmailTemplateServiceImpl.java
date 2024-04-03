@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
-import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
 import lombok.AllArgsConstructor;
@@ -28,6 +27,7 @@ import java.nio.file.Paths;
 
 import java.util.Map;
 
+
 import static wevioo.tn.backend.services.email.TemplateUtils.DIRECTORYPATH;
 
 
@@ -36,8 +36,6 @@ import static wevioo.tn.backend.services.email.TemplateUtils.DIRECTORYPATH;
 public class EmailTemplateServiceImpl implements EmailTemplateService {
 
     private final EmailTemplateRepository emailTemplateRepository;
-
-    private final JavaMailSender emailSender;
 
     private  final TemplateUtils templateUtils;
 
@@ -67,12 +65,17 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
                           ) {
 
         try {
-            MimeMessage message = emailSender.createMimeMessage();
+            UserEntity user = userRepository.findById(id)
+                    .orElseThrow(() -> new IllegalStateException("User not found"));
+            JavaMailSender mailSender =templateUtils.personalJavaMailSender(user.getEmail(), user.getEmailSecret());
+
+            MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, UTF_8_ENCODING);
             helper.setPriority(1);
             helper.setSubject(emailTemplate.getSubject());
-            helper.setFrom("farah.jeerbi@gmail.com");
+          //  helper.setFrom("farah.jeerbi@gmail.com");
             helper.setTo(recipients);
+
             if (cc != null) {
                 for (String ccRecipient : cc) {
                     helper.addCc(ccRecipient);
@@ -84,8 +87,6 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
             String result = templateUtils.replacePlaceholders(templateContent, requestBody);
             emailTemplate.setContent(result);
 
-            UserEntity user = userRepository.findById(id)
-                    .orElseThrow(() -> new IllegalStateException("User not found"));
 
             String signature = user.getSignature();
 
@@ -94,7 +95,6 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
 
             //Add HTML Body content
             templateUtils.addHtmlContentToEmail(mimeMultipart,emailTemplate);
-
 
 
             // Add signature to the email body
@@ -107,7 +107,9 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
             }
 
             message.setContent(mimeMultipart);
-            emailSender.send(message);
+
+
+            mailSender.send(message);
         } catch (Exception exception) {
             throw new EmailSendingException("Failed to send HTML email", exception);
         }
@@ -142,18 +144,7 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
         return "deleted Successfully";
     }
 
-    public void sendHtmlEmail(String to, String subject, String htmlBody) {
-        MimeMessage message = emailSender.createMimeMessage();
-        try {
-            MimeMessageHelper helper = new MimeMessageHelper(message, true);
-            helper.setTo(to);
-            helper.setSubject(subject);
-            helper.setText(htmlBody, true); // true indicates HTML content
-            emailSender.send(message);
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
-    }
+
 
     public String updateEmailTemplate(Long id, UpdateEmailTemplateRequest updatedTemplate, Object jsonObject)  {
         try {

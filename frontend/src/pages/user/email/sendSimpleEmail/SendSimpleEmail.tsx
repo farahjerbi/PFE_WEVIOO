@@ -11,8 +11,20 @@ import EmailEditor ,{EmailEditorProps,EditorRef} from 'react-email-editor';
 import ScheduleModal from '../../../../components/modals/ScheduleModal';
 import { selectUser } from '../../../../redux/state/authSlice';
 import { useSelector } from 'react-redux';
-import ListEmails from '../../../admin/Email/list/ListEmails';
 import { LIST_EMAIL_TEMPLATES } from '../../../../routes/paths';
+import { Button, Tooltip, styled } from '@mui/material';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
+});
 interface SendSimpleEmailProps {
   isScheduled: boolean;
 }
@@ -32,6 +44,7 @@ const SendSimpleEmail : React.FC<SendSimpleEmailProps> = ({isScheduled }) => {
     const[template,setTemplate]=useState<EmailTemplate>();
     const emailEditorRef = useRef<EditorRef|null>(null); 
     const [templateDesign,setTemplateDesign]= useState<any>();
+    const[isSentSeparately,setIsSentSeparately]=useState<boolean>(false);
     const navigate=useNavigate()
     const[getTemplatePlaceholders]=useGetTemplatePlaceholdersMutation()
     const[getTemplateById]=useGetTemplateByIdMutation()
@@ -85,6 +98,7 @@ const SendSimpleEmail : React.FC<SendSimpleEmailProps> = ({isScheduled }) => {
         formData.append('requestBody',JSON.stringify(placeholdersValues))
         formData.append('id',String(user?.id))
         formData.append('addSignature',String(isSignatureEnabled))
+        formData.append('isSentSeparately',String(isSentSeparately))
         try {
           const response = await axios.post(`http://localhost:8088/api/email/sendEmail/${id}`, formData);
           
@@ -159,9 +173,19 @@ const SendSimpleEmail : React.FC<SendSimpleEmailProps> = ({isScheduled }) => {
                   <p>(if exists)</p>
               </div>
               {!isScheduled && (
-                <div className='text-center mt-4' style={{marginLeft:"60px"}}>
-                <p>Add Attachement : </p>
-                <input type='file'  accept="*/*" onChange={(e) => setFileInput(e.target.files && e.target.files[0])}  className='mb-4' />
+                <div className='text-center mt-4' style={{marginLeft:"30%"}}>
+                       <Button
+                                className='mb-4'
+                                component="label"
+                                role={undefined}
+                                variant="contained"
+                                tabIndex={-1}
+                                color='secondary'
+                                startIcon={<CloudUploadIcon />}
+                              >
+                                Upload File
+                                <VisuallyHiddenInput accept="*/*" onChange={(e) => setFileInput(e.target.files && e.target.files[0])} className='mb-4'  type="file" />
+                              </Button>
                 </div>
               )}  
             </div>
@@ -197,7 +221,9 @@ const SendSimpleEmail : React.FC<SendSimpleEmailProps> = ({isScheduled }) => {
             <div className='d-flex justify-content-between mt-4'>
             {!isScheduled && (
               <>
-                <MDBBtn className='btn w-50 ' color='primary' type='submit'> <MDBIcon  icon="envelope" style={{marginRight:"5px"}} /> Send  </MDBBtn>  
+                <MDBBtn className='btn w-30 ' color='primary' type='submit' onClick={()=>setIsSentSeparately(false)}> <MDBIcon  icon="mail-bulk" style={{marginRight:"5px"}} /> Send Bulk </MDBBtn>  
+                <MDBBtn className='btn w-30 ' color='info' type='submit'onClick={()=>setIsSentSeparately(true)}> 
+                 <MDBIcon  icon="envelope" style={{marginRight:"5px"}} /> Send Separately </MDBBtn>  
                 <MDBBtn className='btn ' color='secondary' onClick={()=>setPage(!page)} > <MDBIcon  icon="arrow-left" style={{marginRight:"5px"}} /> Previous  </MDBBtn>
 
               </>

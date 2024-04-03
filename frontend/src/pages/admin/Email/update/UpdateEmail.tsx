@@ -123,7 +123,7 @@ const UpdateEmail = () => {
 
     <div className='update_container' >
 
-        <div className="p-5 bg-image" style={{backgroundImage: 'url("../assets/update.png")', height: '300px'}}></div>
+        <div className="p-5 bg-image" style={{backgroundImage: 'url("../../../assets/update.png")', height: '300px'}}></div>
         <form onSubmit={handleUpdateTemplate}>
         <MDBCard className='mx-5 mb-5 p-5 shadow-5' style={{marginTop: '-40px', background: 'hsla(0, 0%, 100%, 0.8)', backdropFilter: 'blur(30px)'}}>
         <MDBCardBody className='p-5 text-center'>

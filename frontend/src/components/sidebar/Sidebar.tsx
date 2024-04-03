@@ -73,7 +73,7 @@ const Sidebar = () => {
             ></div>
             <MDBCardBody style={{marginLeft:0,paddingLeft:0}}>
                 <div style={{display:"flex" ,justifyContent:"center",alignItems:"center"}}>
-                <img src="../assets/wevioo_logo.png" alt='logo' className='logo' />
+                <img src="../../../assets/wevioo_logo.png" alt='logo' className='logo-sidebar' />
                 <h4 className="">Notification Platform</h4>
                 </div>
             </MDBCardBody>
