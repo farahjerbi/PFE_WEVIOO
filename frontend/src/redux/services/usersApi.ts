@@ -4,7 +4,7 @@ import { UpdatedUser } from "../../models/UpdatedUser";
 export const usersApi = createApi({
     reducerPath: 'usersApi',
     baseQuery:fetchBaseQuery({
-        baseUrl:"http://localhost:8088/api/users"
+        baseUrl:"http://localhost:8099/api/users"
     }),
     endpoints:(builder)=>({
         activateUser : builder.mutation({

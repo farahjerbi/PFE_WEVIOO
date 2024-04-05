@@ -120,6 +120,7 @@ const Login=()=> {
       {isMfaEnabled  && (
                 <>
                 <h5 className='title'>Set Up Two-Factor Authentication</h5>
+                <img src="../../../assets/otp.png" alt="otp" style={{width:"40%",marginLeft:"30%"}} />
                 <Code email={email} password={password} stage={stage} />
                 </>
       )}

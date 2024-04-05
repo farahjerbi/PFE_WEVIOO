@@ -4,7 +4,7 @@ import { EmailTemplate } from "../../models/EmailTemplate";
 export const emailApi = createApi({
     reducerPath: 'emailApi',
     baseQuery:fetchBaseQuery({
-        baseUrl:"http://localhost:8088/api/email"
+        baseUrl:"http://localhost:8099/apiEmail"
     }),
     endpoints:(builder)=>({
         addTemplateEmail : builder.mutation({

@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import './EmailTemplate.css'
 import { useNavigate } from "react-router-dom";
 import { LIST_EMAIL_TEMPLATES } from "../../../../routes/paths";
+import BreadcrumSection from "../../../../components/BreadcrumSection/BreadcrumSection";
 const EmailDragAndDrop: React.FC = () => {
   const initialState={
     name: '',
@@ -109,6 +110,8 @@ const EmailDragAndDrop: React.FC = () => {
 
   
   return (
+    <>
+      <BreadcrumSection/>
     <div className="Editor-container">
       <div className="export_button">
         <MDBBtn onClick={exportHtml}>Create Template Email</MDBBtn>
@@ -145,7 +148,7 @@ const EmailDragAndDrop: React.FC = () => {
         </MDBModalDialog>
       </MDBModal>
     </div>
-
+    </>
   );
 };
 

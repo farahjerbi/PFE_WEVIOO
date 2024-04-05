@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../../redux/state/authSlice';
+import { AUTHENTICATION, DASHBOARD } from '../../routes/paths';
 
 const Code= ({ email, password ,stage}: OtpProps) => {
     const [otp, setOTP] = useState(['', '', '', '', '', '']);
@@ -31,12 +32,12 @@ const Code= ({ email, password ,stage}: OtpProps) => {
       .then((userData: any) => {
       if(userData && stage==="register"){
         toast.success("OTP verified successfully")
-        navigate('/authentication')
+        navigate(AUTHENTICATION)
       }
       if(userData && stage==="login"){
         dispatch(setUser({ user: userData.user, token: userData.token,role:userData.user.role}));
         toast.success("User logged In successfully !")
-        navigate('/createTemplate')
+        navigate(DASHBOARD)
       }
     })
   }

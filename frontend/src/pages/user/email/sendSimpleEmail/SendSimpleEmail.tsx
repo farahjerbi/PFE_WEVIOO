@@ -100,7 +100,7 @@ const SendSimpleEmail : React.FC<SendSimpleEmailProps> = ({isScheduled }) => {
         formData.append('addSignature',String(isSignatureEnabled))
         formData.append('isSentSeparately',String(isSentSeparately))
         try {
-          const response = await axios.post(`http://localhost:8088/api/email/sendEmail/${id}`, formData);
+          const response = await axios.post(`http://localhost:8099/apiEmail/sendEmail/${id}`, formData);
           
           if (response.status === 200) {
             console.log("🚀 ~ Profile ~ response:", response);

@@ -20,7 +20,7 @@ interface DecodedToken {
                 const decodedToken: DecodedToken = jwtDecode(token);
                 const userEmail = decodedToken.sub;
                 const response = await axios.get<IUser>(
-                    `http://localhost:8088/api/users/getUserByEmail/${userEmail}`
+                    `http://localhost:8099/api/users/getUserByEmail/${userEmail}`
                 );
                 console.log("🚀 ~ response.data:", response.data)
                 return response.data;
