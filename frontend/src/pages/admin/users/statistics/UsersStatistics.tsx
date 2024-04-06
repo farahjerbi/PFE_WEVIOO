@@ -58,7 +58,7 @@ const UsersStatistics = () => {
   };
   return (
     <MDBRow className="mb-3 pt-5">
-      <BreadcrumSection/>
+      {/* <BreadcrumSection/> */}
       <div className='d-flex '>
       <Bar {...config} height={390} width={600} className='barDiv' />
       <img src="../../../../assets/statistics.png" alt="" className='img'/>

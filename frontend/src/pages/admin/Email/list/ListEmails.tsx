@@ -5,6 +5,7 @@ import {
   MDBCardBody,
   MDBCardImage,
   MDBCol,
+  MDBContainer,
   MDBModal,
   MDBModalBody,
   MDBModalContent,
@@ -66,6 +67,8 @@ const ListEmails = () => {
   const [update, setUpdate] = useState<boolean>(false);
   const navigate = useNavigate();
   const role = useSelector(selectRole);
+  const[query,setQuery]=useState<string>('')
+
 
   const handlePageChange = (page: any) => {
     setCurrentPage(page);
@@ -126,11 +129,33 @@ const ListEmails = () => {
     <div>
       <BreadcrumSection />
       <MDBRow className="mt-5 pt-5">
+      <MDBContainer className="mt-5 d-flex" style={{marginLeft:"17%",width:"70%"}}  >
+          <img src="../../../assets/search .png" alt="search" style={{width:"3%"}} />
+            <input
+              type="text"
+              className="search-hover"
+              placeholder="Search here..."
+              onChange={(e) => setQuery(e.target.value)}
+              />
+              
+              <Button  onClick={()=>setQuery("")} size="small"  >
+              <img src="../../../assets/users-search.png" alt="" style={{width:"5%",borderRadius:"9px",marginRight:"2%"}}/>
+                  All Templates
+              </Button>      
+              <Button  onClick={()=>setQuery("SIMPLE")} size="small"  >
+              <img  src="../../../assets/add-friend.png" alt="" style={{width:"5%",marginRight:"2%"}}  /> Simple Templates
+              </Button>
+              <Button onClick={()=>setQuery("COMPLEX")} size="small"  >
+              <img  src="../../../assets/unfollow.png" alt="" style={{width:"5%"}} /> Advanced Templates
+              </Button>
+             
+
+          </MDBContainer>
         <MDBCol
           md="10"
           className="list_container mb-4 d-flex align-items-center"
         >
-          <MDBCardImage src="../assets/listEmails.gif" position="top" fluid className="size_imgg" />
+        {role===Role.ADMIN && (<MDBCardImage src="../assets/emais.jpg" position="top" fluid className="size_imgg" />)}  
           <MDBCard>
             <MDBCardBody>
               <MDBTable striped hover bordered>
@@ -150,11 +175,14 @@ const ListEmails = () => {
                   </tr>
                 </MDBTableHead>
                 <MDBTableBody>
-                  {currentItems.map((template) => (
+                  {currentItems.filter(
+          (template)=>template.name.toLowerCase().includes(query) ||
+          template.state?.toString()===query).map((template) => (
                     <tr key={template.id}>
                       <td>{template.name}</td>
                       <td>{template.language}</td>
-                      {template.state === "SIMPLE" && (
+                     
+                         {template.state === "SIMPLE" && (
                         <td>
                           <MDBBadge color="info" pill>
                             {template.state}
@@ -168,6 +196,8 @@ const ListEmails = () => {
                           </MDBBadge>
                         </td>
                       )}
+                      
+                
                       <td>
                         <div className="buttons">
 

@@ -2,6 +2,7 @@ import BreadcrumSection from "../../../components/BreadcrumSection/BreadcrumSect
 import Features from "../../../components/features/Features"
 import Section1 from "../../../components/section1/Section1"
 import Calendar from "../Email/calendar/Calendar"
+import UsersStatistics from "../users/statistics/UsersStatistics"
 
 const Dashboard = () => {
   return (
@@ -9,6 +10,7 @@ const Dashboard = () => {
     <BreadcrumSection/>
     <Section1/>
     <Calendar/>
+    <UsersStatistics/>
     <Features/>
     </>
   )

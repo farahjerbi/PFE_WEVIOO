@@ -1,4 +1,4 @@
-import { MDBBadge, MDBBtn, MDBCard, MDBCardBody, MDBCol, MDBPagination, MDBPaginationItem, MDBPaginationLink, MDBTable, MDBTableBody, MDBTableHead } from 'mdb-react-ui-kit'
+import { MDBBadge, MDBBtn, MDBCard, MDBCardBody, MDBCardImage, MDBCardText, MDBCardTitle, MDBCol, MDBContainer, MDBInput, MDBPagination, MDBPaginationItem, MDBPaginationLink, MDBRow, MDBTable, MDBTableBody, MDBTableHead } from 'mdb-react-ui-kit'
 import  { useEffect, useState } from 'react'
 import { useActivateUserMutation, useDesActivateUserMutation, useGetAllUsersMutation } from '../../../../redux/services/usersApi';
 import { toast } from 'sonner';
@@ -10,9 +10,11 @@ import { Role } from '../../../../models/Role';
 import Delete from '@mui/icons-material/Delete';
 import PersonOff from '@mui/icons-material/PersonOff';
 import PersonOutline from '@mui/icons-material/PersonOutline';
-import { Button, Tooltip } from '@mui/material';
+import {  Badge, Button, Tooltip } from '@mui/material';
+import Avatar from 'react-avatar';
 
 const ListUsers = () => {
+  /*https://www.freepik.com/free-vector/isometric-phone-with-chat-concept_5230451.htm#fromView=search&page=7&position=20&uuid=6b51443b-8949-4d75-8835-87cf4d3d5bd5 */
   const [updated, setUpdated] = useState<boolean>(false);
     useEffect(() => {
         fetchData(); 
@@ -23,18 +25,8 @@ const ListUsers = () => {
       const[desActivateUser]=useDesActivateUserMutation();
       const[activateUser]=useActivateUserMutation();
       const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
-      //Pagination 
-      const [currentPage, setCurrentPage] = useState(1);
-      const itemsPerPage = 4; 
-      const indexOfLastItem = currentPage * itemsPerPage;
-      const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-      const currentItems = users.slice(indexOfFirstItem, indexOfLastItem);
-    
-      const handlePageChange = (page:any) => {
-        setCurrentPage(page);
-      };
+      const[query,setQuery]=useState<string>('')
 
-      //endPagination
 
       const fetchData = async () => {
         try {
@@ -77,31 +69,57 @@ const ListUsers = () => {
 
   return (
     <>
-           <BreadcrumSection />
-           <div className='users_container'>
-        <MDBCol md="9" className="list_container mb-4 d-flex align-items-center me-2 ">
-                <MDBCard style={{marginTop:"7%" }} >
-                    <MDBCardBody>
-                    <MDBTable striped hover bordered >
-                        <MDBTableHead color="blue lighten-4">
-                        <tr>
-                            <th>FirstName</th>
-                            <th>LastName</th>
-                            <th>Email</th>
-                            <th>Status</th>
-                            <th> Activate / Desactivate </th>
-                            <th>Delete</th>
-                        </tr>
-                        </MDBTableHead>
-                        <MDBTableBody>
-                        {currentItems.map(user => (
-                        <tr key={user.id}>
-                            <td>{user.firstName}</td>
-                            <td>{user.lastName}</td>
-                            <td>{user.email}</td>
-                            {user.enabled ==="true"  && (
+           <BreadcrumSection />      
+        <MDBRow style={{marginLeft:"12%"}}  >
+        <MDBContainer className="mt-5 d-flex mb-3" style={{width:"80%",paddingTop:"3%"}} >
+          <img src="../../../assets/search .png" alt="search" style={{width:"3%"}} />
+            <input
+              type="text"
+              className="search-hover"
+              placeholder="Search here..."
+              onChange={(e) => setQuery(e.target.value)}
+              />
+              
+              <Button  onClick={()=>setQuery("")} size="small"  >
+              <img src="../../../assets/users-search.png" alt="" style={{width:"9%",borderRadius:"5px",marginRight:"2%"}}/>
+                  All Users
+              </Button>      
+              <Button  onClick={()=>setQuery("true")} size="small"  >
+              <img  src="../../../assets/add-friend.png" alt="" style={{width:"9%",marginRight:"2%"}}  /> Enabled Users
+              </Button>
+              <Button onClick={()=>setQuery("false")} size="small"  >
+              <img  src="../../../assets/unfollow.png" alt="" style={{width:"9%",marginRight:"2%"}} /> Disabled Users
+              </Button>
+             
+
+          </MDBContainer>
+        {users.filter(
+          (e)=>e.firstName.toLowerCase().includes(query) ||
+           e.lastName.toLowerCase().includes(query) ||
+           e.email.toLowerCase().includes(query)||
+           e.enabled.toString()===query
+
+        ).map(user => (
+
+        <MDBCol key={user.id} xl="3" md="6" className="mb-r me-4 mt-4">
+            <MDBCard style={{borderRadius:"none"}}>
+              <MDBCardBody >
+                <div className="d-flex text-black">
+                  <div className="flex-grow-1">
+                  <div className='d-flex' style={{ alignItems: "center", justifyContent: "start" }}>
+    <Avatar
+        color="linear-gradient(90deg, rgba(216, 233, 249, 1) 0%, rgba(171, 201, 255, 1) 51%, rgba(171, 181, 255, 1) 100%)"
+        name={user.firstName}
+        initials={user.firstName.charAt(0).toUpperCase()}
+        size={"30"}
+        round
+    />
+    <div style={{ marginLeft: "10px",marginTop:"3%" }}>
+        <MDBCardTitle>{user.firstName} {user.lastName} </MDBCardTitle>
+          </div>
+          {user.enabled ==="true"  && (
                                     <td>
-                                    <MDBBadge color='primary' pill>
+                                    <MDBBadge color='primary' pill style={{fontSize:"0.7rem"}}>
                                         Enabled
                                 </MDBBadge>
                                 </td>
@@ -113,61 +131,44 @@ const ListUsers = () => {
                                 </MDBBadge>
                                 </td>
                             )}
-                            <td>
-                            <div className='buttons'>
-                            {user.enabled ==="false"&& ( 
-                               <Tooltip  style={{width:"100%"}} title="Activate Account" className="color_blue" >
+      </div>
+                    <MDBCardText className='mt-3'>
+                      <div className='d-flex' style={{alignItems: "center"}}>
+                      <span> {user.email}</span>
+                      </div>
+              
+                        </MDBCardText>
+                
+                    <div className="d-flex pt-1">
+                      {user.enabled ==="false"&& ( 
+                               <Tooltip  style={{width:"60%"}} title="Activate Account" className="color_blue" >
                                <Button  onClick={()=>activate(user.email)} >
                                <PersonOutline style={{color:"whitesmoke"}}  />
                                </Button>                           
                                </Tooltip>
                             )}
                             {user.enabled ==="true"&& (
-                                      <Tooltip  style={{width:"100%"}} title="Desactivate Account" className="color_baby_blue" >
+                                      <Tooltip  style={{width:"60%"}} title="Desactivate Account" className="color_baby_blue" >
                                       <Button  onClick={()=>desactivate(user.email)}  >
                                       <PersonOff style={{color:"whitesmoke"}}  />
                                       </Button>                           
                                       </Tooltip>
                                  )}                           
-                                 
-                                
-                             </div>
-                            </td>
-                            <td>
-                              
-                          <Tooltip title="Delete" className="color_red" >
+                                  <Tooltip title="Delete" className="color_red" style={{marginLeft:"3%"}}>
                           <Button  onClick={() => { setDeleteModalOpen(true); setIdDelete(user.id)}}>
                           <Delete style={{color:"whitesmoke"}}  />
                           </Button>                           
                           </Tooltip>
-                            </td>
-                        </tr>
-                        ))}
-                        </MDBTableBody>
-                    </MDBTable>
-                    </MDBCardBody>
-                    <nav aria-label='Page navigation example'>
-                    <MDBPagination circle center className='mb-2'>
-                      <MDBPaginationItem disabled={currentPage === 1}>
-                        <MDBPaginationLink onClick={() => handlePageChange(currentPage - 1)}>Previous</MDBPaginationLink>
-                      </MDBPaginationItem>
-                      {Array.from({ length: Math.ceil(users.length / itemsPerPage) }, (_, i) => (
-                        <MDBPaginationItem key={i} active={i + 1 === currentPage}>
-                          <MDBPaginationLink onClick={() => handlePageChange(i + 1)}>{i + 1}</MDBPaginationLink>
-                        </MDBPaginationItem>
-                      ))}
-                      <MDBPaginationItem disabled={currentPage === Math.ceil(users.length / itemsPerPage)}>
-                        <MDBPaginationLink onClick={() => handlePageChange(currentPage + 1)}>Next</MDBPaginationLink>
-                      </MDBPaginationItem>
-                    </MDBPagination>
-                  </nav>
-                </MDBCard>
-            </MDBCol> 
-      {idDelete && (
+                      </div>
+                 
+                    </div>
+                  </div>
+              </MDBCardBody>
+            </MDBCard>
+          </MDBCol>))}
+        </MDBRow>
+        {idDelete && (
          <DeleteUserModal typeUser={Role.ADMIN} id={idDelete} show={deleteModalOpen}  onClose={handleUpdate}/> )}
-      <img src="../../../../assets/users.gif" alt="gif" style={{width:"30%" ,height:"40%",marginTop:"6%"}}/>
-
-    </div>
     </>
    
   )

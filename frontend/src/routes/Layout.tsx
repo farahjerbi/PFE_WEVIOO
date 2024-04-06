@@ -8,12 +8,13 @@ const Layout = () => {
 
   return (
     <>
-    {isAuth && ( <>
-      <Navbar/>
-      <Sidebar />
-    </> )}
-    <Outlet />
-    </>
+          <Navbar/>
+          <div >
+          <Sidebar />
+          </div>
+          <div className='main-content' style={{position:"relative" ,zIndex:"20" , marginLeft:"5%"}}>
+                    <Outlet />
+                </div>    </>
  )
 }
 
