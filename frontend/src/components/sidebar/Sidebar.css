@@ -3,15 +3,15 @@ strong{
   
 }
 .sidebar-icon{
-  font-size: 0.97rem;
+  width: 45% ;
   margin: 19px 0;
-  color: rgb(231, 233, 236);
+  margin-left: 13%;
+  color: #0a26f8;
 }
 
-span{
-  margin-left: 4%;
+.sidebar-item span {
   font-size: 15px;
-  color: rgb(231, 233, 236);
+  color: #6873C8;
 }
 
 .sidebar-container{
@@ -20,21 +20,23 @@ span{
 
 .sidebar-header {
   position: relative;
-  height: 30%; /* Adjust the height as needed */
-  overflow: hidden; /* Hide any overflow from the background image */
+  height: 40%; 
+  overflow: hidden; 
 }
 
 h4 {
   text-align: center;
   margin: 0;
-  color: rgb(231, 233, 236);
+  color: rgb(75, 90, 111);
 
 }
 
 .sidebar-item{
+  /* height: 70px; */
   background-color: transparent !important;
 }
 .sidebar-item-active{
+  /* height: 70px; */
   background-color: rgb(187, 192, 236) !important;
 }
 
@@ -44,18 +46,18 @@ h4 {
 }
 
 .logoStyle{
-  width: 25%;
+  width: 65%;
 }
 
 .sidebar-icon-secondary{
   font-size: 0.8rem;
   margin: 6% 10%;
-  color: rgb(193, 200, 211);
+  color: rgb(69, 75, 84);
 }
 
 .span-secondary{
   font-size: small;
-  color: rgb(231, 233, 236);
+  color: rgb(69, 75, 84);
 }
 
 .avatar{
@@ -66,11 +68,7 @@ h4 {
   background-color: transparent !important ;
 }
 
-.logo-sidebar{
-  padding-left: 0;
-  margin-left: 5%;
-  width:23%;
-}
+
 
 .icon-Style{
   margin-left:"5px" ;

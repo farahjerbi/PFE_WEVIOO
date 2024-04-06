@@ -47,10 +47,10 @@ const Section1 = () => {
   return (
     <div className='section '>
         <MDBRow className="mb-4 ">
-        <MDBCol xl="3" md="6" className="mb-r">
-          <MDBCard className="cascading-admin-card">
-              <div className="admin-up" >
-                <MDBIcon icon="mail-bulk" className='color_green'/>
+        <MDBCol xl="2" md="4" className="mb-r me-4">
+        <MDBCard className="cascading-admin-card">
+              <div className="admin-up">
+              <MDBIcon icon="sms" className="color_baby_blue"/>
                 <div className="data">
                   <h4>
                     <strong>Emails</strong>
@@ -61,11 +61,29 @@ const Section1 = () => {
                 <div className="progress">
                 <div aria-valuemax={100} aria-valuemin={0} aria-valuenow={numberOfTemplatesEmail} className="progress-bar bg-primary" role="progressbar" style={{width: '25%'}}></div>
                 </div>
-                <MDBCardText>Emails Templates Count : <strong>{numberOfTemplatesEmail}</strong></MDBCardText>
+                <MDBCardText>Count : <strong>{numberOfTemplatesEmail}</strong></MDBCardText>
               </MDBCardBody>
             </MDBCard>
         </MDBCol>  
-        <MDBCol xl="3" md="6" className="mb-r">
+        <MDBCol xl="2" md="4" className="mb-r me-4">
+        <MDBCard className="cascading-admin-card">
+              <div className="admin-up">
+              <MDBIcon icon="sms" className="color_blue"/>
+                <div className="data">
+                  <h4>
+                    <strong>SMS</strong>
+                  </h4>
+                </div>
+              </div>
+              <MDBCardBody>
+                <div className="progress">
+                <div aria-valuemax={100} aria-valuemin={0} aria-valuenow={numberOfTemplatesEmail} className="progress-bar bg-primary" role="progressbar" style={{width: '25%'}}></div>
+                </div>
+                <MDBCardText>Count : <strong>{numberOfTemplatesEmail}</strong></MDBCardText>
+              </MDBCardBody>
+            </MDBCard>
+        </MDBCol>  
+        <MDBCol xl="2" md="4" className="mb-r me-4">
           <MDBCard className="cascading-admin-card">
               <div className="admin-up">
               <MDBIcon icon="sms" className="color_orange"/>
@@ -80,12 +98,12 @@ const Section1 = () => {
                   <div aria-valuemax={100} aria-valuemin={0} aria-valuenow={25} className="progress-bar bg grey" role="progressbar"
                     style={{width: '25%'}}></div>
                 </div>
-                <MDBCardText>Worse than last week (25%)</MDBCardText>
+                <MDBCardText>Count:</MDBCardText>
               </MDBCardBody>
             </MDBCard>
         </MDBCol>
 
-        <MDBCol xl="3" md="6" className="mb-r">
+        <MDBCol xl="2" md="4" className="mb-r me-4">
           <MDBCard className="cascading-admin-card">
               <div className="admin-up">
               <MDBIcon icon="bell" className="color_purple"/>
@@ -100,11 +118,11 @@ const Section1 = () => {
                   <div aria-valuemax={100} aria-valuemin={0} aria-valuenow={25} className="progress-bar grey darken-2" role="progressbar"
                     style={{width: '75%'}}></div>
                 </div>
-                <MDBCardText>Worse than last week (75%)</MDBCardText>
+                <MDBCardText>Count:</MDBCardText>
               </MDBCardBody>
             </MDBCard>
         </MDBCol>
-        <MDBCol xl="3" md="6" className="mb-r">
+        <MDBCol xl="2" md="4" className="mb-r me-4">
           <MDBCard className="cascading-admin-card">
               <div className="admin-up">
               <MDBIcon icon="users" className="color_red"/>
@@ -119,7 +137,7 @@ const Section1 = () => {
                   <div aria-valuemax={100} aria-valuemin={0} aria-valuenow={numberOfUsers} className="progress-bar bg grey" role="progressbar"
                     style={{width: '25%'}}></div>
                 </div>
-                <MDBCardText>Users Count : <strong>{numberOfUsers}</strong></MDBCardText>
+                <MDBCardText>Count : <strong>{numberOfUsers}</strong></MDBCardText>
               </MDBCardBody>
             </MDBCard>
         </MDBCol>

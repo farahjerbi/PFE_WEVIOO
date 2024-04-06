@@ -1,10 +1,8 @@
 .breadcrum{
-    margin-top: 5% !important;
-    width: calc(100% - 270px); 
+    margin-top: 6% !important;
+    width: calc(100% - 155px); 
     height: 0px !important;
-    margin-left: 16% !important;
+    margin-left: 10% !important;
     position: relative;
-    margin: 2%;  
-    border-radius: 20px ; 
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 6px 20px rgba(0, 0, 0, 0.19) !important;
+    margin: 3%;  
 }

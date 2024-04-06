@@ -29,6 +29,7 @@ const Navbar = () => {
 
           <MDBNavbar className="flexible-navbar" light expand="md" scrolling>
                 <MDBNavbarBrand  href="https://www.wevioo.com/fr" target="_blanc">
+                    {/* <img src="../../../assets/wevioo_logo.png" alt='logo' className='logo-navbar' /> */}
                     <strong className='navbar-brand' >WEVIOO</strong>
                 </MDBNavbarBrand>
                 <MDBCollapse  navbar>
@@ -48,11 +49,11 @@ const Navbar = () => {
                         </li>
                     </ul>
                 </div>
-                    <MDBNavbarNav  className='justify-content-end' style={{marginRight:"2%"}} >
+                    <MDBNavbarNav  className='justify-content-end' style={{marginLeft:"60%"}} >
                         <MDBNavbarItem >
                         <Tooltip title="Logout"  >
                         <IconButton onClick={()=>handleLogout()}>
-                            <LogOut style={{color:"#6873C8"}}  />
+                         <img src="../../../assets/sign-out.png" alt="logout" style={{width:"30%"}} />
                         </IconButton>
                         </Tooltip>
                      </MDBNavbarItem>

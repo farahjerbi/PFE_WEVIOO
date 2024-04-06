@@ -17,7 +17,7 @@ import { Role } from '../../../../models/Role';
 import { MDBBadge, MDBBtn, MDBCard, MDBCardBody, MDBCardFooter, MDBCardHeader, MDBCardText, MDBCardTitle, MDBModal, MDBModalBody, MDBModalContent, MDBModalDialog, MDBModalFooter, MDBModalHeader, MDBModalTitle } from 'mdb-react-ui-kit';
 export const StyleWrapper = styled.div`
   .fc-button.fc-prev-button, .fc-button.fc-next-button, .fc-button.fc-button-primary{
-    background: #7EB4DA;
+    background:#54b4d3;
     border:none;
     background-image: none;
 }
@@ -29,7 +29,7 @@ export const StyleWrapper = styled.div`
   background:transparent;
 }
 .fc .fc-button-primary:not(:disabled).fc-button-active{
-  background:#377dbc;
+  background:#d59057;
 }
 `
 const Calendar  : React.FC= () => {
@@ -133,12 +133,12 @@ const handleEventMouseLeave = (eventId: string) => {
       
   return (
         <div className='mt-5' style={{
-          backgroundImage: "url('/assets/Schedule.gif')",
+          backgroundImage: "url('/assets/calender.jpg')",
           backgroundPosition: "center",
           backgroundSize: "contain",
           backgroundRepeat: "no-repeat",
           width: "83%",
-          marginLeft: "18%"
+          marginLeft: "12%"
         }}>
     <StyleWrapper style={{marginTop:"8%"}}>
       <FullCalendar

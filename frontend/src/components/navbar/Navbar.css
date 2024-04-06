@@ -18,13 +18,13 @@
     position: fixed;
     top: 0;
     z-index: 1000; 
-    background-color: #fff; 
+    background-color: #fff;  
 }
 
 .flexible-navbar {
     height: 60px;
-    margin-left: 15%; 
-    width: calc(100% - 15%); 
+    margin-left: 6.6%; 
+    width: calc(100% - 6.6%); 
 }
 
 .nav-link{
@@ -64,7 +64,7 @@
     content: "";
     width: 2rem;
     height: 0.2rem;
-    background: linear-gradient(90deg,#a993fe 0% , #7e61e7 100%);
+    background: linear-gradient(90deg,#93d3fe 0% , #3e5ff1 100%);
     border-radius: 0.5rem;
     position: absolute;
     bottom: -0.6rem;
@@ -79,3 +79,7 @@
     transform: translateX(0);
 }
 
+.logo-navbar{
+    padding-left: 0;
+    width:18%;
+  }

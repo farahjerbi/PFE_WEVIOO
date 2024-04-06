@@ -1,12 +1,12 @@
 .section{
-    margin-left: 17%;
-    margin-top: 8%;
+    margin-left: 12%;
+    margin-top: 10%;
+   
 }
 
 .cascading-admin-card{
+    width: 110%;
     border-radius: 5% !important;
-    width: 85% !important;
-
 }
 
 strong{
