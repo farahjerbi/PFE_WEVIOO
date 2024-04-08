@@ -26,7 +26,16 @@ const ListUsers = () => {
       const[activateUser]=useActivateUserMutation();
       const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
       const[query,setQuery]=useState<string>('')
+      //Pagination 
+      const [currentPage, setCurrentPage] = useState(1);
+      const itemsPerPage = 6; 
+      const indexOfLastItem = currentPage * itemsPerPage;
+      const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+      const currentItems = users.slice(indexOfFirstItem, indexOfLastItem);
 
+      const handlePageChange = (page:any) => {
+        setCurrentPage(page);
+      };
 
       const fetchData = async () => {
         try {
@@ -93,7 +102,7 @@ const ListUsers = () => {
              
 
           </MDBContainer>
-        {users.filter(
+        {currentItems.filter(
           (e)=>e.firstName.toLowerCase().includes(query) ||
            e.lastName.toLowerCase().includes(query) ||
            e.email.toLowerCase().includes(query)||
@@ -101,7 +110,7 @@ const ListUsers = () => {
 
         ).map(user => (
 
-        <MDBCol key={user.id} xl="3" md="6" className="mb-r me-4 mt-4">
+        <MDBCol key={user.id} xl="3" md="6" className="mb-r me-4 mt-4 ms-5">
             <MDBCard style={{borderRadius:"none"}}>
               <MDBCardBody >
                 <div className="d-flex text-black">
@@ -165,8 +174,25 @@ const ListUsers = () => {
                   </div>
               </MDBCardBody>
             </MDBCard>
-          </MDBCol>))}
+          </MDBCol>))} 
+      
+          
         </MDBRow>
+        <nav aria-label='Page navigation example'>
+                    <MDBPagination circle center className='mb-2 mt-2'>
+                      <MDBPaginationItem disabled={currentPage === 1}>
+                        <MDBPaginationLink  onClick={() => handlePageChange(currentPage - 1)}>Previous</MDBPaginationLink>
+                      </MDBPaginationItem>
+                      {Array.from({ length: Math.ceil(users.length / itemsPerPage) }, (_, i) => (
+                        <MDBPaginationItem key={i} active={i + 1 === currentPage}>
+                          <MDBPaginationLink onClick={() => handlePageChange(i + 1)}>{i + 1}</MDBPaginationLink>
+                        </MDBPaginationItem>
+                      ))}
+                      <MDBPaginationItem disabled={currentPage === Math.ceil(users.length / itemsPerPage)}>
+                        <MDBPaginationLink onClick={() => handlePageChange(currentPage + 1)}>Next</MDBPaginationLink>
+                      </MDBPaginationItem>
+                    </MDBPagination>
+                  </nav>
         {idDelete && (
          <DeleteUserModal typeUser={Role.ADMIN} id={idDelete} show={deleteModalOpen}  onClose={handleUpdate}/> )}
     </>

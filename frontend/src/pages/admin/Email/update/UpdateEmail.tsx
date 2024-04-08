@@ -8,6 +8,7 @@ import EmailEditor, { EditorRef, EmailEditorProps } from 'react-email-editor'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import axios from 'axios'
+import { LIST_EMAIL_TEMPLATES } from '../../../../routes/paths'
 
 const UpdateEmail = () => {
   const { id } = useParams();
@@ -107,7 +108,7 @@ const UpdateEmail = () => {
           
         toast.success("Template updated successfully");
 
-        navigate('/listEmailTemplates')
+        navigate(LIST_EMAIL_TEMPLATES)
       
       
     } catch (error) {

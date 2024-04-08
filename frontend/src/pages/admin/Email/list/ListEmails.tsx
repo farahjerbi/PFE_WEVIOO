@@ -47,7 +47,7 @@ import Image from "@mui/icons-material/Image";
 import { Role } from "../../../../models/Role";
 import { selectRole } from "../../../../redux/state/authSlice";
 import { useSelector } from "react-redux";
-import { EDIT_EMAIL_TEMPLATE, SEND_EMAIL, SEND_EMAIL_SCHEDULED } from "../../../../routes/paths";
+import { ADD_EMAIL_TEMPLATE, EDIT_EMAIL_TEMPLATE, SEND_EMAIL, SEND_EMAIL_SCHEDULED } from "../../../../routes/paths";
 
 
 const ListEmails = () => {
@@ -68,8 +68,7 @@ const ListEmails = () => {
   const navigate = useNavigate();
   const role = useSelector(selectRole);
   const[query,setQuery]=useState<string>('')
-
-
+ 
   const handlePageChange = (page: any) => {
     setCurrentPage(page);
   };
@@ -155,9 +154,13 @@ const ListEmails = () => {
           md="10"
           className="list_container mb-4 d-flex align-items-center"
         >
+        {role===Role.USER && (<MDBCardImage src="../assets/send-email.jpg" position="top" fluid className="size_imgg" style={{marginLeft:"-6%"}} />)}  
         {role===Role.ADMIN && (<MDBCardImage src="../assets/emais.jpg" position="top" fluid className="size_imgg" />)}  
           <MDBCard>
             <MDBCardBody>
+            {role===Role.ADMIN && (  <Button onClick={()=>navigate(ADD_EMAIL_TEMPLATE)} style={{width:"20%"}} size="small" className="mb-2" >
+                  <img  src="../../../assets/new-mail.png" alt="" style={{width:"22%",marginRight:"3%"}} />Add
+                  </Button>)}
               <MDBTable striped hover bordered>
                 <MDBTableHead color="blue lighten-4">
                   <tr>

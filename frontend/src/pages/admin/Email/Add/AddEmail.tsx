@@ -11,7 +11,7 @@ const AddEmail = () => {
   return (
     <>
       <BreadcrumSection />
-    <MDBRow className="add_email_container d-flex justify-content-center pt-5">
+    <MDBRow className="add_email_container d-flex justify-content-center pt-5 ">
     <MDBCol xl="5" >
       <MDBCard >
       <div className="center-image">
@@ -19,7 +19,7 @@ const AddEmail = () => {
          </div>
          <MDBCardBody>
           <MDBCardTitle className="font-bold mb-3">
-            <strong>Simple Template </strong>
+            <strong className='ms-5'>Simple Template </strong>
           </MDBCardTitle>
           <MDBCardText>Some quick example text to build on the card title and make up the bulk of the card's content.</MDBCardText>
         </MDBCardBody>
@@ -40,7 +40,7 @@ const AddEmail = () => {
          </div>
         <MDBCardBody>
           <MDBCardTitle className="font-bold mb-3">
-            <strong>Advanced Template</strong>
+            <strong className='ms-5'>Advanced Template</strong>
           </MDBCardTitle>
           <MDBCardText>Some quick example text to build on the card title and make up the bulk of the card's content.</MDBCardText>
         </MDBCardBody>

@@ -7,4 +7,5 @@ export interface TemplateBody{
     signature?:Image,
     logo?:Image
     design?:string;
+    tags?:boolean;
 }

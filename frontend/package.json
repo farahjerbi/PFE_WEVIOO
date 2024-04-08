@@ -6,7 +6,7 @@
     "@ant-design/charts": "^2.0.3",
     "@ant-design/plots": "^2.1.14",
     "@emotion/react": "^11.11.4",
-    "@emotion/styled": "^11.11.0",
+    "@emotion/styled": "^11.11.5",
     "@fortawesome/fontawesome-free": "^6.5.1",
     "@fullcalendar/core": "^6.1.11",
     "@fullcalendar/daygrid": "^6.1.11",
@@ -14,6 +14,7 @@
     "@fullcalendar/react": "^6.1.11",
     "@fullcalendar/timegrid": "^6.1.11",
     "@mui/icons-material": "^5.15.13",
+    "@mui/joy": "^5.0.0-beta.32",
     "@mui/material": "^5.15.13",
     "@mui/x-date-pickers": "^6.19.7",
     "@reduxjs/toolkit": "^1.9.7",
@@ -27,6 +28,7 @@
     "@types/react-window": "^1.8.8",
     "axios": "^0.24.0",
     "dayjs": "^1.11.10",
+    "formik": "^2.4.5",
     "html2canvas": "^1.4.1",
     "jwt-decode": "^4.0.0",
     "mdb-react-ui-kit": "^7.2.0",
@@ -46,7 +48,8 @@
     "sonner": "^1.4.3",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4",
-    "xlsx": "^0.18.5"
+    "xlsx": "^0.18.5",
+    "yup": "^1.4.0"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -197,11 +197,14 @@ const SendSimpleEmail : React.FC<SendSimpleEmailProps> = ({isScheduled }) => {
 
 
                     <div>
-                        <h2>Dynamic Inputs Based on Placeholders</h2>
+                    {Object.keys(placeholders).length > 0 && (
+                          <h3>Dynamic Inputs Based on Placeholders</h3>
+                        )}
                         {placeholders.map((placeholder) => (
                             <div key={placeholder}>
                                 <label>{placeholder}</label>
                                 <MDBInput
+                                    required
                                     type="text"
                                     onChange={(e) => handleInputChange(placeholder, e.target.value)}
                                 />
@@ -221,7 +224,10 @@ const SendSimpleEmail : React.FC<SendSimpleEmailProps> = ({isScheduled }) => {
             <div className='d-flex justify-content-between mt-4'>
             {!isScheduled && (
               <>
-                <MDBBtn className='btn w-30 ' color='primary' type='submit' onClick={()=>setIsSentSeparately(false)}> <MDBIcon  icon="mail-bulk" style={{marginRight:"5px"}} /> Send Bulk </MDBBtn>  
+              {!template?.templateBody.tags && (<>
+                    <MDBBtn className='btn w-30 ' color='primary' type='submit' onClick={()=>setIsSentSeparately(false)}> 
+                    <MDBIcon  icon="mail-bulk" style={{marginRight:"5px"}} /> Send Bulk </MDBBtn>  
+                  </> )}
                 <MDBBtn className='btn w-30 ' color='info' type='submit'onClick={()=>setIsSentSeparately(true)}> 
                  <MDBIcon  icon="envelope" style={{marginRight:"5px"}} /> Send Separately </MDBBtn>  
                 <MDBBtn className='btn ' color='secondary' onClick={()=>setPage(!page)} > <MDBIcon  icon="arrow-left" style={{marginRight:"5px"}} /> Previous  </MDBBtn>

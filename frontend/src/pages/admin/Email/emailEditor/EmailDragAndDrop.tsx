@@ -8,6 +8,18 @@ import './EmailTemplate.css'
 import { useNavigate } from "react-router-dom";
 import { LIST_EMAIL_TEMPLATES } from "../../../../routes/paths";
 import BreadcrumSection from "../../../../components/BreadcrumSection/BreadcrumSection";
+import Button from '@mui/joy/Button';
+import Add from '@mui/icons-material/Add';
+import FormControl from '@mui/joy/FormControl';
+import FormLabel from '@mui/joy/FormLabel';
+import Input from '@mui/joy/Input';
+import Modal from '@mui/joy/Modal';
+import ModalDialog from '@mui/joy/ModalDialog';
+import DialogTitle from '@mui/joy/DialogTitle';
+import DialogContent from '@mui/joy/DialogContent';
+import Stack from '@mui/joy/Stack';
+
+
 const EmailDragAndDrop: React.FC = () => {
   const initialState={
     name: '',
@@ -25,6 +37,9 @@ const EmailDragAndDrop: React.FC = () => {
   const[addTemplateEmail]=useAddTemplateEmailMutation();
   const[addDesignTemplate]=useAddDesignTemplateMutation();
   const navigate=useNavigate();
+  const [open, setOpen] = React.useState<boolean>(false);
+
+
 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -114,7 +129,16 @@ const EmailDragAndDrop: React.FC = () => {
       <BreadcrumSection/>
     <div className="Editor-container">
       <div className="export_button">
-        <MDBBtn onClick={exportHtml}>Create Template Email</MDBBtn>
+        {/* <MDBBtn onClick={exportHtml}>Create Template Email</MDBBtn> */}
+        <Button
+        size="sm"
+        variant="outlined"
+        color="primary"
+        startDecorator={<Add />}
+        onClick={() =>{exportHtml();setOpen(true)} }
+      >
+        New template
+      </Button>
       </div>
 
       <EmailEditor
@@ -124,9 +148,31 @@ const EmailDragAndDrop: React.FC = () => {
         minHeight={"74.5vh"}
 
       />
-
-
-      <MDBModal open={basicModal} setOpen={setBasicModal} tabIndex='-1'>
+  
+  <Modal open={open} onClose={() => setOpen(false)}>
+        <ModalDialog>
+          <DialogTitle>Create new template</DialogTitle>
+          <DialogContent>Fill in the information of the template.</DialogContent>
+          <form onSubmit={handleAddTemplate}>
+            <Stack spacing={2}>
+              <FormControl>
+                <FormLabel>Name</FormLabel>
+                <Input name='name' value={name} onChange={handleChange} autoFocus required />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Language</FormLabel>
+                <Input name='language' value={language} onChange={handleChange} required />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Subject</FormLabel>
+                <Input name='subject' value={subject} onChange={handleChange}  required />
+              </FormControl>
+              <Button type="submit">Submit</Button>
+            </Stack>
+          </form>
+        </ModalDialog>
+      </Modal>
+      {/* <MDBModal   open={basicModal} setOpen={setBasicModal} tabIndex='-1'>
         <MDBModalDialog>
           <MDBModalContent>
             <MDBModalHeader>
@@ -146,7 +192,7 @@ const EmailDragAndDrop: React.FC = () => {
             </form>
           </MDBModalContent>
         </MDBModalDialog>
-      </MDBModal>
+      </MDBModal> */}
     </div>
     </>
   );

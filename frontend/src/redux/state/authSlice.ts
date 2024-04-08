@@ -4,12 +4,8 @@ import { IUser, UserPayload } from "../../models/User";
 import { Role } from "../../models/Role";
 import { jwtDecode } from "jwt-decode";
 import axios from 'axios';
+import { DecodedToken } from "../../models/DecodedToken";
 
-interface DecodedToken {
-    sub: string;
-    iat: number;
-    exp: number;
-  }
 
   export const decodeToken = createAsyncThunk<IUser | null, void>(
     "auth/decodeToken",

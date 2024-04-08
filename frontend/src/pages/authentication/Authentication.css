@@ -1,6 +1,6 @@
 .illustration{
     width: 100%;
-    height: 100%;
+    height: 80vh;
     background-color: #6873C8
 }  
 
@@ -9,5 +9,10 @@
     margin-left: 38% !important;
 }
 
-
-
+.container-auth{
+    width: 90%;
+    margin-left: 5%;
+    margin-top: 3%;
+    position: fixed;
+    min-height: 90vh;
+}

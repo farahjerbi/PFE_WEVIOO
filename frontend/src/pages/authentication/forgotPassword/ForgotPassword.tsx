@@ -1,8 +1,12 @@
 import { MDBBtn, MDBCard, MDBCardBody, MDBCardImage, MDBCol, MDBInput, MDBRow } from 'mdb-react-ui-kit'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useResetPasswordMutation } from '../../../redux/services/usersApi'
 import { toast } from 'sonner';
 import { useNavigate, useParams } from 'react-router-dom';
+import { jwtDecode } from "jwt-decode";
+import { DecodedToken } from '../../../models/DecodedToken';
+import { isTokenExpired } from '../../../redux/state/authSlice';
+import { AUTHENTICATION } from '../../../routes/paths';
 
 const ForgotPassword = () => {
   const { email } = useParams();
@@ -11,13 +15,22 @@ const ForgotPassword = () => {
   const[confirmNewPassword,setConfirmNewPassword]=useState<string>("")
   const[resetPassword]=useResetPasswordMutation()
   const navigate=useNavigate()
+
+  useEffect(() => {
+    if(email && isTokenExpired(email)){
+      navigate(AUTHENTICATION)
+    }
+  }, []);
+
   const handleChangePassword = async()=> {
     try{
       if(newPassword!==confirmNewPassword){
         toast.warning("Passwords do not match !")
       }else{
         if(email){
-          await resetPassword({email,newPassword,confirmNewPassword})
+          const decodedToken: DecodedToken = jwtDecode(email);
+          const userEmail = decodedToken.sub;
+          await resetPassword({email:userEmail,newPassword,confirmNewPassword})
           .unwrap()
           .then((userData: any) => {
             toast.success("Password Changed Successfully !")

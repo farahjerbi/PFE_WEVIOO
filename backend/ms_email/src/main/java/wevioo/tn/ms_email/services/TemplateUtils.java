@@ -12,6 +12,7 @@ import jakarta.mail.util.ByteArrayDataSource;
 import lombok.AllArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.TemplateEngine;
@@ -59,9 +60,42 @@ public class TemplateUtils {
         return template;
     }
 
-    public void addHtmlContentToEmail(MimeMultipart mimeMultipart, TemplateBody emailTemplate) throws MessagingException {
+    public String extractUsername(String email) {
+        int atIndex = email.indexOf('@');
+        String username=atIndex != -1 ? email.substring(0, atIndex) : email;
+        return username.replace(".", "");
+    }
+    private String extractFirstName(String email) {
+        String username = extractUsername(email);
+        int dotIndex = username.indexOf('.');
+        return dotIndex != -1 ? username.substring(0, dotIndex) : username;
+    }
+
+    private String extractLastName(String email) {
+        String username = extractUsername(email);
+        int dotIndex = username.indexOf('.');
+        return dotIndex != -1 ? username.substring(dotIndex + 1) : "";
+    }
+
+    public String replaceTags(String template, String email) {
+        String username = extractUsername(email);
+        String firstName = extractFirstName(email);
+        String lastName = extractLastName(email);
+
+        template = template.replace("@email", email);
+        template = template.replace("@username", username);
+        template = template.replace("@firstname", firstName);
+        template = template.replace("@lastname", lastName);
+
+        return template;
+    }
+
+
+
+    public void addHtmlContentToEmail(MimeMultipart mimeMultipart, TemplateBody emailTemplate,String addSignature) throws MessagingException {
         Context context = new Context();
         context.setVariable("template", emailTemplate);
+        context.setVariable("signature", addSignature);
         String text = templateEngine.process(EMAIL_TEMPLATE, context);
         BodyPart messageBodyPart = new MimeBodyPart();
         messageBodyPart.setContent(text, TEXT_HTML_ENCODING);

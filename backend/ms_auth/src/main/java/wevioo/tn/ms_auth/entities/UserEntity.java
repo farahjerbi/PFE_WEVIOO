@@ -23,7 +23,7 @@ public class UserEntity implements UserDetails {
     private String email;
     private String password;
     private boolean mfaEnabled=false;
-    private boolean enabled=false;
+    private boolean enabled=true;
     private String secret;
     private String signature;
     private String emailSecret;

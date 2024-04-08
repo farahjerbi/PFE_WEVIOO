@@ -46,6 +46,14 @@ const Login=()=> {
   }
 
   const forgotPasswordEmail = async () => {
+    if(!emailForgotten){
+      toast.error("Enter Email please");
+      return
+    }
+    if (!/\S+@\S+\.\S+/.test(emailForgotten)){
+      toast.error("Email forma incorrect");
+      return
+    }
     try {
         setBasicModal(!basicModal)
         setEmailForgotten("")
@@ -92,8 +100,8 @@ const Login=()=> {
               <MDBContainer className='mt-5' >
                 <form onSubmit={handleLogin}>
 
-                  <MDBInput name='email' value={email} onChange={handleChange} className='mb-4' type='email' id='form7Example1' label='Email address' />
-                  <MDBInput name='password' value={password} onChange={handleChange} className='mb-4' type='password' id='form7Example2' label='Password' />
+                  <MDBInput required name='email' value={email} onChange={handleChange} className='mb-4' type='email' id='form7Example1' label='Email address' />
+                  <MDBInput required name='password' value={password} onChange={handleChange} className='mb-4' type='password' id='form7Example2' label='Password' />
 
                   <MDBRow className='mb-4'>
                     <MDBCol className='d-flex justify-content-center'>
@@ -119,8 +127,7 @@ const Login=()=> {
 
       {isMfaEnabled  && (
                 <>
-                <h5 className='title'>Set Up Two-Factor Authentication</h5>
-                <img src="../../../assets/otp.png" alt="otp" style={{width:"40%",marginLeft:"30%"}} />
+                <h5 className='title mb-5'>Set Up Two-Factor Authentication</h5>
                 <Code email={email} password={password} stage={stage} />
                 </>
       )}
@@ -137,7 +144,7 @@ const Login=()=> {
                 <MDBInput 
                 label='Please Enter your email'
                 name="email"
-                type="text"
+                type='email'
                 value={emailForgotten}
                 onChange={(e) => setEmailForgotten(e.target.value)}
                 required />

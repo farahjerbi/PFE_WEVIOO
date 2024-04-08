@@ -43,6 +43,18 @@ public class JwtGenerator {
         return token;
     }
 
+    public String generateSimpleToken(String email) {
+        Date currentDate = new Date();
+        Date expireDate = new Date(currentDate.getTime() + JWT_EXPIRATION);
+        String token = Jwts.builder()
+                .setSubject(email)
+                .setIssuedAt( new Date())
+                .setExpiration(expireDate)
+                .signWith(key, SignatureAlgorithm.HS512)
+                .compact();
+        return token;
+    }
+
     public String getUsernameFromJWT(String token){
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)

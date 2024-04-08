@@ -4,30 +4,32 @@ import Register from '../../components/register/Register';
 import Login from '../../components/login/Login';
 import './Authentication.css'
 import { useNavigate, useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { selectIsAuth } from '../../redux/state/authSlice';
+import { isTokenExpired } from '../../redux/state/authSlice';
+import { AUTHENTICATION } from '../../routes/paths';
 
 
 const Authentication = () => {
     const { emailUser } = useParams();
     const [loginRegisterActive, setLoginRegisterActive] = useState<string>("login");
-
-    const isAuth = useSelector(selectIsAuth);
-
     const navigate = useNavigate();
 
     useEffect(() => {
-      if(emailUser){
-        setLoginRegisterActive('register')
-      }
-    }, []);
+
+      if(emailUser && isTokenExpired(emailUser)){
+        navigate(AUTHENTICATION)}
+
+        if(emailUser){
+          setLoginRegisterActive('register')
+        }
+      
+       } , []);
   
     return (
-    <div className="container">
-    <MDBCard className='my-5'  >
+    <div className="container-auth ">
+    <MDBCard className='my-5 auth-card'  >
       <MDBRow>
         <MDBCol md="6">
-          <MDBCardImage className='illustration' src="../assets/email.png" />
+          <MDBCardImage className='illustration' src="../assets/auth.jpg" />
         </MDBCol>
         <MDBCol md="6">
           <MDBCardBody  >

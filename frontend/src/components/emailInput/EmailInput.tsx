@@ -97,7 +97,7 @@ const EmailInput: React.FC<EmailInputProps> = ({ label,onChange }) => {
                <div key={index} className='d-flex mb-2'>
           <MDBInput
             name="email"
-            type="text"
+            type="email"
             value={email}
             onChange={(e) => handleEmailChange(index, e.target.value)}
             required

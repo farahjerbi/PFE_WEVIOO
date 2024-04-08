@@ -19,6 +19,7 @@ public class TemplateBody implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String subject;
+    private boolean tags=false;
     @Column(columnDefinition = "TEXT")
     private String content;
     @JsonIgnore

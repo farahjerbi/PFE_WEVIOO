@@ -6,14 +6,18 @@ import lombok.AllArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import wevioo.tn.ms_auth.security.JwtGenerator;
 
 @AllArgsConstructor
 @Service
 public class EmailForgetPassword {
     private final JavaMailSender mailSender;
+    private final JwtGenerator jwtGenerator;
+
 
     public void sendEmailForgotPassword(String toEmail ){
-        String activationLink = "http://localhost:3000/forgotPassword/" + toEmail;
+        String token=jwtGenerator.generateSimpleToken((toEmail));
+        String activationLink = "http://localhost:3000/forgotPassword/" + token;
         String body = "<!DOCTYPE html>\n" +
                 "<html lang=\"en\">\n" +
                 "<head>\n" +

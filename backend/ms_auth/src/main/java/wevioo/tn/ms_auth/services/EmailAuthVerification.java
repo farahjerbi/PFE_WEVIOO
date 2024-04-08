@@ -5,21 +5,24 @@ import jakarta.mail.internet.MimeMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import wevioo.tn.ms_auth.security.JwtGenerator;
 
 @Service
 public class EmailAuthVerification {
 
     private final JavaMailSender mailSender;
 
-
-    public EmailAuthVerification(JavaMailSender mailSender) {
+    private final JwtGenerator jwtGenerator;
+    public EmailAuthVerification(JavaMailSender mailSender, JwtGenerator jwtGenerator) {
         this.mailSender = mailSender;
+        this.jwtGenerator = jwtGenerator;
     }
 
 
 
     public void sendEmailAuthVerification(String toEmail ){
-        String activationLink = "http://localhost:3000/authentication/" + toEmail;
+        String token= jwtGenerator.generateSimpleToken(toEmail);
+        String activationLink = "http://localhost:3000/authentication/" + token;
         String body = "<!DOCTYPE html>\n" +
                 "<html lang=\"en\">\n" +
                 "<head>\n" +

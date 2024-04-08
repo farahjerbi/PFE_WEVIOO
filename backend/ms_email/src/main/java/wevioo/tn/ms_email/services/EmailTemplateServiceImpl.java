@@ -39,6 +39,13 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
 
 
     public EmailTemplate createEmailTemplate(EmailTemplate emailTemplate) {
+        if(emailTemplate.getTemplateBody().getContent().contains("@email")
+        ||emailTemplate.getTemplateBody().getContent().contains("@username")
+                ||emailTemplate.getTemplateBody().getContent().contains("@firstname")
+                ||emailTemplate.getTemplateBody().getContent().contains("@lastname")
+        ){
+            emailTemplate.getTemplateBody().setTags(true);
+        }
         return emailTemplateRepository.save(emailTemplate);
     }
 
@@ -65,7 +72,6 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
             MimeMessageHelper helper = new MimeMessageHelper(message, true, UTF_8_ENCODING);
             helper.setPriority(1);
             helper.setSubject(emailTemplate.getSubject());
-            //  helper.setFrom("farah.jeerbi@gmail.com");
             helper.setTo(recipients);
 
             if (cc != null) {
@@ -75,9 +81,13 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
             }
             helper.setReplyTo(replyTo);
 
-            String templateContent = emailTemplate.getContent();
-            String result = templateUtils.replacePlaceholders(templateContent, requestBody);
+            String result = emailTemplate.getContent();
+            if (emailTemplate.isTags()) {
+                result = templateUtils.replaceTags(result, recipients[0]);
+            }
+            result = templateUtils.replacePlaceholders(result, requestBody);
             emailTemplate.setContent(result);
+
 
 
             String signature = user.getSignature();
@@ -86,7 +96,7 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
             MimeMultipart mimeMultipart = new MimeMultipart("related");
 
             //Add HTML Body content
-            templateUtils.addHtmlContentToEmail(mimeMultipart,emailTemplate);
+            templateUtils.addHtmlContentToEmail(mimeMultipart,emailTemplate, addSignature);
 
 
             // Add signature to the email body
