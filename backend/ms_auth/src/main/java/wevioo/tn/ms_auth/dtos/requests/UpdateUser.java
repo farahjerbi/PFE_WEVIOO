@@ -8,5 +8,6 @@ public class UpdateUser {
     private String firstName;
     private String lastName;
     private String emailSecret;
+    private String signatureUrl;
     private MultipartFile signature;
 }

@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { useGetAllEmailTemplatesMutation } from '../../../../redux/services/emailApi';
 import { EmailTemplate } from '../../../../models/EmailTemplate';
 import { toast } from 'sonner';
-import { Pie } from '@ant-design/plots';
-import { MDBRow } from 'mdb-react-ui-kit';
+import { MDBCard, MDBCardBody, MDBCardTitle, MDBRow } from 'mdb-react-ui-kit';
 import BreadcrumSection from '../../../../components/BreadcrumSection/BreadcrumSection';
+import { PieChart } from '@mui/x-charts/PieChart';
 
 const EmailStatistics = () => {
     const[getAllEmailTemplates]=useGetAllEmailTemplatesMutation();
@@ -37,34 +37,36 @@ const EmailStatistics = () => {
       };
 
       const data = [
-        { type: 'Complex Template', value: numberOfComplexTemplate },
-        { type: 'Simple Template', value: numberOfSimpleTemplate },
+        {id:0, label: 'Advanced Template', value: numberOfComplexTemplate, color:"#6873C8"},
+        {id:1, label: 'Simple Template', value: numberOfSimpleTemplate },
       ];
 
-      const config = {
-        data,
-        angleField: 'value',
-        colorField: 'type',
-        radius: 0.8,
-        label: {
-          text: (d:any) => `${d.type}\n ${d.value}`,
-          position: 'spider',
-        },
-        legend: {
-          color: {
-            title: false,
-            position: 'right',
-            rowPadding: 5,
-          },
-        },
-      }
+
   return (
-    <div>
-   <MDBRow className="mb-3 mt-5">
-        <BreadcrumSection/>
-        <Pie {...config} />
-    </MDBRow>
+   <MDBCard className="mb-3 mt-5">
+    <MDBCardBody>
+    <MDBCardTitle>Statistics</MDBCardTitle>
+    <div style={{height:"170px"}}>
+    <PieChart
+      series={[
+        {
+          data: data ,
+          innerRadius: 30,
+          outerRadius: 50,
+          paddingAngle: 5,
+          cornerRadius: 5,
+          startAngle: -90,
+          endAngle: 180,
+          cx: 100,
+          cy: 100,
+        }
+      ]}
+      
+    />
     </div>
+    
+    </MDBCardBody>
+    </MDBCard>
  
       )
 }

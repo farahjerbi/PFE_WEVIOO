@@ -63,7 +63,11 @@ public class ProfileServiceImpl implements ProfileService {
         user.setLastName(userEntity.getLastName());
         user.setFirstName(userEntity.getFirstName());
         user.setEmailSecret(userEntity.getEmailSecret());
-        user.setSignature(fileStorageService.storeFile(userEntity.getSignature()));
+        if (userEntity.getSignature() != null && !userEntity.getSignature().isEmpty()) {
+            user.setSignature(fileStorageService.storeFile(userEntity.getSignature()));
+        } else if (userEntity.getSignatureUrl() != null && !userEntity.getSignatureUrl().isEmpty()) {
+            user.setSignature(userEntity.getSignatureUrl());
+        }
 
         userRepository.save(user);
 

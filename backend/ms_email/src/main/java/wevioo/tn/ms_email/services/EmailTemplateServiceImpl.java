@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -20,6 +21,7 @@ import wevioo.tn.ms_email.repositories.EmailTemplateRepository;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Map;
 
 import static wevioo.tn.ms_email.services.TemplateUtils.DIRECTORYPATH;
@@ -170,6 +172,18 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
 
 
 
+    public void toggleFavoriteEmail(Long emailTemplateId, Long userId) {
+        EmailTemplate emailTemplate = emailTemplateRepository.findById(emailTemplateId)
+                .orElseThrow(() -> new EntityNotFoundException("Email template not found with id: " + emailTemplateId));
 
+        List<Long> userFavoriteEmails = emailTemplate.getUserFavoriteEmails();
+        if (userFavoriteEmails.contains(userId)) {
+            userFavoriteEmails.removeIf(id -> id.equals(userId));
+        } else {
+            userFavoriteEmails.add(userId);
+        }
+
+         emailTemplateRepository.save(emailTemplate);
+    }
 
 }

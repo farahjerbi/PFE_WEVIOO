@@ -46,12 +46,12 @@ const ChangePassword:React.FC<Close> = ({ onClose })=> {
 
   return (
     <>
-    <MDBContainer fluid className='changepassword-container my-5'>
+    <MDBContainer fluid className='changepassword-container  my-5'>
 
-    <MDBRow className='g-0 align-items-center'>
+    <MDBRow className='g-0 align-items-center '>
       <MDBCol col='6'>
 
-      <MDBCard className='my-5 cascading-right' style={{
+      <MDBCard className='my-5 cascading-right  ' style={{
                 background: 'hsla(0, 0%, 100%, 0.55)',
                 backdropFilter: 'blur(30px)',
             }}>
@@ -70,7 +70,7 @@ const ChangePassword:React.FC<Close> = ({ onClose })=> {
             style={{ background: 'linear-gradient(90deg, rgba(106, 15, 255, 1) 0%, rgba(131, 89, 255, 1) 15%, rgba(168, 118, 230, 1) 35%, rgba(186, 155, 227, 1) 67%, rgba(234, 219, 247, 1) 100%)'}} className='w-100 mb-4' >
               Reset</MDBBtn>
             </form>
-            <MDBBtn outline className='mx-2' color='secondary' onClick={()=>onClose()}>
+            <MDBBtn type='button' outline className='mx-2' color='secondary' onClick={()=>onClose()}>
               Go Back
             </MDBBtn>
           </MDBCardBody>

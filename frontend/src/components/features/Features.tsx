@@ -13,33 +13,39 @@ import DevicesRoundedIcon from '@mui/icons-material/DevicesRounded';
 import EdgesensorHighRoundedIcon from '@mui/icons-material/EdgesensorHighRounded';
 import ViewQuiltRoundedIcon from '@mui/icons-material/ViewQuiltRounded';
 
+import {  useSelector } from 'react-redux';
+import { selectSavedEmails } from '../../redux/state/emailSlice';
+
+import SheetContent from '../sheet/SheetContent';
+
 const items = [
   {
-    icon: <DevicesRoundedIcon color='secondary' />,
-    title: 'Push',
-    description:
-      'This item could let users know the product is available on all platforms, such as web, mobile, and desktop.',
-    image: 'url("../../../assets/push-dash.gif")',
-  },
-  {
-    icon: <ViewQuiltRoundedIcon className='green'/>,
+    icon: <ViewQuiltRoundedIcon className='blue'/>,
     title: 'Emails',
     description:
       'This item could provide a snapshot of the most important metrics or data points related to the product.',
     image: 'url("../../../assets/email-dash.gif")',
   },
   {
-    icon: <EdgesensorHighRoundedIcon color='warning' />,
+    icon: <EdgesensorHighRoundedIcon className='purple' />,
     title: 'SMS',
     description:
       'This item could provide information about the mobile app version of the product.',
     image: 'url("../../../assets/sms-dash.gif")',
   },
+  {
+    icon: <DevicesRoundedIcon className='baby-blue' />,
+    title: 'Push',
+    description:
+      'This item could let users know the product is available on all platforms, such as web, mobile, and desktop.',
+    image: 'url("../../../assets/push-dash.gif")',
+  },
  
 ];
 
 export default function Features() {
-  const [selectedItemIndex, setSelectedItemIndex] = React.useState(0);
+  const emails=useSelector(selectSavedEmails)
+  const [selectedItemIndex, setSelectedItemIndex] = React.useState(0)
 
   const handleItemClick = (index: number) => {
     setSelectedItemIndex(index);
@@ -48,12 +54,12 @@ export default function Features() {
   const selectedFeature = items[selectedItemIndex];
 
   return (
-    <Container style={{marginLeft:"17%"}} id="features" sx={{ py: { xs: 8, sm: 16 } }}>
-      <Grid container spacing={6}>
+    <Container style={{marginLeft:"12%"}} id="features" sx={{ py: { xs: 8, sm: 16 } }}>
+      <Grid container spacing={6} >
         <Grid item xs={12} md={6}>
           <div>
             <Typography component="h2" variant="h4" color="text.primary">
-              Notification Platform features
+              Saved Templates
             </Typography>
             <Typography
               variant="body1"
@@ -190,28 +196,20 @@ export default function Features() {
           xs={12}
           md={6}
           sx={{ display: { xs: 'none', sm: 'flex' }, width: '100%' }}
-        >
-          <Card
-            variant="outlined"
-            sx={{
-              height: '100%',
-              width: '100%',
-              display: { xs: 'none', sm: 'flex' },
-              pointerEvents: 'none',
-            }}
-          >
-            <Box
-              sx={{
-                m: 'auto',
-                width: 438,
-                height: 460,
-                backgroundSize: 'contain',
-                backgroundImage: selectedFeature.image,
-              }}
-            />
-          </Card>
+        >    
+       {selectedItemIndex === 0 && emails && (
+          <SheetContent templates={emails} type='email' />
+      )}
+         {selectedItemIndex === 1 && emails && (
+          <SheetContent templates={emails} type='email' />
+      )}
+         {selectedItemIndex === 2 && emails && (
+          <SheetContent templates={emails} type='email' />
+      )}
         </Grid>
       </Grid>
+   
     </Container>
+    
   );
 }

@@ -5,6 +5,8 @@ import authReducer from "../redux/state/authSlice"
 import { emailApi } from './services/emailApi';
 import { usersApi } from './services/usersApi';
 import styleSlice from './state/styleSlice';
+import emailSlice from './state/emailSlice';
+import usersSlice from './state/usersSlice';
 export const store = configureStore({
   reducer: {
     auth:authReducer,
@@ -12,6 +14,8 @@ export const store = configureStore({
     [emailApi.reducerPath]:emailApi.reducer,
     [usersApi.reducerPath]:usersApi.reducer,
     style: styleSlice,
+    email:emailSlice,
+    users:usersSlice
 
 
   },

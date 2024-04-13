@@ -6,4 +6,5 @@ export interface EmailTemplate{
     language:string,
     state?:string,
     templateBody:TemplateBody
+    userFavoriteEmails?: number[];
 }

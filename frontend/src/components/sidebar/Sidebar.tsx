@@ -1,11 +1,11 @@
-import { MDBCard, MDBCardBody, MDBCol, MDBIcon, MDBListGroup, MDBListGroupItem } from 'mdb-react-ui-kit';
+import { MDBCard, MDBCardBody, MDBCol, MDBListGroup, MDBListGroupItem } from 'mdb-react-ui-kit';
 import { useEffect, useState } from 'react'
 import './Sidebar.css'
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import {  useLocation, useNavigate } from 'react-router-dom';
 import { Role } from '../../models/Role';
 import { selectRole } from '../../redux/state/authSlice';
 import { useSelector } from 'react-redux';
-import { ADD_EMAIL_TEMPLATE, CALENDAR, DASHBOARD, EMAILS_STATISTICS, LIST_EMAIL_TEMPLATES, LIST_PUSH_TEMPLATES, LIST_SMS_TEMPLATES, LIST_USERS, PROFILE, USERS_STATISTICS } from '../../routes/paths';
+import {  CALENDAR, DASHBOARD, LIST_EMAIL_TEMPLATES, LIST_PUSH_TEMPLATES, LIST_SMS_TEMPLATES, LIST_USERS, PROFILE, SAVEDTEMPLATES } from '../../routes/paths';
 import { Tooltip } from '@mui/material';
 import { selectIsOpen } from '../../redux/state/styleSlice';
 const Sidebar = () => {
@@ -13,6 +13,7 @@ const Sidebar = () => {
     const [dashboardName, setDashboardName] = useState('');
     const role = useSelector(selectRole);
     const isOpen=useSelector(selectIsOpen);
+
     useEffect(() => {
       const pathname = location.pathname;
       const dashboardNameFromPath = pathname.split('/');
@@ -98,7 +99,16 @@ const Sidebar = () => {
                     </Tooltip>
                     {isOpen && ( <span>Push Templates</span> )}
                     </MDBListGroupItem>
-            
+
+              {role===Role.USER && (
+                   <MDBListGroupItem className={dashboardName === "saved-templates" ? 'sidebar-item-active' : 'sidebar-item'}  onClick={()=>navigate(SAVEDTEMPLATES)}>
+                   <Tooltip  title="saved templates"  >
+                   <img src="../../../assets/bookmark.png" alt="sidebar-icon" className={isOpen?"sidebar-icon-open":"sidebar-icon"} />
+                   </Tooltip>
+                   {isOpen && ( <span>Saved Templates</span> )}
+                   </MDBListGroupItem>
+              )}      
+                 
             </MDBListGroup>
     
         </div>

@@ -21,4 +21,5 @@ public interface EmailTemplateService {
                             String addSignature)throws JsonProcessingException;
     String deleteEmailTemplate(Long id);
     String updateEmailTemplate(Long id, UpdateEmailTemplateRequest updatedTemplate, Object jsonObject) ;
+    void toggleFavoriteEmail(Long emailTemplateId, Long userId);
 }

@@ -20,7 +20,7 @@ const ForgotPassword = () => {
     if(email && isTokenExpired(email)){
       navigate(AUTHENTICATION)
     }
-  }, []);
+  });
 
   const handleChangePassword = async()=> {
     try{

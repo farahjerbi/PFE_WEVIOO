@@ -1,4 +1,4 @@
-import { MDBBtn, MDBModal, MDBModalBody, MDBModalContent, MDBModalDialog, MDBModalFooter, MDBModalHeader, MDBModalTitle } from 'mdb-react-ui-kit'
+import { MDBBtn} from 'mdb-react-ui-kit'
 import React, { useEffect, useState } from 'react'
 import { useDeleteUserMutation } from '../../redux/services/usersApi';
 import { toast } from 'sonner';
@@ -6,12 +6,11 @@ import { Role } from '../../models/Role';
 import { useDispatch } from 'react-redux';
 import { logout } from '../../redux/state/authSlice';
 import { useNavigate } from 'react-router-dom';
-interface DeleteUserModalProps {
-    id: number;
-    onClose: () => void;
-    show:boolean;
-    typeUser:Role
-  }
+import { Button, DialogContent, DialogTitle, Modal } from '@mui/material';
+import ModalDialog from '@mui/joy/ModalDialog';
+import { DeleteUserModalProps } from '../../models/DeleteModels';
+import { setDeleteUser } from '../../redux/state/usersSlice';
+
   const DeleteUserModal: React.FC<DeleteUserModalProps> = ({ id , onClose ,show ,typeUser}) => {
     const[deleteUser]=useDeleteUserMutation();
     const dispatch = useDispatch();
@@ -24,6 +23,7 @@ interface DeleteUserModalProps {
         try {
           await deleteUser(id);
           toast.success("User Deleted Successfully !");
+          dispatch(setDeleteUser(id))
           onClose();
           if(typeUser===Role.USER){
             dispatch(logout());
@@ -40,23 +40,22 @@ interface DeleteUserModalProps {
         } 
 
   return (
-    <MDBModal open={open} tabIndex='-1'>
-    <MDBModalDialog>
-      <MDBModalContent>
-        <MDBModalHeader>
-          <MDBModalTitle>Delete User</MDBModalTitle>
-          <MDBBtn className='btn-close' color='none' onClick={toggleOpen}></MDBBtn>
-        </MDBModalHeader>
-        <MDBModalBody>Are you sure you want to delete this user ?</MDBModalBody>
-        <MDBModalFooter>
-          <MDBBtn color='secondary' onClick={toggleOpen}>
-            Close
+    <>
+     <Modal open={open} onClose={() => setOpen(false)}>
+        <ModalDialog>
+          <DialogTitle>Delete User</DialogTitle>
+          <DialogContent>Are you sure you want to delete this account ?</DialogContent>
+          <div className='d-felx'>
+          <MDBBtn className='w-40 ms-1 me-4' color='secondary' onClick={toggleOpen}>
+            Never mind ...
           </MDBBtn>
-          {id && ( <MDBBtn color='danger' onClick={()=>deleteU(id)}> Yes ! </MDBBtn> )}
-        </MDBModalFooter>
-      </MDBModalContent>
-    </MDBModalDialog>
-  </MDBModal>  
+            {id && (  <Button style={{width:"50%"}} type="submit" color='error' onClick={()=>deleteU(id)}>YES!</Button>)}
+          </div> 
+        </ModalDialog>
+      </Modal>
+    </>
+
+
   )
 }
 

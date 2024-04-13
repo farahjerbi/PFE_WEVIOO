@@ -6,7 +6,6 @@ import {
   MDBCol,
   MDBInput,
   MDBCheckbox,
-  MDBIcon,
   MDBContainer,
   MDBModal,
   MDBModalDialog,

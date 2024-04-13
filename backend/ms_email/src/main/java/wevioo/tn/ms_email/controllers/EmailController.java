@@ -358,6 +358,16 @@ public class EmailController {
     }
 
 
+    @PutMapping("toggleFavoriteEmail/{templateId}/{userId}")
+    public String toggleFavoriteEmail(@PathVariable  Long templateId, @PathVariable Long userId){
+         emailTemplateService.toggleFavoriteEmail(templateId,userId);
+        return "Template add to favorite with success";
+    }
+
+    @GetMapping("likedByUser/{userId}")
+    public List<EmailTemplate> getTemplatesLikedByUser(@PathVariable Long userId) {
+        return emailTemplateRepository.findTemplatesByUserFavoriteEmailsContains(userId);
+    }
 
 }
 

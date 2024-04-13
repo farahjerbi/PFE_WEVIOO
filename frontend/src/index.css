@@ -176,20 +176,36 @@ main {
   background: linear-gradient(90deg, rgba(88, 173, 91, 1) 0%, rgb(48, 141, 49) 50%, rgba(95, 165, 105, 1) 100%);
 }
 
-.color_orange{
-  background: linear-gradient(90deg, rgba(233, 138, 85, 1) 0%, rgb(214, 85, 16) 51%, rgba(233, 138, 85, 1) 100%);
-}
 
 .color_purple{
   background: linear-gradient(90deg, rgba(210, 114, 210, 1) 0%, rgb(156, 47, 156) 50%, rgba(210, 114, 210, 1) 100%);
 }
 
+.color_pink{
+  background: linear-gradient(90deg, rgb(210, 114, 167) 0%, rgb(181, 55, 95) 50%, rgb(210, 114, 167) 100%);
+}
+
+
+.color_orange{
+  background: linear-gradient(90deg, rgb(208, 138, 84) 0%, rgb(195, 74, 10) 51%, rgb(208, 138, 84)  100%);
+}
 .color_red{
   background: linear-gradient(90deg, rgb(226, 18, 18) 0%, rgb(157, 21, 21) 50%, rgba(226, 18, 18) 100%);
 }
 
+.color_white{
+  background: linear-gradient(90deg, #6873C8 0%, rgb(184, 180, 214) 50%, #6873C8 100%);
+}
 .green{
   color: #4fab52 !important;
+}
+
+.blue{
+  color: #6873C8 !important;
+}
+
+.baby-blue{
+  color: #7fc7ed !important;
 }
 
 .orange{
@@ -213,6 +229,10 @@ main {
 }
 .color_baby_blue{
   background: linear-gradient(90deg, #54b4d3 0%, rgb(26, 164, 182) 50%, #54b4d3  100%);
+}
+
+.color_baby_bluee{
+  background: linear-gradient(90deg, #9ed6fc 0%, rgb(110, 175, 219) 50%, #9ed6fc  100%);
 }
 
 .search-hover {

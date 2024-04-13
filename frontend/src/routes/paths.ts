@@ -15,4 +15,5 @@ export const SEND_EMAIL_SCHEDULED="/email/send/scheduled"
 export const EDIT_EMAIL_TEMPLATE="/email/edit"
 export const AUTHENTICATION="/authentication"
 export const CALENDAR="/calendar"
+export const SAVEDTEMPLATES="/saved-templates"
 

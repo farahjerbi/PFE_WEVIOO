@@ -6,9 +6,11 @@ import { useAddTemplateEmailMutation } from '../../../../redux/services/emailApi
 import { toast } from 'sonner'
 import { EmailTemplate } from '../../../../models/EmailTemplate'
 import { useNavigate } from 'react-router-dom'
-import { LIST_EMAIL_TEMPLATES } from '../../../../routes/paths'
+import { ADD_EMAIL_TEMPLATE, LIST_EMAIL_TEMPLATES } from '../../../../routes/paths'
 import { Box, FormControl, InputAdornment, TextField, Typography } from '@mui/material'
 import Textarea from '@mui/joy/Textarea';
+import { useDispatch } from 'react-redux'
+import { setEmail } from '../../../../redux/state/emailSlice'
 
 const CreateSimpleEmail = () => {
   const initialState={
@@ -66,6 +68,7 @@ const formValidation = () => {
   const {name,language,subject,content}=formData;
   const[addTemplateEmail]=useAddTemplateEmailMutation();
   const navigate = useNavigate();
+  const dispatch=useDispatch();
   const handleAddTemplate: (evt: React.FormEvent<HTMLFormElement>) => void = async (e) => {
     e.preventDefault();
     const isFormValid = formValidation();
@@ -82,6 +85,7 @@ const formValidation = () => {
       };
       
       const userData = await addTemplateEmail(emailTemplate).unwrap();
+      dispatch(setEmail(emailTemplate));
       console.log("🚀 ~ emailData:", userData);
       toast.success("Template added successfully");
       setFormData(initialState);
@@ -188,7 +192,7 @@ const formValidation = () => {
 
 
               <div style={{display:"flex" ,justifyContent:"space-between"}}>
-              <MDBBtn color='info' type='button' onClick={()=>navigate(LIST_EMAIL_TEMPLATES)}>Go Back</MDBBtn>
+              <MDBBtn color='info' type='button' onClick={()=>navigate(ADD_EMAIL_TEMPLATE)}>Go Back</MDBBtn>
               <MDBBtn type='submit'>Add Template</MDBBtn>
               </div>
               </form>

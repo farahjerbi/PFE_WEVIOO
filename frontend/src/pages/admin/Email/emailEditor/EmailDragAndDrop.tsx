@@ -18,6 +18,8 @@ import ModalDialog from '@mui/joy/ModalDialog';
 import DialogTitle from '@mui/joy/DialogTitle';
 import DialogContent from '@mui/joy/DialogContent';
 import Stack from '@mui/joy/Stack';
+import { useDispatch } from "react-redux";
+import { setEmail } from "../../../../redux/state/emailSlice";
 
 
 const EmailDragAndDrop: React.FC = () => {
@@ -37,6 +39,7 @@ const EmailDragAndDrop: React.FC = () => {
   const[addTemplateEmail]=useAddTemplateEmailMutation();
   const[addDesignTemplate]=useAddDesignTemplateMutation();
   const navigate=useNavigate();
+  const dispatch=useDispatch();
   const [open, setOpen] = React.useState<boolean>(false);
 
 
@@ -46,8 +49,6 @@ const EmailDragAndDrop: React.FC = () => {
     setFormData({...formData, [e.target.name]: e.target.value})
   }
 
-
-  const toggleOpen = () => setBasicModal(!basicModal);
 
   const exportHtml = () => {
     if (emailEditorRef.current !== null) {
@@ -102,6 +103,7 @@ const EmailDragAndDrop: React.FC = () => {
       };
       
       const userData = await addTemplateEmail(emailTemplate).unwrap();
+      dispatch(setEmail(emailTemplate))
     if (templateDesign) {
         const requestData = {
           jsonObject: templateDesign,
@@ -129,7 +131,6 @@ const EmailDragAndDrop: React.FC = () => {
       <BreadcrumSection/>
     <div className="Editor-container">
       <div className="export_button">
-        {/* <MDBBtn onClick={exportHtml}>Create Template Email</MDBBtn> */}
         <Button
         size="sm"
         variant="outlined"
@@ -172,27 +173,6 @@ const EmailDragAndDrop: React.FC = () => {
           </form>
         </ModalDialog>
       </Modal>
-      {/* <MDBModal   open={basicModal} setOpen={setBasicModal} tabIndex='-1'>
-        <MDBModalDialog>
-          <MDBModalContent>
-            <MDBModalHeader>
-              <MDBModalTitle>In order to complete the process, please fill this form</MDBModalTitle>
-              <MDBBtn className='btn-close' color='none' onClick={toggleOpen}></MDBBtn>
-            </MDBModalHeader>
-            <form onSubmit={handleAddTemplate} style={{margin:"5px"}}>
-              <MDBInput  name='name' value={name} onChange={handleChange} wrapperClass='mb-4' label='Template Name' id='form1' type='text'/>
-              <MDBInput  name='language' value={language} onChange={handleChange} wrapperClass='mb-4' label='Language' id='form1' type='text'/>
-              <MDBInput  name='subject' value={subject} onChange={handleChange} wrapperClass='mb-4' label='Subject' id='form1' type='text'/>
-            <MDBModalFooter>
-              <MDBBtn color='secondary' onClick={toggleOpen}>
-                Close
-              </MDBBtn>
-              <MDBBtn type="submit">Save</MDBBtn>
-            </MDBModalFooter>
-            </form>
-          </MDBModalContent>
-        </MDBModalDialog>
-      </MDBModal> */}
     </div>
     </>
   );

@@ -80,7 +80,7 @@ const formValidation = () => {
       formData.email=emailUser
       setContinued(true)
     }
-  }, []);
+  });
 
   const verifyEmailUser: (evt: FormEvent<HTMLFormElement>) => void = async (
     e: FormEvent<HTMLFormElement>

@@ -8,8 +8,8 @@ import { Role } from '../../../models/Role';
 import ChangePassword from '../changePassword/ChangePassword';
 import { toast } from 'sonner';
 import axios from 'axios';
-import { useSelector } from 'react-redux';
-import { selectUser } from '../../../redux/state/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectUser, setUpdatedUser } from '../../../redux/state/authSlice';
 import Button from '@mui/material/Button';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { styled } from '@mui/material/styles';
@@ -28,13 +28,16 @@ const VisuallyHiddenInput = styled('input')({
 });
 const Profile = () => {
     const user = useSelector(selectUser);
+    const dispatch=useDispatch();
     const [updated, setUpdated] = useState<boolean>(false);
     const [signatureInput, setSignatureInput] = useState<File | null>(null);
     const [formData, setFormData] = useState({
-        email: "" ,
-        emailSecret: "" ,
-        firstName: "",
-        lastName: "",
+        email: user?.email ,
+        emailSecret: user?.emailSecret ,
+        firstName: user?.firstName,
+        lastName: user?.lastName,
+        signatureInput: user?.signature,
+
     });
     const { email, emailSecret, firstName, lastName } = formData;
     const [idDelete, setIdDelete] = useState<number>();
@@ -42,33 +45,21 @@ const Profile = () => {
     const [resetPassword, setResetPassword] = useState<boolean>(false);
     const [signatureUrl, setSignatureUrl] = useState<string>("");
     useEffect(() => {
-      const fetchSignatureImage = async () => {
-        try {
-          if(user){ 
-            setSignatureUrl(`http://localhost:8099/uploads/${user.signature}`);   
-              }
-        } catch (error) {
-          console.error('Error fetching signature image:', error);
-        }
-      };
-    
       if (user && user.signature) {
         fetchSignatureImage();
       }
+    }, [user]); 
     
-      if (user) {
-        setFormData({  
-          email: user.email,
-          emailSecret: user.emailSecret,
-          firstName: user.firstName,
-          lastName: user.lastName,
-        });
+    const fetchSignatureImage = async () => {
+      try {
+        if (user && user.signature) {
+          setSignatureUrl(`http://localhost:8099/uploads/${user.signature}`);
+        }
+      } catch (error) {
+        console.error('Error fetching signature image:', error);
       }
+    };
     
-    }, [user,updated]); 
-    
-
-  
     if (!user) {
       return <div>Loading user...</div>;
     }
@@ -88,29 +79,28 @@ const Profile = () => {
             ) => {
               e.preventDefault();
             
-              const id = user.id;
-              if (!firstName || !lastName || !signatureInput || !emailSecret) {
+              if (!firstName || !lastName || !emailSecret) {
                 console.error("Please fill in all fields and select a signature file.");
                 return;
               }
-            
               const formData = new FormData();
-              formData.append('signature', signatureInput);
               formData.append('firstName', firstName);
               formData.append('lastName', lastName);
               formData.append('emailSecret', emailSecret);
-            
+              if (signatureInput !== null) {
+                formData.append('signature', signatureInput);
+              } else {
+                if (signatureUrl) {
+                  formData.append('signatureUrl', signatureUrl);
+                } 
+              }
               try {
-                const response = await axios.post(`http://localhost:8088/api/users/updateProfile/${id}`, formData);
+                const response = await axios.post(`http://localhost:8099/api/users/updateProfile/${user?.id}`, formData);
                 
                 if (response.status === 200) {
-                  console.log("🚀 ~ Profile ~ response:", response);
                   const updatedUser = response.data;
-                  console.log("🚀 ~ Profile ~ updatedUser:", updatedUser);
+                  dispatch(setUpdatedUser(updatedUser))
                   toast.success("Profile Updated Successfully !");
-                  localStorage.setItem("user", JSON.stringify(updatedUser));
-                  setUpdated(!updated);
-                  console.log("User updated successfully!");
                 }
               } catch (err) {
                 toast.error('Error!')
@@ -163,21 +153,22 @@ const Profile = () => {
                                 role={undefined}
                                 variant="contained"
                                 tabIndex={-1}
-                                color='secondary'
+                                color='info'
                                 startIcon={<CloudUploadIcon />}
                               >
                                 <VisuallyHiddenInput accept="*/*" onChange={(e) => setSignatureInput(e.target.files && e.target.files[0])}  className='mb-4'  type="file" />
                               </Button>
                             </Tooltip>
+                          {signatureInput && (<p>{signatureInput.name}</p>)}  
                             {signatureUrl && (
-                                  <img src={signatureUrl} alt="Signature" style={{ maxWidth: '40%', height: 'auto' }} />
+                                  <img src={signatureUrl} alt="Signature" style={{ maxWidth: '100px', height: 'auto' }} />
 
                             )}
 
                             <div className='d-flex '>
-                            <MDBBtn className='w-50 me-2'>Update Profile</MDBBtn>                            
-                            <MDBBtn className='w-50 me-2' color='info' onClick={()=>setResetPassword(true)}  >Change Password</MDBBtn>
-                            <MDBBtn className='w-50 ' color='danger' onClick={() => { setDeleteModalOpen(true); setIdDelete(user.id)}}>Delete Profile</MDBBtn>
+                            <MDBBtn className='w-50 me-2 color_baby_blue'>Update Profile</MDBBtn>                            
+                            <MDBBtn className='w-50 me-2 color_baby_bluee'  onClick={()=>setResetPassword(true)}  >Change Password</MDBBtn>
+                            <MDBBtn className='w-50 color_blue'  onClick={() => { setDeleteModalOpen(true); setIdDelete(user.id)}}>Delete Profile</MDBBtn>
                             </div>
                             </MDBCardBody>
                             </form>

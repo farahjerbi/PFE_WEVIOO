@@ -1,8 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useSelector,  } from "react-redux";
-import { decodeToken, selectIsAuth } from "../redux/state/authSlice";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../redux/store";
+import {  selectIsAuth } from "../redux/state/authSlice";
+
 import { Navigate } from "react-router-dom";
 import { AUTHENTICATION } from "./paths";
 interface ProtectedRouteProps {

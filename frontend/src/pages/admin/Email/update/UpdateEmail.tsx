@@ -2,28 +2,27 @@ import React, { useEffect, useRef, useState } from 'react'
 import './UpdateEmail.css'
 import BreadcrumSection from '../../../../components/BreadcrumSection/BreadcrumSection'
 import { MDBBtn, MDBCard, MDBCardBody, MDBCol, MDBInput, MDBRow, MDBTextArea } from 'mdb-react-ui-kit'
-import { useGetDesignTemplateMutation, useGetTemplateByIdMutation, useUpdateTemplateMutation } from '../../../../redux/services/emailApi'
-import { EmailTemplate } from '../../../../models/EmailTemplate'
-import EmailEditor, { EditorRef, EmailEditorProps } from 'react-email-editor'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useGetDesignTemplateMutation, useUpdateTemplateMutation } from '../../../../redux/services/emailApi'
+import EmailEditor, {  EmailEditorProps } from 'react-email-editor'
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
-import axios from 'axios'
 import { LIST_EMAIL_TEMPLATES } from '../../../../routes/paths'
+import { useSelector } from 'react-redux'
+import { selectEmail } from '../../../../redux/state/emailSlice'
 
 const UpdateEmail = () => {
-  const { id } = useParams();
-  const[template,setTemplate]=useState<EmailTemplate>();
   const emailEditorRef = useRef<any>(null); 
   const [templateDesign,setTemplateDesign]= useState<any>(null);
   const [show,setShow]= useState<boolean>(false);
-  const[getTemplateById]=useGetTemplateByIdMutation()
   const[getDesignTemplate]=useGetDesignTemplateMutation();
+  const template=useSelector(selectEmail)
+
   const initialState={
-    name: "",
-    state:"",
-    language:"",
-    content:"",
-    subject:"",
+    name: template?.name,
+    state:template?.state,
+    language:template?.language,
+    content:template?.templateBody.content,
+    subject:template?.templateBody.subject,
     design:""
   }
   const [formData, setFormData] = useState(initialState);
@@ -31,26 +30,16 @@ const UpdateEmail = () => {
   const navigate=useNavigate();
   const[updateTemplate]=useUpdateTemplateMutation();
   useEffect(() => {
+    if(template?.state ==="COMPLEX"){
     fetchData();
-  }, []);
+  }
+  });
 
     
   const fetchData = async () => {
     try {
-      const responseTemplate = await getTemplateById(id).unwrap();
-      setTemplate(responseTemplate)
-      setFormData({
-        name: responseTemplate?.name ,
-        state: responseTemplate?.state ,
-        language: responseTemplate?.language,
-        content: responseTemplate?.templateBody?.content ,
-        subject: responseTemplate?.templateBody?.subject,
-        design:"",
-      });
-      if(responseTemplate.state ==="COMPLEX"){
-        const design = await getDesignTemplate(Number(id)).unwrap();
+        const design = await getDesignTemplate(Number(template?.id)).unwrap();
         setTemplateDesign(design);
-      }
     } catch (error) {
       toast.error("Error! Yikes");
       console.error("🚀 ~ error:", error);
@@ -102,7 +91,7 @@ const UpdateEmail = () => {
       const requestData = {
           jsonObject: formData.design,
           emailTemplate: emailTemplate,
-          id: id
+          id: template?.id
       };
         await updateTemplate(requestData);
           

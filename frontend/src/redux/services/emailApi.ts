@@ -88,12 +88,25 @@ export const emailApi = createApi({
                 method: "DELETE",
             }),
         }),
+        toggleFavoriteEmail: builder.mutation({
+            query: ( {idTemplate,idUser}) => ({
+                url: `/toggleFavoriteEmail/${idTemplate}/${idUser}`,
+                method: "PUT",
+            }),
+        }),
+        getSavedTemplatesEamil: builder.mutation({
+            query: ( id ) => ({
+                url: `/likedByUser/${id}`,
+                method: "GET",
+            }),
+        }),
     }),
+    
  
 })
 
 export const {useAddTemplateEmailMutation,useGetAllEmailTemplatesMutation,useGetTemplatePlaceholdersMutation,
                 useAddDesignTemplateMutation,useGetDesignTemplateMutation,useDeleteTemplateMutation,useGetTemplateByIdMutation,
                 useGetScheduledEmailsMutation,useGetScheduledEmailsByUserMutation,useUpdateTemplateMutation,
-                useDeleteScheduledEmailMutation
+                useDeleteScheduledEmailMutation,useToggleFavoriteEmailMutation,useGetSavedTemplatesEamilMutation
             }=emailApi;

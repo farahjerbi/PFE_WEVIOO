@@ -1,8 +1,7 @@
-import { MDBBadge, MDBBtn, MDBCard, MDBCardBody, MDBCardImage, MDBCardText, MDBCardTitle, MDBCol, MDBContainer, MDBInput, MDBPagination, MDBPaginationItem, MDBPaginationLink, MDBRow, MDBTable, MDBTableBody, MDBTableHead } from 'mdb-react-ui-kit'
+import { MDBBadge, MDBCard, MDBCardBody, MDBCardText, MDBCardTitle, MDBCol, MDBContainer, MDBPagination, MDBPaginationItem, MDBPaginationLink, MDBRow } from 'mdb-react-ui-kit'
 import  { useEffect, useState } from 'react'
-import { useActivateUserMutation, useDesActivateUserMutation, useGetAllUsersMutation } from '../../../../redux/services/usersApi';
+import { useActivateUserMutation, useDesActivateUserMutation } from '../../../../redux/services/usersApi';
 import { toast } from 'sonner';
-import { IUser } from '../../../../models/User';
 import BreadcrumSection from '../../../../components/BreadcrumSection/BreadcrumSection';
 import './ListUsers.css'
 import DeleteUserModal from '../../../../components/modals/DeleteUserModal';
@@ -10,18 +9,17 @@ import { Role } from '../../../../models/Role';
 import Delete from '@mui/icons-material/Delete';
 import PersonOff from '@mui/icons-material/PersonOff';
 import PersonOutline from '@mui/icons-material/PersonOutline';
-import {  Badge, Button, Tooltip } from '@mui/material';
+import {  Button, Tooltip } from '@mui/material';
 import Avatar from 'react-avatar';
+import { useDispatch, useSelector } from 'react-redux';
+import { getUsers, selectUsers, setUpdateUserEnabled } from '../../../../redux/state/usersSlice';
+import { AppDispatch } from '../../../../redux/store';
 
 const ListUsers = () => {
-  /*https://www.freepik.com/free-vector/isometric-phone-with-chat-concept_5230451.htm#fromView=search&page=7&position=20&uuid=6b51443b-8949-4d75-8835-87cf4d3d5bd5 */
-  const [updated, setUpdated] = useState<boolean>(false);
-    useEffect(() => {
-        fetchData(); 
-      }, [updated]);
-      const [users, setUsers] = useState<IUser[]>([]);
+      const dispatchAction: AppDispatch = useDispatch(); 
       const [idDelete, setIdDelete] = useState<number>();
-      const[getAllUsers]=useGetAllUsersMutation();
+      const dispatch=useDispatch();
+      const users=useSelector(selectUsers)
       const[desActivateUser]=useDesActivateUserMutation();
       const[activateUser]=useActivateUserMutation();
       const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
@@ -31,29 +29,20 @@ const ListUsers = () => {
       const itemsPerPage = 6; 
       const indexOfLastItem = currentPage * itemsPerPage;
       const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-      const currentItems = users.slice(indexOfFirstItem, indexOfLastItem);
-
+      const currentItems = users?.slice(indexOfFirstItem, indexOfLastItem);
+      useEffect(() => {
+        dispatchAction(getUsers());
+        });
       const handlePageChange = (page:any) => {
         setCurrentPage(page);
       };
 
-      const fetchData = async () => {
-        try {
-          const response = await getAllUsers({}).unwrap();
-          console.log("🚀 ~ fetchData ~ response:", response)
-          setUsers(response); 
-          console.error("🚀 ~ error:", users);
-        } catch (error) {
-          toast.error("Error! Yikes");
-          console.error("🚀 ~ error:", error);
-        }
-      };
 
       const activate = async (email:string) => {
         try {
           await activateUser(email);
+          dispatch(setUpdateUserEnabled({email:email,enabled:"true"}))
           toast.success("User Activated !");
-          setUpdated(!updated)
         } catch (error) {
           toast.error("Error! Yikes");
           console.error("🚀 ~ error:", error);
@@ -63,8 +52,8 @@ const ListUsers = () => {
       const desactivate = async (email:string) => {
         try {
           await desActivateUser(email);
+          dispatch(setUpdateUserEnabled({email:email,enabled:"false"}))
           toast.success("User DesActivated !");
-          setUpdated(!updated)
         } catch (error) {
           toast.error("Error! Yikes");
           console.error("🚀 ~ error:", error);
@@ -72,7 +61,6 @@ const ListUsers = () => {
       };
 
       const handleUpdate = () => {
-        setUpdated(!updated); 
         setDeleteModalOpen(false)
             };
 
@@ -102,7 +90,7 @@ const ListUsers = () => {
              
 
           </MDBContainer>
-        {currentItems.filter(
+        {currentItems?.filter(
           (e)=>e.firstName.toLowerCase().includes(query) ||
            e.lastName.toLowerCase().includes(query) ||
            e.email.toLowerCase().includes(query)||
@@ -111,7 +99,7 @@ const ListUsers = () => {
         ).map(user => (
 
         <MDBCol key={user.id} xl="3" md="6" className="mb-r me-4 mt-4 ms-5">
-            <MDBCard style={{borderRadius:"none"}}>
+            <MDBCard style={{borderRadius:"none",minHeight:"230px"}}>
               <MDBCardBody >
                 <div className="d-flex text-black">
                   <div className="flex-grow-1">
@@ -136,7 +124,7 @@ const ListUsers = () => {
                                 {user.enabled ==="false"&& (
                                     <td>
                                     <MDBBadge color='info' pill>
-                                        Unenabled 
+                                        Disabled 
                                 </MDBBadge>
                                 </td>
                             )}
@@ -157,13 +145,13 @@ const ListUsers = () => {
                                </Tooltip>
                             )}
                             {user.enabled ==="true"&& (
-                                      <Tooltip  style={{width:"60%"}} title="Desactivate Account" className="color_baby_blue" >
+                                      <Tooltip  style={{width:"60%"}} title="Desactivate Account" className="color_white" >
                                       <Button  onClick={()=>desactivate(user.email)}  >
                                       <PersonOff style={{color:"whitesmoke"}}  />
                                       </Button>                           
                                       </Tooltip>
                                  )}                           
-                                  <Tooltip title="Delete" className="color_red" style={{marginLeft:"3%"}}>
+                                  <Tooltip title="Delete" className="color_pink" style={{marginLeft:"3%"}}>
                           <Button  onClick={() => { setDeleteModalOpen(true); setIdDelete(user.id)}}>
                           <Delete style={{color:"whitesmoke"}}  />
                           </Button>                           
@@ -178,21 +166,24 @@ const ListUsers = () => {
       
           
         </MDBRow>
-        <nav aria-label='Page navigation example'>
-                    <MDBPagination circle center className='mb-2 mt-2'>
-                      <MDBPaginationItem disabled={currentPage === 1}>
-                        <MDBPaginationLink  onClick={() => handlePageChange(currentPage - 1)}>Previous</MDBPaginationLink>
-                      </MDBPaginationItem>
-                      {Array.from({ length: Math.ceil(users.length / itemsPerPage) }, (_, i) => (
-                        <MDBPaginationItem key={i} active={i + 1 === currentPage}>
-                          <MDBPaginationLink onClick={() => handlePageChange(i + 1)}>{i + 1}</MDBPaginationLink>
-                        </MDBPaginationItem>
-                      ))}
-                      <MDBPaginationItem disabled={currentPage === Math.ceil(users.length / itemsPerPage)}>
-                        <MDBPaginationLink onClick={() => handlePageChange(currentPage + 1)}>Next</MDBPaginationLink>
-                      </MDBPaginationItem>
-                    </MDBPagination>
-                  </nav>
+        {users && (
+            <nav aria-label='Page navigation example '>
+            <MDBPagination circle center className='mb-2 mt-4'>
+              <MDBPaginationItem disabled={currentPage === 1}>
+                <MDBPaginationLink  onClick={() => handlePageChange(currentPage - 1)}>Previous</MDBPaginationLink>
+              </MDBPaginationItem>
+              {Array.from({ length: Math.ceil(users.length / itemsPerPage) }, (_, i) => (
+                <MDBPaginationItem key={i} active={i + 1 === currentPage}>
+                  <MDBPaginationLink onClick={() => handlePageChange(i + 1)}>{i + 1}</MDBPaginationLink>
+                </MDBPaginationItem>
+              ))}
+              <MDBPaginationItem disabled={currentPage === Math.ceil(users.length / itemsPerPage)}>
+                <MDBPaginationLink onClick={() => handlePageChange(currentPage + 1)}>Next</MDBPaginationLink>
+              </MDBPaginationItem>
+            </MDBPagination>
+          </nav>
+        )}
+      
         {idDelete && (
          <DeleteUserModal typeUser={Role.ADMIN} id={idDelete} show={deleteModalOpen}  onClose={handleUpdate}/> )}
     </>

@@ -75,6 +75,12 @@ export const authSlice = createSlice({
             state.role=action.payload.user.role;
             state.isAuthorized=true;
         },
+        setUpdatedUser:(
+          state, 
+          action : PayloadAction<IUser>
+          )=>{
+          state.user=action.payload;
+      },
         logout:(state)=>{
             localStorage.clear();
             state.user=null;
@@ -108,6 +114,6 @@ export const selectIsAuth = (state: RootState) => state.auth.isAuthorized;
 export const selectUser = (state: RootState) => state.auth.user;
 export const selectToken = (state: RootState) => state.auth.token;
 export const selectRole = (state: RootState) => state.auth.role;
-export const {setUser,logout,setIsAuthorized} = authSlice.actions
+export const {setUpdatedUser,setUser,logout,setIsAuthorized} = authSlice.actions
 
 export default authSlice.reducer;

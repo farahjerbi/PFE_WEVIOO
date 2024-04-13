@@ -3,11 +3,6 @@
     margin-left: 19% !important;
 }
 
-.view{
-    position: absolute;
-    margin-left: 13%;
-}
-
 .buttons{
     display: flex;
     align-items: center;

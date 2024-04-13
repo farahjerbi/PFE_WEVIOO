@@ -6,7 +6,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import { useDeleteScheduledEmailMutation, useGetScheduledEmailsByUserMutation, useGetScheduledEmailsMutation } from '../../../../redux/services/emailApi';
 import { toast } from 'sonner';
 import { Button, Tooltip } from '@mui/material';
-import { DateSelectArg, EventClickArg, EventContentArg } from '@fullcalendar/core';
+import { EventClickArg, EventContentArg } from '@fullcalendar/core';
 import ForwardToInbox from "@mui/icons-material/ForwardToInbox";
 import Clear from "@mui/icons-material/Clear";
 import Info from "@mui/icons-material/Info"
@@ -14,12 +14,13 @@ import styled from '@emotion/styled';
 import { selectRole, selectUser } from '../../../../redux/state/authSlice';
 import { useSelector } from 'react-redux';
 import { Role } from '../../../../models/Role';
-import { MDBBadge, MDBBtn, MDBCard, MDBCardBody, MDBCardFooter, MDBCardHeader, MDBCardText, MDBCardTitle, MDBModal, MDBModalBody, MDBModalContent, MDBModalDialog, MDBModalFooter, MDBModalHeader, MDBModalTitle } from 'mdb-react-ui-kit';
+import { MDBBadge, MDBBtn, MDBCard, MDBCardHeader, MDBModal, MDBModalBody, MDBModalContent, MDBModalDialog, MDBModalFooter, MDBModalHeader, MDBModalTitle } from 'mdb-react-ui-kit';
 export const StyleWrapper = styled.div`
   .fc-button.fc-prev-button, .fc-button.fc-next-button, .fc-button.fc-button-primary{
-    background:#54b4d3;
+    background:white;
     border:none;
     background-image: none;
+    color:blue;
 }
 .fc-v-event{
   background:#C1C6F9;
@@ -29,7 +30,8 @@ export const StyleWrapper = styled.div`
   background:transparent;
 }
 .fc .fc-button-primary:not(:disabled).fc-button-active{
-  background:#d59057;
+  background:rgb(56, 18, 226);
+  color:white;
 }
 `
 const Calendar  : React.FC= () => {
@@ -132,15 +134,24 @@ const handleEventMouseLeave = (eventId: string) => {
           }
       
   return (
-        <div className='mt-5' style={{
-          backgroundImage: "url('/assets/calender.jpg')",
-          backgroundPosition: "center",
-          backgroundSize: "contain",
-          backgroundRepeat: "no-repeat",
+    <MDBCard className='mt-5'  
+    style={{
+      backgroundImage: "url('/assets/lol.jpg')",
+      backgroundPosition: "center",
+      backgroundSize: "cover",
+      backgroundRepeat: "no-repeat",
+      marginLeft:"7%"
+    }}
+    >
+              <div className='mt-5 mb-5' style={{
+          // backgroundImage: "url('/assets/calendar.jpg')",
+          // backgroundPosition: "center",
+          // backgroundSize: "cover",
+          // backgroundRepeat: "no-repeat",
           width: "83%",
-          marginLeft: "12%"
+          marginLeft: "8%"
         }}>
-    <StyleWrapper style={{marginTop:"8%"}}>
+    <StyleWrapper>
       <FullCalendar
           plugins={[dayGridPlugin, timeGridPlugin]}
           initialView={"dayGridMonth"}
@@ -183,6 +194,8 @@ const handleEventMouseLeave = (eventId: string) => {
       </MDBModal>
   </>
     </div>
+    </MDBCard>
+
   
       )
 }
@@ -221,10 +234,15 @@ const renderEventContent = (eventContent: EventContentArg, showInfoBox: boolean,
 
             </div>
         )}
- 
+    {role===Role.USER && ( <Button className="color_baby_blue" style={{color:"white"}} >
+                          <ForwardToInbox style={{marginRight:"3px"}} />
+                              {eventContent.timeText}
+                            </Button>   )}
+                         
       {role===Role.USER && showInfoBox && ( 
 
-    <div style={{ position: 'absolute', zIndex: 999, bottom: 30, right: 30, maxHeight: "20vh", overflowY: "auto" }}>
+        <>
+          <div style={{ position: 'absolute', zIndex: 999, bottom: 30, right: 30, maxHeight: "20vh", overflowY: "auto" }}>
     <MDBCard style={{ minHeight: "100px" }}>
         <MDBCardHeader>  
           <h6><Info style={{marginLeft:"8px"}}/> Informations <Info/></h6>
@@ -247,6 +265,9 @@ const renderEventContent = (eventContent: EventContentArg, showInfoBox: boolean,
           </MDBCardHeader>
         </MDBCard>
         </div>
+        </>
+       
+
     )}
       </>
     )

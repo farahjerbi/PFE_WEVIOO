@@ -2,18 +2,7 @@ import React, { ChangeEvent, useEffect, useState } from 'react';
 import { MDBBtn, MDBIcon, MDBInput } from 'mdb-react-ui-kit';
 import './EmailInput.css';
 import *as xlsx from 'xlsx';
-import { styled } from '@mui/material';
-const VisuallyHiddenInput = styled('input')({
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
-  height: 1,
-  overflow: 'hidden',
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  whiteSpace: 'nowrap',
-  width: 1,
-});
+
 interface EmailInputProps {
   label: string;
   onChange: (emails: string[]) => void;

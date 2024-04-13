@@ -1,7 +1,6 @@
 import  { useEffect, useState } from 'react'
 import './UsersStatistics.css'
-import { MDBRow } from 'mdb-react-ui-kit'
-import { Bar } from '@ant-design/plots';
+import { MDBCard, MDBCardBody, MDBRow } from 'mdb-react-ui-kit'
 import { useGetAllUsersMutation } from '../../../../redux/services/usersApi';
 import { IUser } from '../../../../models/User';
 import { toast } from 'sonner';
@@ -27,16 +26,6 @@ const UsersStatistics = () => {
   ];
 
 
-  const config = {
-    data,
-    xField: 'year',
-    yField: 'value',
-    shapeField: 'hollow',
-    colorField: 'year',
-    legend: {
-      color: { size: 72, autoWrap: true, maxRows: 3, cols: 6 },
-    },
-  };
 
   const fetchDataUser = async () => {
     try {
@@ -57,13 +46,14 @@ const UsersStatistics = () => {
     }
   };
   return (
-    <MDBRow className="mb-3 pt-5">
+    <MDBCard className="mb-3 pt-5">
       {/* <BreadcrumSection/> */}
+      <MDBCardBody>
       <div className='d-flex '>
-      <Bar {...config} height={390} width={600} className='barDiv' />
       <img src="../../../../assets/statistics.png" alt="" className='img'/>
       </div>
-    </MDBRow>
+      </MDBCardBody>
+    </MDBCard>
  )
 }
 

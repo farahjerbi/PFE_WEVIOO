@@ -1,10 +1,9 @@
-import { MDBCard, MDBCardBody, MDBIcon, MDBBreadcrumb, MDBBreadcrumbItem } from 'mdb-react-ui-kit';
+import { MDBCard, MDBCardBody, MDBBreadcrumb, MDBBreadcrumbItem } from 'mdb-react-ui-kit';
 import './BreadcrumSection.css'
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 const BreadcrumSection = () => {
   const location = useLocation();
-  const [dashboardName, setDashboardName] = useState('');
   const [breadcrumbs, setBreadcrumbs] = useState<{ displayName: string; path: string; }[]>([]); 
 
   useEffect(() => {
@@ -19,7 +18,7 @@ const BreadcrumSection = () => {
   }, [location.pathname]);
   return (
     <MDBCard className="breadcrum mb-5 " >
-      <MDBCardBody className='d-flex ' style={{background: "linear-gradient(-200deg, #EBEBEB 0%, #3544ED 200%)",maxHeight:"80px",position:"relative"}}>
+      <MDBCardBody className='d-flex ' style={{background: "linear-gradient(-200deg, #EBEBEB 0%, #3544ED 450%)",maxHeight:"80px",position:"relative"}}>
           <MDBBreadcrumb>
           <div className='d-flex '>
           <img src="../../../assets/settings.png" alt="settings" style={{width:"4%",marginRight:"2%"}}/>
