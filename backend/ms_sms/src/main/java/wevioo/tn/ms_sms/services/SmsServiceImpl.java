@@ -13,7 +13,6 @@ import wevioo.tn.ms_sms.entities.SmsTemplate;
 import wevioo.tn.ms_sms.openFeign.UsersClient;
 import wevioo.tn.ms_sms.repositories.SmsRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
