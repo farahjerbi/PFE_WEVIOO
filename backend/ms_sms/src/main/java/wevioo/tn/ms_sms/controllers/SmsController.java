@@ -1,10 +1,7 @@
 package wevioo.tn.ms_sms.controllers;
 
-import com.twilio.Twilio;
-import com.twilio.rest.api.v2010.account.Message;
-import com.twilio.type.PhoneNumber;
+
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import wevioo.tn.ms_sms.dtos.request.SendsSms;
@@ -40,11 +37,16 @@ public class SmsController {
     }
 
 
-
     @PostMapping(value = "/sendSMS")
     public String sendSMS(@RequestBody SendsSms sendsSms) {
         return smsService.sendSms(sendsSms);
     }
+
+    @PostMapping(value = "/sendWhatsAppSms")
+    public String sendSMSWhatsApp(@RequestBody SendsSms sendsSms) {
+        return smsService.sendSmsWhatsApp(sendsSms);
+    }
+
 
 }
 

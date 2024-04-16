@@ -1,18 +1,22 @@
 package wevioo.tn.ms_sms.services;
 
-import com.twilio.Twilio;
-import com.twilio.rest.api.v2010.account.Message;
-import com.twilio.type.PhoneNumber;
+import com.infobip.ApiClient;
+import com.infobip.ApiException;
+import com.infobip.api.SmsApi;
+import com.infobip.api.WhatsAppApi;
+import com.infobip.model.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import wevioo.tn.ms_sms.dtos.request.SendsSms;
 import wevioo.tn.ms_sms.dtos.request.UpdateSmsTemplate;
 import wevioo.tn.ms_sms.entities.SmsTemplate;
-import wevioo.tn.ms_sms.entities.TwilioProperties;
 import wevioo.tn.ms_sms.openFeign.UsersClient;
 import wevioo.tn.ms_sms.repositories.SmsRepository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -22,7 +26,7 @@ public class SmsServiceImpl implements SmsService{
 
     private final UsersClient usersClient;
     private final SmsUtils smsUtils;
-    private final TwilioProperties twilioProperties;
+    private final ApiClient infobipApiClient;
 
 
 
@@ -50,29 +54,68 @@ public class SmsServiceImpl implements SmsService{
          smsRepository.deleteById(id);
     }
 
-    public String sendSms(SendsSms sendsSms){
-        SmsTemplate smsTemplate=smsRepository.findById(sendsSms.getIdTemplate()).orElseThrow(() -> new RuntimeException("SmsTemplate not found with id: " + sendsSms.getIdTemplate()));
+    public String sendSms(SendsSms sendsSms) {
+        SmsTemplate smsTemplate = smsRepository.findById(sendsSms.getIdTemplate())
+                .orElseThrow(() -> new RuntimeException("SmsTemplate not found with id: " + sendsSms.getIdTemplate()));
 
-        String content = smsUtils.replacePlaceholders(smsTemplate.getContent(),sendsSms.getPlaceholderValues());
+        String content = smsUtils.replacePlaceholders(smsTemplate.getContent(), sendsSms.getPlaceholderValues());
 
         for (String number : sendsSms.getNumbers()) {
             if (!smsUtils.isValidPhoneNumber(number)) {
-                return"Invalid phone number: " + number;
+                return "Invalid phone number: " + number;
             }
         }
 
-        Twilio.init(twilioProperties.getAccountSid(), twilioProperties.getAuthToken());
+        SmsApi smsApi = new SmsApi(infobipApiClient);
 
-        sendsSms.getNumbers().parallelStream().forEach(phoneNumber -> {
-            Message.creator(
-                    new PhoneNumber(phoneNumber),
-                    new PhoneNumber(twilioProperties.getFromNumber()),
-                    content
-            ).create();
-        });
+        List<SmsTextualMessage> smsMessages = sendsSms.getNumbers().stream()
+                .map(number -> new SmsTextualMessage()
+                        .from(smsTemplate.getSubject())
+                        .addDestinationsItem(new SmsDestination().to(number))
+                        .text(content))
+                .collect(Collectors.toList());
 
-        return "Message sent successfully";
+        SmsAdvancedTextualRequest smsMessageRequest = new SmsAdvancedTextualRequest()
+                .messages(smsMessages);
+
+        try {
+            SmsResponse smsResponse = smsApi.sendSmsMessage(smsMessageRequest).execute();
+            return "Message sent successfully";
+        } catch (ApiException apiException) {
+            return "Failed to send message: " + apiException.getMessage();
+        }
     }
+
+    public String sendSmsWhatsApp(SendsSms sendsSms) {
+        WhatsAppApi whatsAppApi = new WhatsAppApi(infobipApiClient);
+        SmsTemplate smsTemplate = smsRepository.findById(sendsSms.getIdTemplate())
+                .orElseThrow(() -> new RuntimeException("SmsTemplate not found with id: " + sendsSms.getIdTemplate()));
+
+        for (String number : sendsSms.getNumbers()) {
+            if (!smsUtils.isValidPhoneNumber(number)) {
+                return "Invalid phone number: " + number;
+            }
+        }
+        String content = smsUtils.replacePlaceholders(smsTemplate.getContent(), sendsSms.getPlaceholderValues());
+
+        try {
+            for (String number : sendsSms.getNumbers()) {
+                WhatsAppTextMessage textMessage = new WhatsAppTextMessage()
+                        .from("447860099299")
+                        .to(number)
+                        .content(new WhatsAppTextContent()
+                                .text(content)
+                        );
+                WhatsAppSingleMessageInfo messageInfo =whatsAppApi.sendWhatsAppTextMessage(textMessage).execute();
+                System.out.println(messageInfo.getStatus().getDescription());
+
+            }
+            return "WhatsApp messages sent successfully";
+        } catch (Exception e) {
+            return "Failed to send WhatsApp messages: " + e.getMessage();
+        }
+    }
+
     }
 
 
