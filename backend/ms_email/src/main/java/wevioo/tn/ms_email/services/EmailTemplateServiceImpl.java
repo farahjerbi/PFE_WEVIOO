@@ -2,11 +2,14 @@ package wevioo.tn.ms_email.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.mail.BodyPart;
+import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -16,10 +19,13 @@ import wevioo.tn.ms_email.dtos.exception.EmailSendingException;
 import wevioo.tn.ms_email.dtos.request.UpdateEmailTemplateRequest;
 import wevioo.tn.ms_email.dtos.response.UserResponse;
 import wevioo.tn.ms_email.entities.EmailTemplate;
+import wevioo.tn.ms_email.entities.State;
 import wevioo.tn.ms_email.entities.TemplateBody;
 import wevioo.tn.ms_email.repositories.EmailTemplateRepository;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
@@ -67,6 +73,7 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
     ) {
 
         try {
+
             UserResponse user = usersClient.getUserById(id);
             JavaMailSender mailSender =templateUtils.personalJavaMailSender(user.getEmail(), user.getEmailSecret());
 
@@ -88,22 +95,21 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
                 result = templateUtils.replaceTags(result, recipients[0]);
             }
             result = templateUtils.replacePlaceholders(result, requestBody);
+
             emailTemplate.setContent(result);
 
-
-
-            String signature = user.getSignature();
 
 
             MimeMultipart mimeMultipart = new MimeMultipart("related");
 
             //Add HTML Body content
-            templateUtils.addHtmlContentToEmail(mimeMultipart,emailTemplate, addSignature);
+            templateUtils.addHtmlContentToEmail(mimeMultipart,result, addSignature);
 
 
             // Add signature to the email body
             if(addSignature.equals("true")){
-                templateUtils.addImagesToEmailBody(signature,mimeMultipart);}
+                String signatureUrl = "http://localhost:8099/uploads/" + user.getSignature();
+                templateUtils.addImagesToEmailBody(signatureUrl,mimeMultipart);}
 
             //AddAttachment
             if (attachment != null && !attachment.isEmpty()) {
@@ -111,10 +117,10 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
             }
 
             message.setContent(mimeMultipart);
-
-
             mailSender.send(message);
-        } catch (Exception exception) {
+        } catch (MessagingException | IOException | MailException exception) {
+            System.out.println("Converted Request Body: " + exception);
+
             throw new EmailSendingException("Failed to send HTML email", exception);
         }
     }
@@ -155,11 +161,12 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
 
             EmailTemplate emailTemplate = emailTemplateRepository.findEmailTemplateWithDetails(id);
             emailTemplate.setName(updatedTemplate.getName());
+            emailTemplate.setState(updatedTemplate.getState());
             emailTemplate.setLanguage(updatedTemplate.getLanguage());
             emailTemplate.getTemplateBody().setContent(updatedTemplate.getContent());
             emailTemplate.getTemplateBody().setSubject(updatedTemplate.getSubject());
 
-            if(updatedTemplate.getState().equals("COMPLEX")){
+            if(updatedTemplate.getState().equals(State.COMPLEX)){
 
                 templateUtils.updateDesignTemplate(jsonObject,id);
             }

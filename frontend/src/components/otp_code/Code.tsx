@@ -33,6 +33,7 @@ const Code= ({ email, password ,stage}: OtpProps) => {
       if(userData && stage==="register"){
         toast.success("OTP verified successfully")
         navigate(AUTHENTICATION)
+        window.location.reload(); 
       }
       if(userData && stage==="login"){
         dispatch(setUser({ user: userData.user, token: userData.token,role:userData.user.role}));

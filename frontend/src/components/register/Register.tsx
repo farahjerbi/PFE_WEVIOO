@@ -15,6 +15,7 @@ import { ReactTyped } from 'react-typed';
 import { FormControl, InputAdornment, TextField } from '@mui/material';
 import { jwtDecode } from 'jwt-decode';
 import { DecodedToken } from '../../models/DecodedToken';
+import { AUTHENTICATION } from '../../routes/paths';
 const Register=()=> {
   const { emailUser } = useParams();
   const stage="register"
@@ -74,6 +75,8 @@ const formValidation = () => {
   const[verifyEmail]=useVerifyEmailMutation();
   const[toBeContinued,setToBeContinued]=useState<boolean>(true);
   const[Continued,setContinued]=useState<boolean>(false);
+  const [mail,setMail]=useState<string>("");
+
   const navigate=useNavigate()
   useEffect(() => {
     if(emailUser){
@@ -115,6 +118,7 @@ const formValidation = () => {
           }else{
         const decodedToken: DecodedToken = jwtDecode(email);
         const userEmail = decodedToken.sub;
+        setMail(userEmail)
       await registerUser({firstName,lastName,email:userEmail,password,mfaEnabled})
       .unwrap()
       .then((userData: any) => {
@@ -122,7 +126,9 @@ const formValidation = () => {
           setIsMfaEnabled(userData.secretImageUri)
           toast.success("User registed successfully !")
           if(!userData.mfaEnabled){
-            navigate('/authentication')
+            setFormData(initialState)
+            navigate(AUTHENTICATION)
+            window.location.reload(); 
           }
     })
   }
@@ -209,7 +215,7 @@ const formValidation = () => {
               </TextField>
               </FormControl>
               <FormControl fullWidth sx={{ m: 1 }}>
-              <TextField error={!!errors.password} name='password' value={password} onChange={handleChange}
+              <TextField error={!!errors.password} name='password' value={password} onChange={handleChange} type='password'
                size="small" label={errors.password? `${errors.password}`:'Password'} variant="outlined"
                   InputProps={
                     errors.password
@@ -227,7 +233,7 @@ const formValidation = () => {
               </FormControl>
 
               <FormControl fullWidth sx={{ m: 1 }}>
-              <TextField error={!!errors.confirmPassword} name='confirmPassword' value={confirmPassword} onChange={handleChange}
+              <TextField error={!!errors.confirmPassword}  type='password' name='confirmPassword' value={confirmPassword} onChange={handleChange}
                size="small" label={errors.confirmPassword? `${errors.confirmPassword}`:'Repeat password' } variant="outlined"
                   InputProps={
                     errors.confirmPassword
@@ -262,7 +268,7 @@ const formValidation = () => {
       <MDBContainer>
         <h5 className='title'>Set Up Two-Factor Authentication</h5>
         <img className='QRCode' src={isMfaEnabled} alt="QR Code" />
-        <Code email={email} password={password} stage={stage}/>
+        <Code email={mail} password={password} stage={stage}/>
       </MDBContainer>
     )}
     

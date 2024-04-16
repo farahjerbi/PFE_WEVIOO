@@ -1,9 +1,8 @@
 .not-found-container {
     display: flex;
-    align-items: center;
-    height: 100vh;
-    animation: moveBackground 10s linear infinite;
-    margin-right:"17%" ;
+    flex-direction: column;
+    margin-left:"23%" ;
+    margin-top: 9%;
   }
   
  

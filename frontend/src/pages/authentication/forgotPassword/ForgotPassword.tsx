@@ -44,15 +44,15 @@ const ForgotPassword = () => {
     }
   }
   return (
-    <div className="container">
-    <MDBCard className='my-5'  >
-      <MDBRow>
+    <div className="container" style={{marginTop:"5%"}} >
+    <MDBCard className='my-5 '  >
+      <MDBRow >
         <MDBCol md="6">
-          <MDBCardImage className='illustration' src="../assets/email.png" />
+          <MDBCardImage className='illustration' style={{width:"90%"}} src="../assets/email.png" />
         </MDBCol>
         <MDBCol md="6">
           <MDBCardBody  >
-            <img  className='logoo mb-4'  src="../assets/logo.png" alt=""  />
+            <img  className='logoo mb-4 mt-5' style={{width:"20%",marginLeft:"30%"}} src="../assets/logo.png" alt=""  />
                 <MDBInput 
                 className='mb-4 mt-5'
                 label='New Password'

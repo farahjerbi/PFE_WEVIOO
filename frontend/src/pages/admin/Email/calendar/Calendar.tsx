@@ -15,6 +15,7 @@ import { selectRole, selectUser } from '../../../../redux/state/authSlice';
 import { useSelector } from 'react-redux';
 import { Role } from '../../../../models/Role';
 import { MDBBadge, MDBBtn, MDBCard, MDBCardHeader, MDBModal, MDBModalBody, MDBModalContent, MDBModalDialog, MDBModalFooter, MDBModalHeader, MDBModalTitle } from 'mdb-react-ui-kit';
+import { useLocation } from 'react-router-dom';
 export const StyleWrapper = styled.div`
   .fc-button.fc-prev-button, .fc-button.fc-next-button, .fc-button.fc-button-primary{
     background:white;
@@ -45,6 +46,9 @@ const [basicModal, setBasicModal] = useState<boolean>(false);
 const [update, setUpdate] = useState<boolean>(false);
 
 const [id, setId] = useState<string>("");
+const location = useLocation();
+const [dashboardName, setDashboardName] = useState('');
+
 
 const toggleOpen = () => setBasicModal(!basicModal);
 const[deleteScheduledEmail]=useDeleteScheduledEmailMutation()
@@ -63,6 +67,12 @@ const handleEventMouseLeave = (eventId: string) => {
 };
 
     useEffect(() => {
+       const pathname = location.pathname;
+  const dashboardNameFromPath = pathname.split('/');
+  const formattedDashboardName =dashboardNameFromPath.slice(1).join('/');
+  setDashboardName(formattedDashboardName);
+  console.log("🚀 ~ useEffect ~ formattedDashboardName:", formattedDashboardName)
+
       role === Role.ADMIN ? fetchDataAdmin() : fetchDataUser();
     }, [update]);
     
@@ -134,20 +144,8 @@ const handleEventMouseLeave = (eventId: string) => {
           }
       
   return (
-    <MDBCard className='mt-5'  
-    style={{
-      backgroundImage: "url('/assets/lol.jpg')",
-      backgroundPosition: "center",
-      backgroundSize: "cover",
-      backgroundRepeat: "no-repeat",
-      marginLeft:"7%"
-    }}
-    >
-              <div className='mt-5 mb-5' style={{
-          // backgroundImage: "url('/assets/calendar.jpg')",
-          // backgroundPosition: "center",
-          // backgroundSize: "cover",
-          // backgroundRepeat: "no-repeat",
+    <MDBCard className='mt-5'  style={{marginLeft:"7%" }}>
+      <div className={dashboardName==="dashboard"? "mt-5 mb-5 dashboard" :"mt-5 mb-5 calendar"} style={{
           width: "83%",
           marginLeft: "8%"
         }}>

@@ -14,6 +14,8 @@ import { Button, styled } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import BreadcrumSection from '../../../../components/BreadcrumSection/BreadcrumSection';
 import { selectEmail } from '../../../../redux/state/emailSlice';
+import InstructionsUserModal from '../../../../components/modals/InstructionsUserModal';
+import React from 'react';
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
   clipPath: 'inset(50%)',
@@ -44,7 +46,7 @@ const SendSimpleEmail : React.FC<SendSimpleEmailProps> = ({isScheduled }) => {
     const navigate=useNavigate()
     const[getTemplatePlaceholders]=useGetTemplatePlaceholdersMutation()
     const template=useSelector(selectEmail)
-
+    const [openInstruction, setOpenInstruction] = React.useState<boolean>(true);
     useEffect(() => {
         fetchData();
       },[]);
@@ -114,6 +116,8 @@ const SendSimpleEmail : React.FC<SendSimpleEmailProps> = ({isScheduled }) => {
   return (
     <>
           <BreadcrumSection/>
+          <InstructionsUserModal show={openInstruction} onClose={()=>setOpenInstruction(false)}  />
+
           <MDBContainer className="my-5 gradient-form ">
     <MDBRow className='d-flex'>
         <MDBCard className='mt-5 mb-5 ' style={{width:"55%",height:"104vh",
@@ -126,7 +130,7 @@ const SendSimpleEmail : React.FC<SendSimpleEmailProps> = ({isScheduled }) => {
             style={{width: '185px'}} alt="logo" />
             <h2>Send Email</h2>
         </div>
-        <form encType="multipart/form-data" method='POST'  onSubmit={handleSubmit} >
+        <form  onSubmit={handleSubmit} >
 
 {!page && (<>
     <EmailInput label="To:" onChange={setRecipientEmails} />

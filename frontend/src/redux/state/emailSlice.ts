@@ -77,7 +77,7 @@ export const emailSlice = createSlice({
           ,
           setUpdateEmailFavList(state, action: PayloadAction<number|undefined>) {
             if (state.savedEmailTemplates) {
-              state.savedEmailTemplates.filter(email => email.id !== action.payload)
+              state.savedEmailTemplates = state.savedEmailTemplates.filter(email => email.id !== action.payload)
             }
           } ,
         setUpdateEmail(state, action: PayloadAction<EmailTemplate>) {

@@ -3,7 +3,11 @@ package wevioo.tn.ms_email.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
-import jakarta.activation.FileDataSource;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import jakarta.activation.URLDataSource;
 import jakarta.mail.BodyPart;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeBodyPart;
@@ -92,7 +96,7 @@ public class TemplateUtils {
 
 
 
-    public void addHtmlContentToEmail(MimeMultipart mimeMultipart, TemplateBody emailTemplate,String addSignature) throws MessagingException {
+    public void addHtmlContentToEmail(MimeMultipart mimeMultipart, String emailTemplate,String addSignature) throws MessagingException {
         Context context = new Context();
         context.setVariable("template", emailTemplate);
         context.setVariable("signature", addSignature);
@@ -103,14 +107,19 @@ public class TemplateUtils {
     }
 
 
-    public void addImagesToEmailBody(String signatureValue, MimeMultipart mimeMultipart) throws MessagingException {
-        if (signatureValue != null && !signatureValue.isEmpty()) {
-            BodyPart imageBodyPart = new MimeBodyPart();
-            String filePath = "uploads/files/" + signatureValue;
-            DataSource dataSource = new FileDataSource(filePath);
-            imageBodyPart.setDataHandler(new DataHandler(dataSource));
-            imageBodyPart.setHeader("Content-ID", "image");
-            mimeMultipart.addBodyPart(imageBodyPart);
+    public void addImagesToEmailBody(String signatureUrl, MimeMultipart mimeMultipart) throws MessagingException {
+        if (signatureUrl != null && !signatureUrl.isEmpty()) {
+            try {
+                BodyPart imageBodyPart = new MimeBodyPart();
+                URL url = new URL(signatureUrl);
+                DataSource dataSource = new URLDataSource(url);
+                imageBodyPart.setDataHandler(new DataHandler(dataSource));
+                imageBodyPart.setHeader("Content-ID", "image");
+                mimeMultipart.addBodyPart(imageBodyPart);
+            } catch (MalformedURLException e) {
+                // Handle MalformedURLException
+                e.printStackTrace(); // or log the error
+            }
         }
     }
 
@@ -170,7 +179,6 @@ public class TemplateUtils {
         Files.createDirectories(Paths.get(DIRECTORYPATH));
 
         try (FileWriter writer = new FileWriter(filePath)) {
-            // Write the new design template to the file, overwriting existing content
             writer.write(jsonString);
         }
 

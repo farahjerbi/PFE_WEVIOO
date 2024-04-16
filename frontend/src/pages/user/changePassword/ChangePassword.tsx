@@ -5,6 +5,7 @@ import { useChangePasswordMutation } from '../../../redux/services/usersApi';
 import { toast } from 'sonner';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../../../redux/state/authSlice';
+
 interface Close {
   onClose: () => void;
 }

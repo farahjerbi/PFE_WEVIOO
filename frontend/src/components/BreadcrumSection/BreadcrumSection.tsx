@@ -18,7 +18,7 @@ const BreadcrumSection = () => {
   }, [location.pathname]);
   return (
     <MDBCard className="breadcrum mb-5 " >
-      <MDBCardBody className='d-flex ' style={{background: "linear-gradient(-200deg, #EBEBEB 0%, #3544ED 450%)",maxHeight:"80px",position:"relative"}}>
+      <MDBCardBody className='d-flex ' style={{ background: "linear-gradient(-200deg, #EBEBEB 0%, #3544ED 450%)",maxHeight:"80px",position:"relative"}}>
           <MDBBreadcrumb>
           <div className='d-flex '>
           <img src="../../../assets/settings.png" alt="settings" style={{width:"4%",marginRight:"2%"}}/>
@@ -29,7 +29,7 @@ const BreadcrumSection = () => {
           ))}
           </div>
             </MDBBreadcrumb>
-            <img src="../../../assets/images.png" alt="" style={{  transform: "rotate(7deg)",position: "absolute", width: "20%", right:0, height: "180%", top: "-35%" }} />
+            {/* <img src="../../../assets/images.png" alt="" style={{  transform: "rotate(7deg)",position: "absolute", width: "20%", right:0, height: "180%", top: "-35%" }} /> */}
 
     </MDBCardBody>
   </MDBCard>

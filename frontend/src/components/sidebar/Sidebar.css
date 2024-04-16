@@ -31,6 +31,18 @@ strong{
   margin-left: 5%;
 }
 
+.sidebar-icon-open- {
+  width: 10% ;
+  margin: 19px 0;
+  margin-left: 5%;
+}
+.sidebar-icon-{
+  width: 40% ;
+  margin: 19px 0;
+  margin-left: 15%;
+  color: #0a26f8;
+}
+
 .sidebar-header {
   position: relative;
   height: 40%; 

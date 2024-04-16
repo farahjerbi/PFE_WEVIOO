@@ -1,21 +1,23 @@
 import React, { useEffect, useRef, useState } from 'react'
 import './UpdateEmail.css'
 import BreadcrumSection from '../../../../components/BreadcrumSection/BreadcrumSection'
-import { MDBBtn, MDBCard, MDBCardBody, MDBCol, MDBInput, MDBRow, MDBTextArea } from 'mdb-react-ui-kit'
+import { MDBBtn, MDBCard, MDBCardBody, MDBCol, MDBInput, MDBRow, MDBSpinner, MDBTextArea } from 'mdb-react-ui-kit'
 import { useGetDesignTemplateMutation, useUpdateTemplateMutation } from '../../../../redux/services/emailApi'
 import EmailEditor, {  EmailEditorProps } from 'react-email-editor'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { LIST_EMAIL_TEMPLATES } from '../../../../routes/paths'
-import { useSelector } from 'react-redux'
-import { selectEmail } from '../../../../redux/state/emailSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { selectEmail, setUpdateEmail } from '../../../../redux/state/emailSlice'
 
 const UpdateEmail = () => {
   const emailEditorRef = useRef<any>(null); 
+  const [loading, setLoading] = useState<boolean>(false);
   const [templateDesign,setTemplateDesign]= useState<any>(null);
   const [show,setShow]= useState<boolean>(false);
   const[getDesignTemplate]=useGetDesignTemplateMutation();
   const template=useSelector(selectEmail)
+  const dispatch=useDispatch()
 
   const initialState={
     name: template?.name,
@@ -33,7 +35,7 @@ const UpdateEmail = () => {
     if(template?.state ==="COMPLEX"){
     fetchData();
   }
-  });
+  },[]);
 
     
   const fetchData = async () => {
@@ -59,28 +61,30 @@ const UpdateEmail = () => {
   
   const handleUpdateTemplate: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
+    setLoading(true); 
   
     if (!template) {
       console.error('Template data is missing');
       return;
     }
     try {
-    
         if (formData.state === "COMPLEX") {
           emailEditorRef.current.editor.exportHtml((data: any) => { 
             localStorage.setItem("newsletter", JSON.stringify(data));
             if (data.html) {
-              console.log("🚀 ~ emailEditorRef.current.editor.exportHtml ~ data.html:", data.html)
               formData.content=data.html
             }
           });
           emailEditorRef.current.editor.saveDesign((data: any) => { 
             if (data) {
               formData.design=data
+              console.log("🚀 ~ emailEditorRef.current.editor.exportHtml ~ data.html:", data)
              }
           });
         }
+
         await new Promise(resolve => setTimeout(resolve, 5000));
+
         const emailTemplate = {
           name: formData.name,
           language: formData.language,
@@ -93,8 +97,20 @@ const UpdateEmail = () => {
           emailTemplate: emailTemplate,
           id: template?.id
       };
+      console.log("🚀 ~ consthandleUpdateTemplate:React.FormEventHandler<HTMLFormElement>= ~ requestData:", requestData)
+
+          const emailTemplateWithId = {
+            id: template?.id,
+            name: formData.name || "", 
+            language: formData.language || "",
+            state: formData.state || "",
+            templateBody: {
+                subject: formData.subject || "",
+                content: formData.content || ""
+            }
+        };
         await updateTemplate(requestData);
-          
+        dispatch(setUpdateEmail(emailTemplateWithId));        
         toast.success("Template updated successfully");
 
         navigate(LIST_EMAIL_TEMPLATES)
@@ -102,7 +118,9 @@ const UpdateEmail = () => {
       
     } catch (error) {
       console.error('Error updating template:', error);
-    }
+    }finally {
+      setLoading(false); 
+  }
   };
 
 
@@ -113,7 +131,7 @@ const UpdateEmail = () => {
 
     <div className='update_container' >
 
-        <div className="p-5 bg-image" style={{backgroundImage: 'url("../../../assets/update.png")', height: '300px'}}></div>
+        <div className="p-5 bg-image" style={{backgroundImage: 'url("../../../assets/updatee.png")', height: '300px'}}></div>
         <form onSubmit={handleUpdateTemplate}>
         <MDBCard className='mx-5 mb-5 p-5 shadow-5' style={{marginTop: '-40px', background: 'hsla(0, 0%, 100%, 0.8)', backdropFilter: 'blur(30px)'}}>
         <MDBCardBody className='p-5 text-center'>
@@ -140,16 +158,34 @@ const UpdateEmail = () => {
             {template?.state==="SIMPLE" ?
             <>
                 <MDBTextArea rows={4} name='content' value={content} onChange={handleChange} wrapperClass='mb-4' label='Content' />
-                <MDBBtn className='w-100 mb-4 color_orange' type='submit' >Update</MDBBtn>
+                {loading && (
+                    <div className='d-flex justify-content-center mt-4'>
+                    <MDBBtn disabled className='btn w-50 ' >
+                    <MDBSpinner size='sm' role='status' tag='span' className='me-2' />
+                        Loading...
+                    </MDBBtn>
+                    </div>
+
+                )}
+               {!loading && ( <MDBBtn className='w-100 mb-4 color_baby_bluee' type='submit' >Update</MDBBtn>)}
             </>
-             :<MDBBtn className='w-100 mb-4 color_orange'  type='button' onClick={()=>setShow(true)}>Next</MDBBtn> }
+             :<MDBBtn className='w-100 mb-4 color_baby_bluee'  type='button' onClick={()=>setShow(true)}>Next</MDBBtn> }
           </>
  
           )}
 
     {show && (
             <>
-            <MDBBtn className='w-100 mb-4 color_orange' type='submit' >Update</MDBBtn>
+              {loading && (
+                    <div className='d-flex justify-content-center mt-4'>
+                    <MDBBtn disabled className='btn w-50 ' >
+                    <MDBSpinner size='sm' role='status' tag='span' className='me-2' />
+                        Loading...
+                    </MDBBtn>
+                    </div>
+
+                )}
+               {!loading && ( <MDBBtn className='w-100 mb-4 color_baby_bluee' type='submit' >Update</MDBBtn>)}
             <EmailEditor
                   ref={emailEditorRef}
                   onLoad={onLoad}
@@ -161,6 +197,7 @@ const UpdateEmail = () => {
                       close: () => console.log("closed")
                     }
                   }}
+                  
                 />
           
             </>

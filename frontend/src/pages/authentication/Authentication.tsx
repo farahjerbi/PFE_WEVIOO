@@ -17,11 +17,9 @@ const Authentication = () => {
 
       if(emailUser && isTokenExpired(emailUser)){
         navigate(AUTHENTICATION)}
-
         if(emailUser){
           setLoginRegisterActive('register')
         }
-      
        } , []);
   
     return (

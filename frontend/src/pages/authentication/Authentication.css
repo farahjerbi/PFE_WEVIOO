@@ -1,6 +1,6 @@
 .illustration{
     width: 100%;
-    height: 80vh;
+    min-height: 80vh;
     background-color: #6873C8
 }  
 

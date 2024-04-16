@@ -133,8 +133,9 @@ const ListEmails = () => {
           md="10"
           className="list_container mb-4 d-flex align-items-center"
         >
-        {role===Role.USER && (<MDBCardImage src="../assets/send-email.jpg" position="top" fluid className="size_imgg" style={{marginLeft:"-10%"}} />)}  
-        {role===Role.ADMIN && (<MDBCardImage src="../assets/calender.jpg" position="top" fluid className="size_imgg" />)}  
+         {role===Role.ADMIN && ( <MDBCardImage src="../assets/send-email.jpg" position="top" fluid className="size_imgg" style={{marginLeft:"-2%"}} />  )}
+         {role===Role.USER && ( <MDBCardImage src="../assets/send-email.jpg" position="top" fluid className="size_imgg" style={{marginLeft:"-10%"}} />  )}
+
           <MDBCard style={{marginLeft:"-120px" , background: 'hsla(0, 0%, 100%, 0.55)',
                 backdropFilter: 'blur(30px)',}} >
             <MDBCardBody>

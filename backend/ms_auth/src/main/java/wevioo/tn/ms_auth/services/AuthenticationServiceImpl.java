@@ -56,6 +56,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         UserEntity user = modelMapper.map(signUpRequest, UserEntity.class);
         user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
+        user.setEnabled(true);
         if(signUpRequest.isMfaEnabled()){
             user.setSecret(tfaService.generateNewSecret());
         }

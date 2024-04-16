@@ -12,6 +12,7 @@ import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import DevicesRoundedIcon from '@mui/icons-material/DevicesRounded';
 import EdgesensorHighRoundedIcon from '@mui/icons-material/EdgesensorHighRounded';
 import ViewQuiltRoundedIcon from '@mui/icons-material/ViewQuiltRounded';
+import { EmailTemplate } from '../../models/EmailTemplate';
 
 import {  useSelector } from 'react-redux';
 import { selectSavedEmails } from '../../redux/state/emailSlice';
@@ -46,6 +47,8 @@ const items = [
 export default function Features() {
   const emails=useSelector(selectSavedEmails)
   const [selectedItemIndex, setSelectedItemIndex] = React.useState(0)
+  const sms:EmailTemplate[]=[]
+  const push:EmailTemplate[]=[]
 
   const handleItemClick = (index: number) => {
     setSelectedItemIndex(index);
@@ -200,11 +203,11 @@ export default function Features() {
        {selectedItemIndex === 0 && emails && (
           <SheetContent templates={emails} type='email' />
       )}
-         {selectedItemIndex === 1 && emails && (
-          <SheetContent templates={emails} type='email' />
+         {selectedItemIndex === 1 && sms && (
+          <SheetContent templates={sms} type='email' />
       )}
-         {selectedItemIndex === 2 && emails && (
-          <SheetContent templates={emails} type='email' />
+         {selectedItemIndex === 2 && push && (
+          <SheetContent templates={push} type='email' />
       )}
         </Grid>
       </Grid>

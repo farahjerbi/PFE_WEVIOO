@@ -1,7 +1,6 @@
 import React, { useRef, useState } from "react";
 import EmailEditor from "react-email-editor"; 
 import { EmailTemplate } from '../../../../models/EmailTemplate'
-import { MDBBtn, MDBInput, MDBModal, MDBModalContent, MDBModalDialog, MDBModalFooter, MDBModalHeader, MDBModalTitle } from "mdb-react-ui-kit";
 import { useAddDesignTemplateMutation, useAddTemplateEmailMutation } from "../../../../redux/services/emailApi";
 import { toast } from "sonner";
 import './EmailTemplate.css'
@@ -20,9 +19,11 @@ import DialogContent from '@mui/joy/DialogContent';
 import Stack from '@mui/joy/Stack';
 import { useDispatch } from "react-redux";
 import { setEmail } from "../../../../redux/state/emailSlice";
+import InstructionsModal from "../../../../components/modals/InstructionsModal";
 
 
 const EmailDragAndDrop: React.FC = () => {
+  
   const initialState={
     name: '',
     language: '',
@@ -41,6 +42,7 @@ const EmailDragAndDrop: React.FC = () => {
   const navigate=useNavigate();
   const dispatch=useDispatch();
   const [open, setOpen] = React.useState<boolean>(false);
+  const [openInstruction, setOpenInstruction] = React.useState<boolean>(true);
 
 
 
@@ -83,10 +85,6 @@ const EmailDragAndDrop: React.FC = () => {
     // }
   };
 
-  const Viewer = () => {
-    return <div>I am a custom tool.</div>;
-  };
-  
 
 
   const handleAddTemplate: (evt: React.FormEvent<HTMLFormElement>) => void = async (e) => {
@@ -129,6 +127,8 @@ const EmailDragAndDrop: React.FC = () => {
   return (
     <>
       <BreadcrumSection/>
+      <InstructionsModal show={openInstruction} onClose={()=>setOpenInstruction(false)}  />
+
     <div className="Editor-container">
       <div className="export_button">
         <Button

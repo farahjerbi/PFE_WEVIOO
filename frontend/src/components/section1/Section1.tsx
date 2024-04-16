@@ -23,7 +23,7 @@ const Section1 = () => {
                 <div className="progress">
                 <div aria-valuemax={100} aria-valuemin={0} aria-valuenow={emails?.length} className="progress-bar bg-primary" role="progressbar" style={{width: '25%'}}></div>
                 </div>
-                <MDBCardText>Count : <strong>{emails.length}</strong></MDBCardText>
+                <MDBCardText>Count : <strong>{emails?.length}</strong></MDBCardText>
               </MDBCardBody>
             </MDBCard>
         </MDBCol>  

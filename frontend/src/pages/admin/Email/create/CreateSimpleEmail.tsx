@@ -11,6 +11,7 @@ import { Box, FormControl, InputAdornment, TextField, Typography } from '@mui/ma
 import Textarea from '@mui/joy/Textarea';
 import { useDispatch } from 'react-redux'
 import { setEmail } from '../../../../redux/state/emailSlice'
+import InstructionsModal from '../../../../components/modals/InstructionsModal'
 
 const CreateSimpleEmail = () => {
   const initialState={
@@ -69,6 +70,7 @@ const formValidation = () => {
   const[addTemplateEmail]=useAddTemplateEmailMutation();
   const navigate = useNavigate();
   const dispatch=useDispatch();
+  const [open,setOpen]=useState<boolean>(true);
   const handleAddTemplate: (evt: React.FormEvent<HTMLFormElement>) => void = async (e) => {
     e.preventDefault();
     const isFormValid = formValidation();
@@ -98,6 +100,7 @@ const formValidation = () => {
 
   return (
     <div>
+        <InstructionsModal show={open} onClose={()=>setOpen(false)}  />
          <BreadcrumSection />
             <MDBCard className='CardContainer'>
             <MDBCardHeader className='header'>Create new template</MDBCardHeader>

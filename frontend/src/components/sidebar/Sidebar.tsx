@@ -103,7 +103,7 @@ const Sidebar = () => {
               {role===Role.USER && (
                    <MDBListGroupItem className={dashboardName === "saved-templates" ? 'sidebar-item-active' : 'sidebar-item'}  onClick={()=>navigate(SAVEDTEMPLATES)}>
                    <Tooltip  title="saved templates"  >
-                   <img src="../../../assets/bookmark.png" alt="sidebar-icon" className={isOpen?"sidebar-icon-open":"sidebar-icon"} />
+                   <img src="../../../assets/bookmark.png" alt="sidebar-icon" className={isOpen?"sidebar-icon-open-":"sidebar-icon-"} />
                    </Tooltip>
                    {isOpen && ( <span>Saved Templates</span> )}
                    </MDBListGroupItem>
