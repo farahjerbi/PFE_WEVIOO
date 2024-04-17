@@ -85,35 +85,7 @@ public class SmsServiceImpl implements SmsService{
         }
     }
 
-    public String sendSmsWhatsApp(SendsSms sendsSms) {
-        WhatsAppApi whatsAppApi = new WhatsAppApi(infobipApiClient);
-        SmsTemplate smsTemplate = smsRepository.findById(sendsSms.getIdTemplate())
-                .orElseThrow(() -> new RuntimeException("SmsTemplate not found with id: " + sendsSms.getIdTemplate()));
 
-        for (String number : sendsSms.getNumbers()) {
-            if (!smsUtils.isValidPhoneNumber(number)) {
-                return "Invalid phone number: " + number;
-            }
-        }
-        String content = smsUtils.replacePlaceholders(smsTemplate.getContent(), sendsSms.getPlaceholderValues());
-
-        try {
-            for (String number : sendsSms.getNumbers()) {
-                WhatsAppTextMessage textMessage = new WhatsAppTextMessage()
-                        .from("447860099299")
-                        .to(number)
-                        .content(new WhatsAppTextContent()
-                                .text(content)
-                        );
-                WhatsAppSingleMessageInfo messageInfo =whatsAppApi.sendWhatsAppTextMessage(textMessage).execute();
-                System.out.println(messageInfo.getStatus().getDescription());
-
-            }
-            return "WhatsApp messages sent successfully";
-        } catch (Exception e) {
-            return "Failed to send WhatsApp messages: " + e.getMessage();
-        }
-    }
 
     }
 

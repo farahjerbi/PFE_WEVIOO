@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useGetAllEmailTemplatesMutation } from '../../../../redux/services/emailApi';
-import { EmailTemplate } from '../../../../models/EmailTemplate';
+import { EmailTemplate } from '../../../../models/email/EmailTemplate';
 import { toast } from 'sonner';
 import { MDBCard, MDBCardBody, MDBCardTitle, MDBRow } from 'mdb-react-ui-kit';
 import BreadcrumSection from '../../../../components/BreadcrumSection/BreadcrumSection';

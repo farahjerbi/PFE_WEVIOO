@@ -6,7 +6,11 @@ import okhttp3.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import wevioo.tn.ms_sms.dtos.request.SendWhatsAppMsg;
+import wevioo.tn.ms_sms.dtos.request.SendsSms;
 import wevioo.tn.ms_sms.dtos.request.WhatsAppTemplatePayload;
+import wevioo.tn.ms_sms.dtos.response.WhatsAppTemplateResponse;
+import wevioo.tn.ms_sms.services.SmsUtils;
 import wevioo.tn.ms_sms.services.WhatsAppService;
 
 import java.io.IOException;
@@ -16,6 +20,8 @@ import java.io.IOException;
 @AllArgsConstructor
 public class WhatsAppController {
     private final WhatsAppService whatsAppService;
+    private final SmsUtils smsUtils;
+
 
     @PostMapping()
     public ResponseEntity<String> createWhatsAppTemplate(@RequestBody WhatsAppTemplatePayload payload) {
@@ -54,4 +60,22 @@ public class WhatsAppController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete WhatsApp template");
         }
     }
+
+    @PostMapping(value = "/sendWhatsAppSms")
+    public String sendSMSWhatsApp(@RequestBody SendWhatsAppMsg sendsSms) {
+        return whatsAppService.sendSmsWhatsApp(sendsSms);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<WhatsAppTemplateResponse> getWhatsAppTemplateById(@PathVariable Long id) {
+        try {
+            WhatsAppTemplateResponse response = whatsAppService.getWhatsAppTemplateById(id);
+            response.setPlaceholders(smsUtils.extractPlaceholders(response.getStructure().getBody().getText()));
+            return ResponseEntity.ok(response);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
 }

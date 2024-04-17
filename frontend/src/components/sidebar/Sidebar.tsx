@@ -2,7 +2,7 @@ import { MDBCard, MDBCardBody, MDBCol, MDBListGroup, MDBListGroupItem } from 'md
 import { useEffect, useState } from 'react'
 import './Sidebar.css'
 import {  useLocation, useNavigate } from 'react-router-dom';
-import { Role } from '../../models/Role';
+import { Role } from '../../models/user/Role';
 import { selectRole } from '../../redux/state/authSlice';
 import { useSelector } from 'react-redux';
 import {  CALENDAR, DASHBOARD, LIST_EMAIL_TEMPLATES, LIST_PUSH_TEMPLATES, LIST_SMS_TEMPLATES, LIST_USERS, PROFILE, SAVEDTEMPLATES } from '../../routes/paths';

@@ -13,7 +13,7 @@ import Info from "@mui/icons-material/Info"
 import styled from '@emotion/styled';
 import { selectRole, selectUser } from '../../../../redux/state/authSlice';
 import { useSelector } from 'react-redux';
-import { Role } from '../../../../models/Role';
+import { Role } from '../../../../models/user/Role';
 import { MDBBadge, MDBBtn, MDBCard, MDBCardHeader, MDBModal, MDBModalBody, MDBModalContent, MDBModalDialog, MDBModalFooter, MDBModalHeader, MDBModalTitle } from 'mdb-react-ui-kit';
 import { useLocation } from 'react-router-dom';
 export const StyleWrapper = styled.div`

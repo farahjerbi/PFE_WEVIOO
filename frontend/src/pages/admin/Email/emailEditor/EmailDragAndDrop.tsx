@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import EmailEditor from "react-email-editor"; 
-import { EmailTemplate } from '../../../../models/EmailTemplate'
+import { EmailTemplate } from '../../../../models/email/EmailTemplate'
 import { useAddDesignTemplateMutation, useAddTemplateEmailMutation } from "../../../../redux/services/emailApi";
 import { toast } from "sonner";
 import './EmailTemplate.css'

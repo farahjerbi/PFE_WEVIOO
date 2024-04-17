@@ -2,7 +2,7 @@ import  { useEffect, useState } from 'react'
 import './UsersStatistics.css'
 import { MDBCard, MDBCardBody, MDBRow } from 'mdb-react-ui-kit'
 import { useGetAllUsersMutation } from '../../../../redux/services/usersApi';
-import { IUser } from '../../../../models/User';
+import { IUser } from '../../../../models/user/User';
 import { toast } from 'sonner';
 import BreadcrumSection from '../../../../components/BreadcrumSection/BreadcrumSection';
 

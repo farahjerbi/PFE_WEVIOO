@@ -7,19 +7,22 @@ import { usersApi } from './services/usersApi';
 import styleSlice from './state/styleSlice';
 import emailSlice from './state/emailSlice';
 import usersSlice from './state/usersSlice';
+import smsSlice from './state/smsSlice';
+import { smsApi } from './services/smsApi';
 export const store = configureStore({
   reducer: {
     auth:authReducer,
     [authApi.reducerPath]:authApi.reducer,
     [emailApi.reducerPath]:emailApi.reducer,
     [usersApi.reducerPath]:usersApi.reducer,
+    [smsApi.reducerPath]:smsApi.reducer,
     style: styleSlice,
     email:emailSlice,
-    users:usersSlice
-
+    users:usersSlice,
+    sms:smsSlice
 
   },
-  middleware:(curryGetDefaultMiddleware)=>curryGetDefaultMiddleware().concat(authApi.middleware,emailApi.middleware,usersApi.middleware)
+  middleware:(curryGetDefaultMiddleware)=>curryGetDefaultMiddleware().concat(smsApi.middleware,authApi.middleware,emailApi.middleware,usersApi.middleware)
 });
 
 export type AppDispatch = typeof store.dispatch;

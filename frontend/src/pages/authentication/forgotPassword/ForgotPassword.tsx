@@ -4,7 +4,7 @@ import { useResetPasswordMutation } from '../../../redux/services/usersApi'
 import { toast } from 'sonner';
 import { useNavigate, useParams } from 'react-router-dom';
 import { jwtDecode } from "jwt-decode";
-import { DecodedToken } from '../../../models/DecodedToken';
+import { DecodedToken } from '../../../models/authentication/DecodedToken';
 import { isTokenExpired } from '../../../redux/state/authSlice';
 import { AUTHENTICATION } from '../../../routes/paths';
 

@@ -14,7 +14,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ReactTyped } from 'react-typed';
 import { FormControl, InputAdornment, TextField } from '@mui/material';
 import { jwtDecode } from 'jwt-decode';
-import { DecodedToken } from '../../models/DecodedToken';
+import { DecodedToken } from '../../models/authentication/DecodedToken';
 import { AUTHENTICATION } from '../../routes/paths';
 const Register=()=> {
   const { emailUser } = useParams();

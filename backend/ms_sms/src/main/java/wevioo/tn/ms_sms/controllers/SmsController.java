@@ -7,8 +7,10 @@ import org.springframework.web.bind.annotation.*;
 import wevioo.tn.ms_sms.dtos.request.SendsSms;
 import wevioo.tn.ms_sms.dtos.request.UpdateSmsTemplate;
 import wevioo.tn.ms_sms.entities.SmsTemplate;
+import wevioo.tn.ms_sms.repositories.SmsRepository;
 import wevioo.tn.ms_sms.services.SmsService;
-import wevioo.tn.ms_sms.services.SmsUtils;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/apiSms")
@@ -16,7 +18,7 @@ import wevioo.tn.ms_sms.services.SmsUtils;
 public class SmsController {
 
     private final SmsService smsService;
-    private final SmsUtils smsUtils;
+    private final SmsRepository smsRepository;
 
     @PostMapping(value = "/addSmsTemplate")
     public ResponseEntity<SmsTemplate> createEmailTemplate(@RequestBody SmsTemplate smsTemplate) {
@@ -42,10 +44,8 @@ public class SmsController {
         return smsService.sendSms(sendsSms);
     }
 
-    @PostMapping(value = "/sendWhatsAppSms")
-    public String sendSMSWhatsApp(@RequestBody SendsSms sendsSms) {
-        return smsService.sendSmsWhatsApp(sendsSms);
-    }
+    @GetMapping(value = "/getAllTemplates")
+    public ResponseEntity<List<SmsTemplate>> getAllTemplates(){return ResponseEntity.ok(smsRepository.findAll());}
 
 
 }

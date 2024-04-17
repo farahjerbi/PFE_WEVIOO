@@ -2,7 +2,7 @@ import { MDBBtn} from 'mdb-react-ui-kit'
 import React, { useEffect, useState } from 'react'
 import { useDeleteUserMutation } from '../../redux/services/usersApi';
 import { toast } from 'sonner';
-import { Role } from '../../models/Role';
+import { Role } from '../../models/user/Role';
 import { useDispatch } from 'react-redux';
 import { logout } from '../../redux/state/authSlice';
 import { useNavigate } from 'react-router-dom';

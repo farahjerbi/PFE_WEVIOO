@@ -1,5 +1,5 @@
 import {createApi , fetchBaseQuery} from "@reduxjs/toolkit/query/react"
-import { EmailTemplate } from "../../models/EmailTemplate";
+import { EmailTemplate } from "../../models/email/EmailTemplate";
 
 export const emailApi = createApi({
     reducerPath: 'emailApi',

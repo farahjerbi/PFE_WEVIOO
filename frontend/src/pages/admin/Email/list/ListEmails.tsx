@@ -20,7 +20,7 @@ import {
   useToggleFavoriteEmailMutation,
 } from "../../../../redux/services/emailApi";
 import { toast } from "sonner";
-import { EmailTemplate } from "../../../../models/EmailTemplate";
+import { EmailTemplate } from "../../../../models/email/EmailTemplate";
 import BreadcrumSection from "../../../../components/BreadcrumSection/BreadcrumSection";
 import { useNavigate } from "react-router-dom";
 import Update from '@mui/icons-material/Update';
@@ -32,7 +32,7 @@ import ScheduleSend from "@mui/icons-material/ScheduleSend";
 import BookmarkAddedOutlined from "@mui/icons-material/BookmarkAddedOutlined";
 import BookmarkRemoveOutlined from "@mui/icons-material/BookmarkRemoveOutlined";
 
-import { Role } from "../../../../models/Role";
+import { Role } from "../../../../models/user/Role";
 import { selectRole, selectUser } from "../../../../redux/state/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { ADD_EMAIL_TEMPLATE, EDIT_EMAIL_TEMPLATE, SEND_EMAIL, SEND_EMAIL_SCHEDULED } from "../../../../routes/paths";

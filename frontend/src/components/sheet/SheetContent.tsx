@@ -10,7 +10,7 @@ import Table from '@mui/joy/Table';
 import Sheet from '@mui/joy/Sheet';
 
 import { SEND_EMAIL, SEND_EMAIL_SCHEDULED } from '../../routes/paths';
-import { EmailTemplate } from '../../models/EmailTemplate';
+import { EmailTemplate } from '../../models/email/EmailTemplate';
 import { useGetDesignTemplateMutation, useToggleFavoriteEmailMutation } from '../../redux/services/emailApi';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSelectedEmail, setUpdateEmailFavList } from '../../redux/state/emailSlice';

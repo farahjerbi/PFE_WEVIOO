@@ -2,7 +2,6 @@ package wevioo.tn.ms_sms.dtos.request;
 
 import lombok.Data;
 import wevioo.tn.ms_sms.entities.Category;
-import wevioo.tn.ms_sms.entities.Language;
 import wevioo.tn.ms_sms.entities.Structure;
 
 @Data

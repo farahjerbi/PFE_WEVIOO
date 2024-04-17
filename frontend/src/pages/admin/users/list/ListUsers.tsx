@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import BreadcrumSection from '../../../../components/BreadcrumSection/BreadcrumSection';
 import './ListUsers.css'
 import DeleteUserModal from '../../../../components/modals/DeleteUserModal';
-import { Role } from '../../../../models/Role';
+import { Role } from '../../../../models/user/Role';
 import Delete from '@mui/icons-material/Delete';
 import PersonOff from '@mui/icons-material/PersonOff';
 import PersonOutline from '@mui/icons-material/PersonOutline';

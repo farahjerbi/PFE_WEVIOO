@@ -12,7 +12,7 @@ import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import DevicesRoundedIcon from '@mui/icons-material/DevicesRounded';
 import EdgesensorHighRoundedIcon from '@mui/icons-material/EdgesensorHighRounded';
 import ViewQuiltRoundedIcon from '@mui/icons-material/ViewQuiltRounded';
-import { EmailTemplate } from '../../models/EmailTemplate';
+import { EmailTemplate } from '../../models/email/EmailTemplate';
 
 import {  useSelector } from 'react-redux';
 import { selectSavedEmails } from '../../redux/state/emailSlice';

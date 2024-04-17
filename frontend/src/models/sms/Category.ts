@@ -1,0 +1,5 @@
+export enum Category {
+    MARKETING = "MARKETING",
+    AUTHENTICATION = "AUTHENTICATION",
+    UTILITY="UTILITY"
+}

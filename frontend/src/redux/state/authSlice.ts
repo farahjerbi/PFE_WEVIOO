@@ -1,10 +1,10 @@
 import {createAsyncThunk, createSlice , PayloadAction} from "@reduxjs/toolkit"
 import {RootState} from "../store"
-import { IUser, UserPayload } from "../../models/User";
-import { Role } from "../../models/Role";
+import { IUser, UserPayload } from "../../models/user/User";
+import { Role } from "../../models/user/Role";
 import { jwtDecode } from "jwt-decode";
 import axios from 'axios';
-import { DecodedToken } from "../../models/DecodedToken";
+import { DecodedToken } from "../../models/authentication/DecodedToken";
 
 
   export const decodeToken = createAsyncThunk<IUser | null, void>(

@@ -1,7 +1,7 @@
 import {createAsyncThunk, createSlice , PayloadAction} from "@reduxjs/toolkit"
 import {RootState} from "../store"
 import axios from "axios";
-import { IUser } from "../../models/User";
+import { IUser } from "../../models/user/User";
 
 export const getUsers = createAsyncThunk<any| null, void>(
     "users/getUsers",

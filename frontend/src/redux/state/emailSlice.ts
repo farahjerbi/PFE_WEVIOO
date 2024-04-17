@@ -1,6 +1,6 @@
 import {createAsyncThunk, createSlice , PayloadAction} from "@reduxjs/toolkit"
 import {RootState} from "../store"
-import { EmailTemplate } from "../../models/EmailTemplate";
+import { EmailTemplate } from "../../models/email/EmailTemplate";
 import axios from "axios";
 
 export const getTemplatesEmail = createAsyncThunk<any| null, void>(

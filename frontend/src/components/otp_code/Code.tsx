@@ -1,7 +1,7 @@
 import { MDBBtn, MDBInput } from 'mdb-react-ui-kit'
 import { FormEvent, useState } from 'react'
 import './Code.css'
-import { OtpProps } from '../../models/OtpProps';
+import { OtpProps } from '../../models/authentication/OtpProps';
 import { useVerifyOTPMutation } from '../../redux/services/authApi';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';

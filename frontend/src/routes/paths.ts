@@ -1,5 +1,6 @@
 export const DASHBOARD = "/dashboard";
 export const ADD_EMAIL_TEMPLATE="/email/add"
+export const ADD_SMS_TEMPLATE="/sms/add"
 export const ADD_SIMPLE_EMAIL_TEMPLATE="/email/add/simple-email-template"
 export const ADD_ADVANCED_EMAIL_TEMPLATE="/email/add/advanced-email-template"
 export const LIST_EMAIL_TEMPLATES="/email/list"

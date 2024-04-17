@@ -11,5 +11,4 @@ public interface SmsService {
     void deleteSmsTemplate(Long id);
     SmsTemplate updateSmsTemplate(UpdateSmsTemplate s, Long id);
     String sendSms(SendsSms sendsSms);
-    String sendSmsWhatsApp(SendsSms sendsSms);
 }

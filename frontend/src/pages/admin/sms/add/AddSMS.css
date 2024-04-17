@@ -1,0 +1,11 @@
+.add_sms_container{
+    margin-left: 19% !important;
+    width: 70%;
+    margin-top: 7%!important;
+}
+
+.center-image {
+    display: grid;
+    place-items: center;
+  }
+

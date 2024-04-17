@@ -7,12 +7,15 @@ import EmailStatistics from "../Email/statistics/EmailStatistics"
 import { useEffect } from "react"
 import { getTemplatesEmail } from "../../../redux/state/emailSlice"
 import { getUsers } from "../../../redux/state/usersSlice"
+import { getTemplatesSms, getTemplatesWhatsapp } from "../../../redux/state/smsSlice"
 
 const Dashboard = () => {
   const dispatch: AppDispatch = useDispatch(); 
   useEffect(() => {
     dispatch(getTemplatesEmail());
     dispatch(getUsers());
+    dispatch(getTemplatesSms())
+    dispatch(getTemplatesWhatsapp())
   }, [dispatch]);
   return (
     <>

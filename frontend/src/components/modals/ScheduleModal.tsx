@@ -17,7 +17,7 @@ import ModalDialog from '@mui/joy/ModalDialog';
 import DialogTitle from '@mui/joy/DialogTitle';
 import DialogContent from '@mui/joy/DialogContent';
 import Stack from '@mui/joy/Stack';
-import { SchedularProps } from '../../models/SchedularProps';
+import { SchedularProps } from '../../models/email/SchedularProps';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);

@@ -1,5 +1,5 @@
-import { EmailTemplate } from "./EmailTemplate";
-import { Role } from "./Role";
+import { EmailTemplate } from "./email/EmailTemplate";
+import { Role } from "./user/Role";
 
 export interface DeleteTemplateModalProps {
     id: number;
