@@ -17,7 +17,7 @@ const ListSMS = () => {
     const[isSMS,setIsSMS]=useState<boolean>(true)
     const templates = useSelector(selectSMSs);
     const templatesWhatsapp = useSelector(selectWhatsapp);
-
+    
     const role = useSelector(selectRole);
     const user=useSelector(selectUser)
     const navigate = useNavigate();
@@ -41,8 +41,14 @@ const ListSMS = () => {
                 md="10"
                 className="ms-5 mt-5 mb-4 d-flex align-items-center"
                 >
-        {isSMS && ( <SMSCard templates={templates} user={user} role={role} />)}
-        {!isSMS && ( <WhatsAppCard templates={templatesWhatsapp} user={user} role={role} />)}
+        {isSMS && (
+          <div style={{marginLeft:"30%"}}><SMSCard templates={templates} user={user} role={role} /></div>
+        )}
+        {!isSMS && templatesWhatsapp && ( 
+          <div style={{marginLeft:"21%"}}>
+             <WhatsAppCard templates={templatesWhatsapp} user={user} role={role} />
+          </div>
+        )}
 
         </MDBCol>
 

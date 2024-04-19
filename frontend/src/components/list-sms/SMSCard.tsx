@@ -6,19 +6,26 @@ import BookmarkRemoveOutlined from '@mui/icons-material/BookmarkRemoveOutlined';
 import BookmarkAddedOutlined from '@mui/icons-material/BookmarkAddedOutlined';
 import Send from '@mui/icons-material/Send';
 import ScheduleSend from '@mui/icons-material/ScheduleSend';
-import { MDBBadge, MDBCard, MDBCardBody, MDBCardImage, MDBCol, MDBIcon, MDBPagination, MDBPaginationItem, MDBPaginationLink, MDBTable, MDBTableBody, MDBTableHead } from 'mdb-react-ui-kit';
+import { MDBCard, MDBCardBody, MDBPagination, MDBPaginationItem, MDBPaginationLink, MDBTable, MDBTableBody, MDBTableHead } from 'mdb-react-ui-kit';
 import { Button, Tooltip } from '@mui/material'
 import { useNavigate } from 'react-router-dom';
 import { Role } from '../../models/user/Role';
 import { SmsTemplate } from '../../models/sms/SmsTemplate';
 import { IUser } from '../../models/user/User';
 import './SMSCard.css'
+import ViewSMSTemplate from '../modals/ViewSMSTemplate';
+import DeleteSMSTemplate from '../modals/DeleteSMSTemplate';
 interface PropsSMS{
 role:Role | null,
 templates:SmsTemplate[] | null,
 user:IUser | null
 }
 const SMSCard : React.FC<PropsSMS> = ({ role ,templates ,user }) => {
+    const [basicModal, setBasicModal] = useState<boolean>(false);
+    const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
+    const [selectedTemplate, setSelectedTemplate] = useState<SmsTemplate>();
+    const [selectedId, setSelectedId] = useState<number>();
+
     const navigate = useNavigate();
     const[query,setQuery]=useState<string>('')
        /*Pagination*/
@@ -30,7 +37,7 @@ const SMSCard : React.FC<PropsSMS> = ({ role ,templates ,user }) => {
        const handlePageChange = (page: any) => {
            setCurrentPage(page);
          };
-       
+      
 
   return (
     <MDBCard className='ms-5 sms-card' >
@@ -61,7 +68,7 @@ template.state?.toString()===query).map((template:any) => (
           <td>{template.language}</td>
             <td>
               <Tooltip style={{marginRight:"5px"}} title="View" className="color_purple" >
-              <Button >
+              <Button onClick={()=>{setSelectedTemplate(template); setBasicModal(true)}}>
               <Visibility style={{color:"whitesmoke"}}  />
               </Button>                           
               </Tooltip>
@@ -85,7 +92,10 @@ template.state?.toString()===query).map((template:any) => (
                 <td>
                 <Tooltip title="Delete" className="color_pink" >
               <Button 
-            //   onClick={() => { setDeleteModalOpen(true); setIdDelete(template.id)}}
+              onClick={() => { 
+                setSelectedId(template.id)
+                setDeleteModalOpen(true)
+              }}
               >
               <Delete style={{color:"whitesmoke"}}  />
               </Button>                           
@@ -180,7 +190,11 @@ template.state?.toString()===query).map((template:any) => (
     </MDBPaginationItem>
   </MDBPagination>
 </nav>
-</MDBCard> )
+{selectedTemplate && (<ViewSMSTemplate template={selectedTemplate} show={basicModal} onClose={()=>setBasicModal(false)}  />)}
+{selectedId && ( <DeleteSMSTemplate id={selectedId} onClose={()=>setDeleteModalOpen(false)} show={deleteModalOpen} /> )}
+</MDBCard> 
+
+)
 }
 
 export default SMSCard

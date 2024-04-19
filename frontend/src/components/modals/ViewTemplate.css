@@ -1,0 +1,13 @@
+.view-card{
+    min-height: 600px;
+    min-width: 800px;
+    background-size: 150% 120%; 
+    background-image:url("../../../public/assets/phone.jpg");
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.content{
+    margin-left: 35%;
+    margin-top: 20%;
+}

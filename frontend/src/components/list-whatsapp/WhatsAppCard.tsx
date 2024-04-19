@@ -13,12 +13,19 @@ import { Role } from '../../models/user/Role';
 import { IUser } from '../../models/user/User';
 import './WhatsAppCard.css'
 import { WhatsAppTemplateResponse } from '../../models/sms/WhatsAppTemplateResponse';
+import ViewSMSTemplate from '../modals/ViewSMSTemplate';
+import DeleteSMSTemplate from '../modals/DeleteSMSTemplate';
 interface PropsWhatsapp{
     role:Role | null,
-    templates:WhatsAppTemplateResponse[] | null,
+    templates:WhatsAppTemplateResponse[] ,
     user:IUser | null
     }
 const WhatsAppCard : React.FC<PropsWhatsapp> = ({ role ,templates ,user }) => {
+  const [basicModal, setBasicModal] = useState<boolean>(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<WhatsAppTemplateResponse>();
+  const [selectedId, setSelectedId] = useState<string>();
+
     const navigate = useNavigate();
     const[query,setQuery]=useState<string>('')
        /*Pagination*/
@@ -26,7 +33,7 @@ const WhatsAppCard : React.FC<PropsWhatsapp> = ({ role ,templates ,user }) => {
        const itemsPerPage = 4;
        const indexOfLastItem = currentPage * itemsPerPage;
        const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-       const currentItems = templates?.slice(indexOfFirstItem, indexOfLastItem);
+       const currentItems = templates.slice(indexOfFirstItem, indexOfLastItem);
        const handlePageChange = (page: any) => {
            setCurrentPage(page);
          };
@@ -53,24 +60,22 @@ const WhatsAppCard : React.FC<PropsWhatsapp> = ({ role ,templates ,user }) => {
       </tr>
     </MDBTableHead>
     <MDBTableBody>
-      {currentItems?.filter(
-(template:any)=>template.name.toLowerCase().includes(query) ||
-template.state?.toString()===query).map((template:any) => (
+      {currentItems?.map((template:any) => (
         <tr key={template.id}>
           <td>{template.name}</td>
           <td>{template.language}</td>
          
-             {template.state === "APPROVED" && (
+             {template.status === "APPROVED" && (
             <td>
               <MDBBadge color="info" pill>
-                {template.state}
+                Approved
               </MDBBadge>
             </td>
           )}
-          {template.state === "REJECTED" && (
+          {template.status === "REJECTED" && (
             <td>
               <MDBBadge color="danger" pill>
-                Advanced
+                Rejected
               </MDBBadge>
             </td>
           )}
@@ -78,7 +83,7 @@ template.state?.toString()===query).map((template:any) => (
     
             <td>
               <Tooltip style={{marginRight:"5px"}} title="View" className="color_purple" >
-              <Button >
+              <Button onClick={()=>{setSelectedTemplate(template);setBasicModal(true)}}>
               <Visibility style={{color:"whitesmoke"}}  />
               </Button>                           
               </Tooltip>
@@ -102,7 +107,7 @@ template.state?.toString()===query).map((template:any) => (
                 <td>
                 <Tooltip title="Delete" className="color_pink" >
               <Button 
-            //   onClick={() => { setDeleteModalOpen(true); setIdDelete(template.id)}}
+              onClick={() => { setDeleteModalOpen(true); setSelectedId(template.name)}}
               >
               <Delete style={{color:"whitesmoke"}}  />
               </Button>                           
@@ -172,8 +177,8 @@ template.state?.toString()===query).map((template:any) => (
         Previous
       </MDBPaginationLink>
     </MDBPaginationItem>
-    {Array.from(
-      { length: Math.ceil(2 / itemsPerPage) },
+    {templates && Array.from(
+      { length: Math.ceil(templates?.length / itemsPerPage) },
       (_, i) => (
         <MDBPaginationItem key={i} active={i + 1 === currentPage}>
           <MDBPaginationLink
@@ -184,19 +189,25 @@ template.state?.toString()===query).map((template:any) => (
         </MDBPaginationItem>
       )
     )}
-    <MDBPaginationItem
-      disabled={
-        currentPage === Math.ceil(2 / itemsPerPage)
-      }
-    >
-      <MDBPaginationLink
-        onClick={() => handlePageChange(currentPage + 1)}
-      >
-        Next
-      </MDBPaginationLink>
-    </MDBPaginationItem>
+    {templates && (
+          <MDBPaginationItem
+          disabled={
+            currentPage === Math.ceil(templates?.length/ itemsPerPage)
+          }
+        >
+          <MDBPaginationLink
+            onClick={() => handlePageChange(currentPage + 1)}
+          >
+            Next
+          </MDBPaginationLink>
+        </MDBPaginationItem>
+    )}
+
   </MDBPagination>
 </nav>
+{selectedTemplate && (<ViewSMSTemplate template={selectedTemplate} show={basicModal} onClose={()=>setBasicModal(false)}  />)}
+{selectedId && ( <DeleteSMSTemplate id={selectedId} onClose={()=>setDeleteModalOpen(false)} show={deleteModalOpen} /> )}
+
 </MDBCard>    )
 }
 

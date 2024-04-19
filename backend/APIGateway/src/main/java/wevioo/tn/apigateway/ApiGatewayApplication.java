@@ -31,7 +31,7 @@ public class ApiGatewayApplication {
                 .route("email", r -> r.path("/apiEmail/**")
                        .filters(f -> f.filter(authenticationFilter))
                         .uri("http://localhost:8091/"))
-                .route("sms", r -> r.path("/apiEmail/**")
+                .route("sms", r -> r.path("/apiSms/**","/apiWhatsApp/**")
                         .filters(f -> f.filter(authenticationFilter))
                         .uri("http://localhost:8092/"))
                 .build();

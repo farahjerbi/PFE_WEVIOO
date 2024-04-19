@@ -1,19 +1,34 @@
-import React, {  useState } from 'react'
+import React, {  useEffect, useState } from 'react'
 import './SimpleEmailTemplate.css'
 import { MDBBtn, MDBCard, MDBCardBody, MDBCardHeader} from 'mdb-react-ui-kit'
 import BreadcrumSection from '../../../../components/BreadcrumSection/BreadcrumSection'
 import { useAddTemplateEmailMutation } from '../../../../redux/services/emailApi'
 import { toast } from 'sonner'
 import { EmailTemplate } from '../../../../models/email/EmailTemplate'
-import { useNavigate } from 'react-router-dom'
-import { ADD_EMAIL_TEMPLATE, LIST_EMAIL_TEMPLATES } from '../../../../routes/paths'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { ADD_EMAIL_TEMPLATE, LIST_EMAIL_TEMPLATES, LIST_SMS_TEMPLATES } from '../../../../routes/paths'
 import { Box, FormControl, InputAdornment, TextField, Typography } from '@mui/material'
 import Textarea from '@mui/joy/Textarea';
 import { useDispatch } from 'react-redux'
 import { setEmail } from '../../../../redux/state/emailSlice'
 import InstructionsModal from '../../../../components/modals/InstructionsModal'
+import { useAddTemplateSMSMutation } from '../../../../redux/services/smsApi'
+import { SmsTemplate } from '../../../../models/sms/SmsTemplate'
+import { setAddSMS, setSMSs } from '../../../../redux/state/smsSlice'
 
 const CreateSimpleEmail = () => {
+  const location = useLocation();
+  const[path,setPath]=useState<string>();
+  useEffect(() => {
+    const pathname = location.pathname;
+    setPath(pathname)
+    },[]);
+    console.log("🚀 ~ CreateSimpleEmail ~ path:", path);
+
+    function containsSMS(path:string) {
+      return path.toLowerCase().includes('sms');
+  }
+
   const initialState={
     name: '',
     language: '',
@@ -68,6 +83,7 @@ const formValidation = () => {
   const [formData, setFormData] = useState(initialState);
   const {name,language,subject,content}=formData;
   const[addTemplateEmail]=useAddTemplateEmailMutation();
+  const[addTemplateSMS]=useAddTemplateSMSMutation();
   const navigate = useNavigate();
   const dispatch=useDispatch();
   const [open,setOpen]=useState<boolean>(true);
@@ -76,22 +92,38 @@ const formValidation = () => {
     const isFormValid = formValidation();
     if(isFormValid){
     try {
-      const emailTemplate: EmailTemplate = {
-        name: formData.name,
-        language: formData.language,
-        state: 'SIMPLE',
-        templateBody: {
+      if(path && containsSMS(path)){
+        const smsTemplate: SmsTemplate = {
+          name: formData.name,
+          language: formData.language,
           subject: formData.subject,
           content: formData.content
-        }
-      };
+          }
+        
+        const smsData = await addTemplateSMS(smsTemplate).unwrap();
+        dispatch(setAddSMS(smsData))
+        toast.success("Template added successfully");
+        setFormData(initialState);
+        navigate(LIST_SMS_TEMPLATES)
+      }else{
+        const emailTemplate: EmailTemplate = {
+          name: formData.name,
+          language: formData.language,
+          state: 'SIMPLE',
+          templateBody: {
+            subject: formData.subject,
+            content: formData.content
+          }
+        };
+        
+        const userData = await addTemplateEmail(emailTemplate).unwrap();
+        dispatch(setEmail(emailTemplate));
+        console.log("🚀 ~ emailData:", userData);
+        toast.success("Template added successfully");
+        setFormData(initialState);
+        navigate(LIST_EMAIL_TEMPLATES)
+      }
       
-      const userData = await addTemplateEmail(emailTemplate).unwrap();
-      dispatch(setEmail(emailTemplate));
-      console.log("🚀 ~ emailData:", userData);
-      toast.success("Template added successfully");
-      setFormData(initialState);
-      navigate(LIST_EMAIL_TEMPLATES)
     } catch (error) {
       toast.error("Error! Yikes");
       console.error("🚀 ~ error:", error);
@@ -188,15 +220,9 @@ const formValidation = () => {
                 />
                 </FormControl>
 
-
-              {/* <MDBTextArea  name='content' value={content} onChange={handleChange} 
-               wrapperClass={`mb-4 ${errors.content ? "border-red-500" : ""}`} label='content' id='textAreaExample' rows={4} />
-              {errors.content && <p className="text-red-500 text-sm mb-2">{errors.name}</p>} */}
-
-
               <div style={{display:"flex" ,justifyContent:"space-between"}}>
               <MDBBtn color='info' type='button' onClick={()=>navigate(ADD_EMAIL_TEMPLATE)}>Go Back</MDBBtn>
-              <MDBBtn type='submit'>Add Template</MDBBtn>
+              <MDBBtn  type='submit'>Add Template</MDBBtn>
               </div>
               </form>
             </MDBCardBody>

@@ -9,6 +9,7 @@ import emailSlice from './state/emailSlice';
 import usersSlice from './state/usersSlice';
 import smsSlice from './state/smsSlice';
 import { smsApi } from './services/smsApi';
+import { whatsAppApi } from './services/whatsAppApi';
 export const store = configureStore({
   reducer: {
     auth:authReducer,
@@ -16,13 +17,14 @@ export const store = configureStore({
     [emailApi.reducerPath]:emailApi.reducer,
     [usersApi.reducerPath]:usersApi.reducer,
     [smsApi.reducerPath]:smsApi.reducer,
+    [whatsAppApi.reducerPath]:whatsAppApi.reducer,
     style: styleSlice,
     email:emailSlice,
     users:usersSlice,
     sms:smsSlice
 
   },
-  middleware:(curryGetDefaultMiddleware)=>curryGetDefaultMiddleware().concat(smsApi.middleware,authApi.middleware,emailApi.middleware,usersApi.middleware)
+  middleware:(curryGetDefaultMiddleware)=>curryGetDefaultMiddleware().concat(whatsAppApi.middleware,smsApi.middleware,authApi.middleware,emailApi.middleware,usersApi.middleware)
 });
 
 export type AppDispatch = typeof store.dispatch;

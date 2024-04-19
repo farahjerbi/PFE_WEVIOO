@@ -6,7 +6,7 @@ import wevioo.tn.ms_sms.entities.Structure;
 
 @Data
 public class WhatsAppTemplatePayload {
-    private boolean allowCategoryChange;
+    private boolean allowCategoryChange=false;
     private String name;
     private String language;
     private Structure structure;

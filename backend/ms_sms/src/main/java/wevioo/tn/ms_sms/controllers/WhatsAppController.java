@@ -1,13 +1,11 @@
 package wevioo.tn.ms_sms.controllers;
 
-import com.google.gson.JsonObject;
 import lombok.AllArgsConstructor;
 import okhttp3.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import wevioo.tn.ms_sms.dtos.request.SendWhatsAppMsg;
-import wevioo.tn.ms_sms.dtos.request.SendsSms;
 import wevioo.tn.ms_sms.dtos.request.WhatsAppTemplatePayload;
 import wevioo.tn.ms_sms.dtos.response.WhatsAppTemplateResponse;
 import wevioo.tn.ms_sms.services.SmsUtils;
@@ -16,14 +14,14 @@ import wevioo.tn.ms_sms.services.WhatsAppService;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/apiWhatsApp")
+@RequestMapping("/apiWhatsApp/")
 @AllArgsConstructor
 public class WhatsAppController {
     private final WhatsAppService whatsAppService;
     private final SmsUtils smsUtils;
 
 
-    @PostMapping()
+    @PostMapping("addWhatsAppTemplate")
     public ResponseEntity<String> createWhatsAppTemplate(@RequestBody WhatsAppTemplatePayload payload) {
         try {
             Response response = whatsAppService.createWhatsAppTemplate(payload);
@@ -36,7 +34,7 @@ public class WhatsAppController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create WhatsApp template: " + e.getMessage());
         }
     }
-    @GetMapping
+    @GetMapping("getAll")
     public ResponseEntity<String> getWhatsAppTemplates() {
         try {
             Response response = whatsAppService.getWhatsAppTemplates();
@@ -48,7 +46,7 @@ public class WhatsAppController {
         }
     }
 
-    @DeleteMapping("/{templateName}")
+    @DeleteMapping("delete/{templateName}")
     public ResponseEntity<String> deleteWhatsAppTemplate(
             @PathVariable String templateName
     ) {

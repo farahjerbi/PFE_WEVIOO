@@ -1,0 +1,18 @@
+.CardContainer{
+    margin-left: 17% !important;
+    width: 75% !important;
+    margin-top: 8% !important;
+}
+
+.header{
+    background: linear-gradient(90deg, rgb(193, 201, 233) 0%, rgb(84, 89, 226) 100%) ;
+}
+.input-err {
+    border: 1px solid red;
+   }
+   
+   .error {
+     color: red;
+     font-size: 0.8rem;
+     margin-top: 0.2rem;
+   }

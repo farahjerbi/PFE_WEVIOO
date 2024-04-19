@@ -1,23 +1,23 @@
 import {createApi , fetchBaseQuery} from "@reduxjs/toolkit/query/react"
-import { SmsTemplate } from "../../models/sms/SmsTemplate";
+import { WhatsAppTemplatePayload } from "../../models/sms/WhatsAppTemplatePayload";
 
-export const smsApi = createApi({
-    reducerPath: 'smsApi',
+export const whatsAppApi = createApi({
+    reducerPath: 'whatsAppApi',
     baseQuery:fetchBaseQuery({
-        baseUrl:"http://localhost:8099/apiSms"
+        baseUrl:"http://localhost:8099/apiWhatsApp"
     }),
     endpoints:(builder)=>({
-        addTemplateSMS : builder.mutation({
-            query:(body:SmsTemplate)=>{
+        addTemplateWhatsapp : builder.mutation({
+            query:(body:WhatsAppTemplatePayload)=>{
                 return{
-                    url:"/addSmsTemplate",
+                    url:"/addWhatsAppTemplate",
                     method:"POST",
                     body,
                 };
             }
         }),
 
-        getAllSMSTemplates : builder.mutation({
+        getAllWhatsappTemplates : builder.mutation({
             query:()=>{
                 return{
                     url:"/getAll",
@@ -26,23 +26,23 @@ export const smsApi = createApi({
             }
         }),
         
-        getSMSTemplateById: builder.mutation({
+        getWhatsappTemplateById: builder.mutation({
             query: ( id ) => ({
                 url: `/getById/${id}`,
                 method: "GET",
             }),
         }),
 
-        deleteSMSTemplate: builder.mutation({
-            query: ( id: number ) => ({
-                url: `/deleteSmsTemplate/${id}`,
+        deleteWhatsappTemplate: builder.mutation({
+            query: ( id: string ) => ({
+                url: `/delete/${id}`,
                 method: "DELETE",
             }),
         }),
 
 
     
-        updateTemplate: builder.mutation({
+        updateTemplateWhatsapp: builder.mutation({
             query: ({ smsTemplate, id }) => ({
                 url: `/updateSmsTemplate/${id}`,
                 method: "PUT",
@@ -56,4 +56,4 @@ export const smsApi = createApi({
  
 })
 
-export const {useAddTemplateSMSMutation,useDeleteSMSTemplateMutation,useGetAllSMSTemplatesMutation,useGetSMSTemplateByIdMutation}=smsApi;
+export const {useAddTemplateWhatsappMutation,useDeleteWhatsappTemplateMutation,useGetAllWhatsappTemplatesMutation,useGetWhatsappTemplateByIdMutation}=whatsAppApi;

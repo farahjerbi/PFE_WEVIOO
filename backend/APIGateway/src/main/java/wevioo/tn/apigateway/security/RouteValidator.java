@@ -16,7 +16,9 @@ public class RouteValidator {
             "/api/users/forgotPassword",
             "/api/",
             "/apiEmail/",
-            "/uploads/"
+            "/uploads/",
+            "/apiSms/",
+            "/apiWhatsApp/"
     );
 
     public Predicate<ServerHttpRequest> isSecured =

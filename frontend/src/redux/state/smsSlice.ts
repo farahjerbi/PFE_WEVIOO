@@ -25,11 +25,11 @@ export const getTemplatesWhatsapp = createAsyncThunk<any| null, void>(
     async (_, { rejectWithValue }) => {
             try {
                 const response = await axios.get<any>(
-                    `http://localhost:8099/apiWhatsApp`
+                    `http://localhost:8099/apiWhatsApp/getAll`
                 );
                 console.log("🚀 ~ response.data:", response.data)
-                return response.data;
-            } catch (error) {
+                return response.data.templates;
+              } catch (error) {
                 console.error("Error decoding token:", error);
                 return rejectWithValue(null);
             }
@@ -82,25 +82,30 @@ export const smsSlice = createSlice({
         )=>{
         state.currentTemplate=action.payload;
     },
-        addSMS(state, action: PayloadAction<SmsTemplate>) {
-            if (state.smsTemplates && action.payload) {
+        setAddSMS(state, action: PayloadAction<SmsTemplate>) {
+            if (state.smsTemplates) {
               state.smsTemplates.push(action.payload);
             }
           },
-
-        setUpdateSmsFav(state, action: PayloadAction<UpdateFav>) {
-            if (state.smsTemplates) {
-              const index = state.smsTemplates.findIndex((sms: SmsTemplate) => sms.id === action.payload.id);
-              if (index !== -1 ) {
-                const userIdx = state.smsTemplates[index].userFavoriteSms.indexOf(action.payload.idUser);
-                if (userIdx !== -1) {
-                  state.smsTemplates[index].userFavoriteSms.splice(userIdx, 1);
-                } else {
-                  state.smsTemplates[index].userFavoriteSms.push(action.payload.idUser);
-                }
-              }
+          setAddWhatsapp(state, action: PayloadAction<WhatsAppTemplateResponse>) {
+            if (state.whatsappTemplates) {
+              state.whatsappTemplates.push(action.payload);
             }
-          }         
+          }
+          // ,
+        // setUpdateSmsFav(state, action: PayloadAction<UpdateFav>) {
+        //     if (state.smsTemplates) {
+        //       const index = state.smsTemplates.findIndex((sms: SmsTemplate) => sms.id === action.payload.id);
+        //       if (index !== -1 ) {
+        //         const userIdx = state.smsTemplates[index].userFavoriteSms?.indexOf(action.payload.idUser);
+        //         if (userIdx !== -1) {
+        //           state.smsTemplates[index].userFavoriteSms?.splice(userIdx, 1);
+        //         } else {
+        //           state.smsTemplates[index].userFavoriteSms?.push(action.payload.idUser);
+        //         }
+        //       }
+        //     }
+        //   }         
           ,
           setUpdateSmsFavList(state, action: PayloadAction<number|undefined>) {
             if (state.savedSmsTemplates) {
@@ -122,9 +127,9 @@ export const smsSlice = createSlice({
               state.smsTemplates = state.smsTemplates.filter((sms: SmsTemplate) => sms.id !== action.payload);
             }
           },
-          setDeleteWhatsapp(state, action: PayloadAction<number>) {
+          setDeleteWhatsapp(state, action: PayloadAction<string>) {
             if (state.whatsappTemplates) {
-              state.whatsappTemplates = state.whatsappTemplates.filter((sms: WhatsAppTemplateResponse) => sms.id !== action.payload);
+              state.whatsappTemplates = state.whatsappTemplates.filter((sms: WhatsAppTemplateResponse) => sms.name !== action.payload);
             }
           }
           
@@ -152,6 +157,6 @@ export const selectSMSs = (state: RootState) => state.sms.smsTemplates;
 export const selectWhatsapp = (state: RootState) => state.sms.whatsappTemplates;
 export const selectCurrentSms = (state: RootState) => state.sms.currentTemplate;
 export const selectSavedSMSs = (state: RootState) => state.sms.savedSmsTemplates;
-export const {setDeleteSms,setDeleteWhatsapp,setSMSs,setSavedSMSs,setSelectedSms,setUpdateSMS,setUpdateSmsFav,setUpdateSmsFavList,setWhatsapps} = smsSlice.actions
+export const {setAddSMS, setDeleteSms,setDeleteWhatsapp,setSMSs,setSavedSMSs,setSelectedSms,setUpdateSMS,setUpdateSmsFavList,setWhatsapps} = smsSlice.actions
 
 export default smsSlice.reducer;

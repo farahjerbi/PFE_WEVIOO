@@ -1,7 +1,7 @@
 import React, { Suspense, useEffect } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { Toaster } from 'sonner';
-import { ADD_ADVANCED_EMAIL_TEMPLATE, ADD_EMAIL_TEMPLATE, ADD_SIMPLE_EMAIL_TEMPLATE, AUTHENTICATION, CALENDAR, DASHBOARD, EDIT_EMAIL_TEMPLATE, EMAILS_STATISTICS, LIST_EMAIL_TEMPLATES, LIST_USERS, PROFILE, SEND_EMAIL, SEND_EMAIL_SCHEDULED, USERS_STATISTICS,SAVEDTEMPLATES, LIST_SMS_TEMPLATES, ADD_SMS_TEMPLATE } from "./routes/paths";
+import { ADD_ADVANCED_EMAIL_TEMPLATE, ADD_EMAIL_TEMPLATE, ADD_SIMPLE_EMAIL_TEMPLATE, AUTHENTICATION, CALENDAR, DASHBOARD, EDIT_EMAIL_TEMPLATE, EMAILS_STATISTICS, LIST_EMAIL_TEMPLATES, LIST_USERS, PROFILE, SEND_EMAIL, SEND_EMAIL_SCHEDULED, USERS_STATISTICS,SAVEDTEMPLATES, LIST_SMS_TEMPLATES, ADD_SMS_TEMPLATE, CREATE_SMS_TEMPLATE, CREATE_WHATSAPP_TEMPLATE } from "./routes/paths";
 import { decodeToken, selectIsAuth, selectRole } from "./redux/state/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Role } from "./models/user/Role";
@@ -11,11 +11,12 @@ import { getTemplatesEmail } from './redux/state/emailSlice';
 import SavedTemplates from './pages/user/email/savedTemplates/SavedTemplates';
 import ListSMS from './pages/admin/sms/listSMS/ListSMS';
 import AddSMS from './pages/admin/sms/add/AddSMS';
+import CreateWhatsapp from './pages/admin/sms/createWhatsapp/CreateWhatsapp';
 // Lazy load components
 const Dashboard = React.lazy(() => import('./pages/admin/dashboard/Dashboard'));
 const Authentication = React.lazy(() => import('./pages/authentication/Authentication'));
 const AddEmail = React.lazy(() => import('./pages/admin/Email/Add/AddEmail'));
-const CreateSimpleEmail = React.lazy(() => import('./pages/admin/Email/create/CreateSimpleEmail'));
+const CreateSimpleTemplate = React.lazy(() => import('./pages/admin/Email/create/CreateSimpleTemplate'));
 const EmailDragAndDrop = React.lazy(() => import('./pages/admin/Email/emailEditor/EmailDragAndDrop'));
 const ListEmails = React.lazy(() => import('./pages/admin/Email/list/ListEmails'));
 const Layout = React.lazy(() => import('./routes/Layout'));
@@ -57,7 +58,9 @@ function App() {
 
                   {role===Role.ADMIN && ( <>
                     <Route path={ADD_EMAIL_TEMPLATE} element={<ProtectedRoute><AddEmail /></ProtectedRoute>} />
-                     <Route path={ADD_SIMPLE_EMAIL_TEMPLATE} element={<ProtectedRoute><CreateSimpleEmail /></ProtectedRoute>} />
+                     <Route path={ADD_SIMPLE_EMAIL_TEMPLATE} element={<ProtectedRoute><CreateSimpleTemplate /></ProtectedRoute>} />
+                     <Route path={CREATE_WHATSAPP_TEMPLATE} element={<ProtectedRoute><CreateWhatsapp /></ProtectedRoute>} />
+                     <Route path={CREATE_SMS_TEMPLATE} element={<ProtectedRoute><CreateSimpleTemplate /></ProtectedRoute>} />
                      <Route path={ADD_SMS_TEMPLATE} element={<ProtectedRoute><AddSMS /></ProtectedRoute>} />
                       <Route path={ADD_ADVANCED_EMAIL_TEMPLATE} element={<ProtectedRoute><EmailDragAndDrop /></ProtectedRoute>} />
                                       <Route path={LIST_USERS} element={<ProtectedRoute><ListUsers /></ProtectedRoute>} />

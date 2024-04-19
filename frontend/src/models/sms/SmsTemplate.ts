@@ -4,6 +4,6 @@ export interface SmsTemplate{
     language:string,
     subject:string,
     content:string,
-    userFavoriteSms: number[];
-    placeholders:string[];
+    userFavoriteSms?: number[];
+    placeholders?:string[];
 }
