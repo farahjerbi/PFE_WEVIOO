@@ -15,6 +15,7 @@ import './WhatsAppCard.css'
 import { WhatsAppTemplateResponse } from '../../models/sms/WhatsAppTemplateResponse';
 import ViewSMSTemplate from '../modals/ViewSMSTemplate';
 import DeleteSMSTemplate from '../modals/DeleteSMSTemplate';
+import { getLanguageName } from '../../models/sms/Language';
 interface PropsWhatsapp{
     role:Role | null,
     templates:WhatsAppTemplateResponse[] ,
@@ -46,10 +47,8 @@ const WhatsAppCard : React.FC<PropsWhatsapp> = ({ role ,templates ,user }) => {
       <tr>
         <th>Name</th>
         <th>Language</th>
-        <th>State</th>
+        <th>Category</th>
         <th> View </th>
-        {role===Role.ADMIN && ( <th> Update </th>)}
-        {role===Role.ADMIN && ( <th> Delete </th>)}
         {role===Role.USER && 
         (<>
         <th>Save</th>
@@ -63,22 +62,30 @@ const WhatsAppCard : React.FC<PropsWhatsapp> = ({ role ,templates ,user }) => {
       {currentItems?.map((template:any) => (
         <tr key={template.id}>
           <td>{template.name}</td>
-          <td>{template.language}</td>
+          <td>{getLanguageName(template.language)}</td>
          
-             {template.status === "APPROVED" && (
+             {template.category === "MARKETING" && (
             <td>
               <MDBBadge color="info" pill>
-                Approved
+                MARKETING
               </MDBBadge>
             </td>
           )}
-          {template.status === "REJECTED" && (
+          {template.category === "AUTHENTICATION" && (
             <td>
-              <MDBBadge color="danger" pill>
-                Rejected
+              <MDBBadge color="secondary" pill>
+                AUTHENTICATION
               </MDBBadge>
             </td>
           )}
+            {template.category === "UTILITY" && (
+            <td>
+              <MDBBadge color="white" pill>
+                <b style={{color:"black"}}>UTILITY</b>
+              </MDBBadge>
+            </td>
+          )}
+          
           
     
             <td>
@@ -87,37 +94,7 @@ const WhatsAppCard : React.FC<PropsWhatsapp> = ({ role ,templates ,user }) => {
               <Visibility style={{color:"whitesmoke"}}  />
               </Button>                           
               </Tooltip>
-            </td>
-            {role===Role.ADMIN && (
-              <>
-              <td>
-              <Tooltip style={{marginRight:"5px"}}  title="Update" className="color_white" >
-              <Button 
-            //   onClick={() =>
-            //   {
-            //       dispatch(setSelectedEmail(template));
-            //       navigate(`${EDIT_EMAIL_TEMPLATE}`)
-            //     }}
-                >
-              <Update style={{color:"whitesmoke"}}  />
-              </Button>                           
-              </Tooltip>
-              </td>
-                
-                <td>
-                <Tooltip title="Delete" className="color_pink" >
-              <Button 
-              onClick={() => { setDeleteModalOpen(true); setSelectedId(template.name)}}
-              >
-              <Delete style={{color:"whitesmoke"}}  />
-              </Button>                           
-              </Tooltip>
-                </td>
-        
-
-              </>
-            )}
-          
+            </td>     
           {role===Role.USER && (
             <>
                       <td>

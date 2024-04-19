@@ -61,9 +61,9 @@ const formValidation = () => {
 const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
   setFormData({...formData, [e.target.name]: e.target.value})
 }
-// const handleChangeLanguage =  (event: SelectChangeEvent) => {
-//   setFormData({ ...formData, language: event.target.value   });
-// };
+const handleChangeLanguage =  (event: SelectChangeEvent) => {
+  setFormData({ ...formData, language: event.target.value   });
+};
 
 
 const [formData, setFormData] = useState(initialState);
@@ -149,7 +149,7 @@ const handleAddTemplate: (evt: React.FormEvent<HTMLFormElement>) => void = async
                   id="demo-simple-select"
                   value={language}
                   label="Language"
-                  // onChange={handleChangeLanguage}
+                  onChange={handleChangeLanguage}
                   >
                {Object.entries(Language).map(([key, value]) => (
                   <MenuItem key={value} value={value}>

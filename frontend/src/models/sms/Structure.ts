@@ -1,3 +1,4 @@
+import { Button } from "./Button";
 import { Format } from "./Format";
 
 export interface Structure{
@@ -5,4 +6,5 @@ export interface Structure{
     body: Format,
     footer: Format,
     type:string,
+    buttons?:Button[]
 }

@@ -5,7 +5,7 @@
 }
 
 .header{
-    background: linear-gradient(90deg, rgb(164, 243, 237) 0%, rgb(59, 108, 232) 100%) ;
+    background: linear-gradient(90deg, rgb(193, 201, 233) 0%, rgb(84, 89, 226) 100%) ;
 }
 .input-err {
     border: 1px solid red;

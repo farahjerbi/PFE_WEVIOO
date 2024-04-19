@@ -51,7 +51,7 @@ public class WhatsAppTemplateService implements WhatsAppService {
 
     public Response getWhatsAppTemplates() throws IOException {
         Request request = new Request.Builder()
-                .url("https://3glv2v.api.infobip.com/whatsapp/2/senders/21695372490/templates")
+                .url("https://3glv2v.api.infobip.com/whatsapp/2/senders/447860099299/templates")
                 .get()
                 .addHeader("Authorization", "App adb55098fdf3453812bd4bf8dc673dee-61018e95-be7c-4251-8d9f-ae46e940369e")
                 .addHeader("Accept", "application/json")
@@ -106,7 +106,7 @@ public class WhatsAppTemplateService implements WhatsAppService {
             }
             for (String number : sendWhatsAppMsg.getNumbers()) {
                 WhatsAppMessage message = new WhatsAppMessage()
-                        .from("21695372490")
+                        .from("447860099299")
                         .to(number)
                         .content(new WhatsAppTemplateContent()
                                 .language(templateResponse.getLanguage())

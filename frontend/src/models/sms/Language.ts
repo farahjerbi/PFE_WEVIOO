@@ -6,16 +6,16 @@ export enum Language {
     Bengali = "bn",
     Bulgarian = "bg",
     Catalan = "ca",
-    ChineseSimplified = "zh_CN",
-    ChineseTraditionalHongKong = "zh_HK",
-    ChineseTraditionalTaiwan = "zh_TW",
+    Chinese_Simplified = "zh_CN",
+    Chinese_Hong_Kong = "zh_HK",
+    Chinese_Taiwan = "zh_TW",
     Croatian = "hr",
     Czech = "cs",
     Danish = "da",
     Dutch = "nl",
     English = "en",
-    EnglishBritish = "en_GB",
-    EnglishUS = "en_US",
+    English_UK = "en_GB",
+    English_US = "en_US",
     Estonian = "et",
     Filipino = "fil",
     Finnish = "fi",
@@ -44,11 +44,11 @@ export enum Language {
     Malay = "ms",
     Malayalam = "ml",
     Marathi = "mr",
-    NorwegianBokmal = "nb",
+    Norwegian_Bokmal = "nb",
     Persian = "fa",
     Polish = "pl",
-    PortugueseBrazil = "pt_BR",
-    PortuguesePortugal = "pt_PT",
+    Portuguese_Brazil = "pt_BR",
+    Portuguese_Portugal = "pt_PT",
     Punjabi = "pa",
     Romanian = "ro",
     Russian = "ru",
@@ -56,9 +56,9 @@ export enum Language {
     Slovak = "sk",
     Slovenian = "sl",
     Spanish = "es",
-    SpanishArgentina = "es_AR",
-    SpanishSpain = "es_ES",
-    SpanishMexico = "es_MX",
+    Spanish_Argentina = "es_AR",
+    Spanish_Spain = "es_ES",
+    Spanish_Mexico = "es_MX",
     Swahili = "sw",
     Swedish = "sv",
     Tamil = "ta",
@@ -70,7 +70,16 @@ export enum Language {
     Uzbek = "uz",
     Vietnamese = "vi",
     Zulu = "zu",
-    Unknown = "unknown",
+    Unknown = "unknown"
 }
 
-
+export function getLanguageName(languageCode: string): string {
+    for (const key in Language) {
+        if (Language.hasOwnProperty(key)) {
+            if (Language[key as keyof typeof Language] === languageCode) {
+                return key;
+            }
+        }
+    }
+    return "Unknown";
+}

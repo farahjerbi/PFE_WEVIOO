@@ -40,6 +40,17 @@ const ViewSMSTemplate: React.FC<ViewTemplateSMSModalProps> = ({template , onClos
 
 
                 </Button>
+                { isWhatsapp(template)  && template.structure.header && template.structure.header.format ==="TEXT" &&(
+                    <Button
+                    style={{maxWidth:"250px"}}
+                        size="sm"
+                        variant="soft"
+                        color="success"
+                    >
+                        {template.structure.header.text}
+                    </Button>
+                )}
+                
                 <Button
                 style={{maxWidth:"250px"}}
                     size="sm"
@@ -50,6 +61,17 @@ const ViewSMSTemplate: React.FC<ViewTemplateSMSModalProps> = ({template , onClos
 
 
                 </Button>
+
+                { isWhatsapp(template)  && template.structure.footer &&(
+                    <Button
+                    style={{maxWidth:"250px"}}
+                        size="sm"
+                        variant="soft"
+                        color="neutral"
+                    >
+                        {template.structure.footer.text}
+                    </Button>
+                )}
                 </div>
             </div>
         </ModalDialog>
