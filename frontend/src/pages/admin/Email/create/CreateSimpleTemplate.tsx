@@ -105,7 +105,7 @@ const formValidation = () => {
           name: formData.name,
           language: formData.language,
           subject: formData.subject,
-          content: formData.content
+          content: formData.content,
           }
         
         const smsData = await addTemplateSMS(smsTemplate).unwrap();

@@ -33,8 +33,8 @@ public class SmsController {
     }
 
     @PutMapping("/updateSmsTemplate/{id}")
-    public ResponseEntity<SmsTemplate> updateSmsTemplate(@RequestBody UpdateSmsTemplate updateDto, @PathVariable Long id) {
-        SmsTemplate updatedTemplate = smsService.updateSmsTemplate(updateDto, id);
+    public ResponseEntity<SmsTemplate> updateSmsTemplate(@RequestBody UpdateSmsTemplate smsTemplate, @PathVariable Long id) {
+        SmsTemplate updatedTemplate = smsService.updateSmsTemplate(smsTemplate, id);
         return ResponseEntity.ok(updatedTemplate);
     }
 
@@ -47,6 +47,15 @@ public class SmsController {
     @GetMapping(value = "/getAllTemplates")
     public ResponseEntity<List<SmsTemplate>> getAllTemplates(){return ResponseEntity.ok(smsRepository.findAll());}
 
+    @PutMapping("toggleFavoriteSMS/{templateId}/{userId}")
+    public String toggleFavoriteEmail(@PathVariable  Long templateId, @PathVariable Long userId){
+        smsService.toggleFavoriteSMS(templateId,userId);
+        return "Template add to favorite with success";
+    }
 
+    @GetMapping("likedByUser/{userId}")
+    public List<SmsTemplate> getTemplatesLikedByUser(@PathVariable Long userId) {
+        return smsRepository.findTemplatesByUserFavoriteSmsContains(userId);
+    }
 }
 

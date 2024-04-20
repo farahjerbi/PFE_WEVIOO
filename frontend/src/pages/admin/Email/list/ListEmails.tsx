@@ -308,7 +308,5 @@ const ListEmails = () => {
 };
 
 export default ListEmails;
-function updateEmail(updatedTemplate: EmailTemplate): any {
-  throw new Error("Function not implemented.");
-}
+
 

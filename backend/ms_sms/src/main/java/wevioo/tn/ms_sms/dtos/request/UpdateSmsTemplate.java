@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 public class UpdateSmsTemplate {
-    private Long id;
     private String name;
     private String subject;
     private String language;

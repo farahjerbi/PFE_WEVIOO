@@ -14,6 +14,7 @@ public class SmsUtils {
     private final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{\\{([^{}]*)\\}\\}");
 
     public Set<String> extractPlaceholders(String template) {
+        System.out.println("Template before processing: " + template);
         Set<String> placeholders = new HashSet<>();
         Matcher matcher = PLACEHOLDER_PATTERN.matcher(template);
         while (matcher.find()) {

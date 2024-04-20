@@ -3,8 +3,8 @@ package wevioo.tn.ms_sms.services;
 import com.infobip.ApiClient;
 import com.infobip.ApiException;
 import com.infobip.api.SmsApi;
-import com.infobip.api.WhatsAppApi;
 import com.infobip.model.*;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import wevioo.tn.ms_sms.dtos.request.SendsSms;
@@ -37,16 +37,15 @@ public class SmsServiceImpl implements SmsService{
 
 
     public SmsTemplate updateSmsTemplate(UpdateSmsTemplate s, Long id) {
-        return smsRepository.findById(id)
-                .map(smsTemplate -> {
-                    smsTemplate.setName(s.getName());
-                    smsTemplate.setLanguage(s.getLanguage());
-                    smsTemplate.setContent(s.getContent());
-                    smsTemplate.setSubject(s.getSubject());
-                    smsTemplate.setPlaceholders(smsUtils.extractPlaceholders(s.getContent()));
-                    return smsRepository.save(smsTemplate);
-                })
-                .orElseThrow(() -> new RuntimeException("SmsTemplate not found with id: " + id));
+        SmsTemplate smsTemplate= smsRepository.findById(id).orElseThrow(() -> new RuntimeException("SmsTemplate not found with id: " + id));
+        System.out.println("Template before processing: " + smsTemplate);
+        System.out.println("Template before processing: " + s);
+
+        smsTemplate.setSubject(s.getSubject());
+        smsTemplate.setContent(s.getContent());
+        smsTemplate.setLanguage(s.getLanguage());
+        smsTemplate.setPlaceholders(smsUtils.extractPlaceholders(s.getContent()));
+        return smsRepository.save(smsTemplate);
     }
 
     public void deleteSmsTemplate(Long id){
@@ -83,6 +82,20 @@ public class SmsServiceImpl implements SmsService{
         } catch (ApiException apiException) {
             return "Failed to send message: " + apiException.getMessage();
         }
+    }
+
+    public void toggleFavoriteSMS(Long smsTemplateId, Long userId) {
+        SmsTemplate smsTemplate = smsRepository.findById(smsTemplateId)
+                .orElseThrow(() -> new RuntimeException("SmsTemplate not found with id: " + smsTemplateId));
+
+        List<Long> userFavoriteSMSs = smsTemplate.getUserFavoriteSms();
+        if (userFavoriteSMSs.contains(userId)) {
+            userFavoriteSMSs.removeIf(id -> id.equals(userId));
+        } else {
+            userFavoriteSMSs.add(userId);
+        }
+
+        smsRepository.save(smsTemplate);
     }
 
 

@@ -7,11 +7,8 @@ import { MDBCol, MDBIcon} from 'mdb-react-ui-kit';
 import { selectSMSs, selectWhatsapp } from '../../../../redux/state/smsSlice';
 import { useSelector } from 'react-redux';
 import { selectRole, selectUser } from '../../../../redux/state/authSlice';
-import { Role } from '../../../../models/user/Role';
-import { useNavigate } from 'react-router-dom';
 import SMSCard from '../../../../components/list-sms/SMSCard';
 import WhatsAppCard from '../../../../components/list-whatsapp/WhatsAppCard';
-import { ADD_SMS_TEMPLATE } from '../../../../routes/paths';
 
 const ListSMS = () => {
     const[isSMS,setIsSMS]=useState<boolean>(true)
@@ -20,7 +17,6 @@ const ListSMS = () => {
     
     const role = useSelector(selectRole);
     const user=useSelector(selectUser)
-    const navigate = useNavigate();
    
   return (
     <>
@@ -31,9 +27,6 @@ const ListSMS = () => {
                         <MarkUnreadChatAlt className='me-2'/>SMS</Button>
                     <Button onClick={()=>setIsSMS(false)} fullWidth className={!isSMS ? 'me-3 baby-bluee':'me-3'}> 
                     <MDBIcon fab icon="whatsapp-square" className='me-2' style={{fontSize:"1.5rem"}} /> WHATSAPP</Button>
-                    {role===Role.ADMIN && (  <Button onClick={()=>navigate(ADD_SMS_TEMPLATE)} style={{width:"20%"}} size="small" className="mb-2" >
-                      <img  src="../../../assets/add.png" alt="" style={{width:"25%",marginRight:"3%"}} />Create
-                      </Button>)}
                 </div>
             </div>
 
@@ -42,7 +35,7 @@ const ListSMS = () => {
                 className="ms-5 mt-5 mb-4 d-flex align-items-center"
                 >
         {isSMS && (
-          <div style={{marginLeft:"30%"}}><SMSCard templates={templates} user={user} role={role} /></div>
+          <div style={{marginLeft:"21%"}}><SMSCard templates={templates} user={user} role={role} /></div>
         )}
         {!isSMS && templatesWhatsapp && ( 
           <div style={{marginLeft:"21%"}}>

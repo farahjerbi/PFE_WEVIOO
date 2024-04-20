@@ -3,9 +3,12 @@ import './Section1.css'
 import {  selectEmails } from '../../redux/state/emailSlice';
 import {  useSelector } from 'react-redux';
 import { selectUsers } from '../../redux/state/usersSlice';
+import { selectSMSs, selectWhatsapp } from '../../redux/state/smsSlice';
 const Section1 = () => {
   const emails = useSelector(selectEmails);
   const users=useSelector(selectUsers)
+  const sms=useSelector(selectSMSs)
+  const whatsapp=useSelector(selectWhatsapp)
   return (
     <div className='section  '>
         <MDBRow className="mb-4 mt-5 ">
@@ -33,7 +36,7 @@ const Section1 = () => {
               <MDBIcon icon="home" className="color_baby_blue"/>
                 <div className="data">
                   <h4>
-                    <strong>Dept</strong>
+                    <strong></strong>
                   </h4>
                 </div>
               </div>
@@ -41,7 +44,7 @@ const Section1 = () => {
                 <div className="progress">
                 <div aria-valuemax={100} aria-valuemin={0} aria-valuenow={emails?.length} className="progress-bar bg-primary" role="progressbar" style={{width: '25%'}}></div>
                 </div>
-                <MDBCardText>Count : <strong>{emails?.length}</strong></MDBCardText>
+                <MDBCardText>Count : <strong>{whatsapp?.length}</strong></MDBCardText>
               </MDBCardBody>
             </MDBCard>
         </MDBCol>  
@@ -60,7 +63,7 @@ const Section1 = () => {
                   <div aria-valuemax={100} aria-valuemin={0} aria-valuenow={25} className="progress-bar bg grey" role="progressbar"
                     style={{width: '25%'}}></div>
                 </div>
-                <MDBCardText>Count:</MDBCardText>
+                <MDBCardText>Count: <strong>{sms?.length}</strong></MDBCardText>
               </MDBCardBody>
             </MDBCard>
         </MDBCol>

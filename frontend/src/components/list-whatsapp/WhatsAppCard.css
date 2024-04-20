@@ -1,7 +1,8 @@
 .whatsapp-card{
-    min-height: 400px;
-    background-size: 100% 100%; 
+    min-height: 380px;
+    min-width: 800px !important;
+    /* background-size: 100% 100%; 
     background-image:url("../../../public/assets/addSMS.jpg");
     background-repeat: no-repeat;
-    background-position: center;
+    background-position: center; */
 }

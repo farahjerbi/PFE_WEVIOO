@@ -81,5 +81,16 @@ export function getLanguageName(languageCode: string): string {
             }
         }
     }
-    return "Unknown";
+    return "unknown";
+}
+
+export function extractPlaceholders(template: string): string[] {
+    console.log("Template before processing: ", template);
+    const placeholders: string[] = [];
+    const placeholderRegex = /\{(\w+)\}/g; 
+    let match;
+    while ((match = placeholderRegex.exec(template)) !== null) {
+        placeholders.push(match[1]); 
+    }
+    return placeholders;
 }

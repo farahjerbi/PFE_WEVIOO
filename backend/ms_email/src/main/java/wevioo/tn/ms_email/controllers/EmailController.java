@@ -369,6 +369,8 @@ public class EmailController {
         return emailTemplateRepository.findTemplatesByUserFavoriteEmailsContains(userId);
     }
 
+
+
 }
 
 

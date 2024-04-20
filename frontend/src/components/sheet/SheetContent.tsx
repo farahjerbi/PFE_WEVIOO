@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Button, Tooltip } from '@mui/material';
 import Visibility from "@mui/icons-material/Visibility";
 import ViewEmailTemplateSimple from '../modals/ViewEmailTemplateSimple';
@@ -10,27 +10,38 @@ import Table from '@mui/joy/Table';
 import Sheet from '@mui/joy/Sheet';
 
 import { SEND_EMAIL, SEND_EMAIL_SCHEDULED } from '../../routes/paths';
-import { EmailTemplate } from '../../models/email/EmailTemplate';
+import { EmailTemplate, isEmailTemplate } from '../../models/email/EmailTemplate';
 import { useGetDesignTemplateMutation, useToggleFavoriteEmailMutation } from '../../redux/services/emailApi';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSelectedEmail, setUpdateEmailFavList } from '../../redux/state/emailSlice';
 import { toast } from 'sonner';
 import { selectUser } from '../../redux/state/authSlice';
+import { SmsTemplate } from '../../models/sms/SmsTemplate';
+import ViewSMSTemplate from '../modals/ViewSMSTemplate';
+import DeleteSMSTemplate from '../modals/DeleteSMSTemplate';
+import { useToggleFavoriteSMSMutation } from '../../redux/services/smsApi';
+import { setUpdateSmsFavList } from '../../redux/state/smsSlice';
 interface SheetContentProps<T> {
     templates: T[];
     type: string;
 }
 
   
-const SheetContent: React.FC<SheetContentProps<EmailTemplate>> = ({ templates, type }) => {
-    const [selectedTemplate, setSelectedTemplate] = React.useState<EmailTemplate>();
+const SheetContent: React.FC<SheetContentProps<EmailTemplate|SmsTemplate>> = ({ templates, type }) => {
+
+    const [selectedTemplate, setSelectedTemplate] = React.useState<EmailTemplate|SmsTemplate>();
     const [templateDesign, setTemplateDesign] = React.useState<any>();
     const [getDesignTemplate] = useGetDesignTemplateMutation();
     const [basicModal, setBasicModal] = React.useState(false);
+    const [smsModal, setSmsModal] = React.useState(false);
+
     const dispatch=useDispatch();
     const navigate=useNavigate();
     const user=useSelector(selectUser)
     const[toggleFavoriteEmail]=useToggleFavoriteEmailMutation();
+    const[toggleFavoriteSMS]=useToggleFavoriteSMSMutation()
+
+
   const handleView = async (template: EmailTemplate) => {
     setSelectedTemplate(template);
     if (template.state === "COMPLEX") {
@@ -56,6 +67,19 @@ const SheetContent: React.FC<SheetContentProps<EmailTemplate>> = ({ templates, t
               dispatch(setUpdateEmailFavList(template.id));
       
               toast.success("Template removed from favorites successfully");
+          
+          }catch(error){
+            toast.error("Error !!")
+          }
+        }
+
+        const toggleFavoriteSMSFunc=async(template:SmsTemplate)=>{
+          try{
+             await toggleFavoriteSMS({idTemplate:template.id,idUser:user?.id})
+                      
+                dispatch(setUpdateSmsFavList(template.id));
+              
+                toast.success("Template removed from favorites successfully");
           
           }catch(error){
             toast.error("Error !!")
@@ -105,13 +129,23 @@ const SheetContent: React.FC<SheetContentProps<EmailTemplate>> = ({ templates, t
             <tr key={template.id}>
               <td>{template.name}</td>
               <td>   
-                <Tooltip style={{marginRight:"5px"}} title="View" className="color_purple" >
-                        <Button onClick={() => handleView(template)}>
-                        <Visibility style={{color:"whitesmoke"}}  />
-                        </Button>                           
-                        </Tooltip>
+              <Tooltip style={{marginRight:"5px"}} title="View" className="color_purple">
+                <Button onClick={() => {
+                  if (isEmailTemplate(template)) {
+                    handleView(template);
+                  } else {
+                    setSelectedTemplate(template);
+                    setSmsModal(true);
+                  }
+                }}>
+                  <Visibility style={{color:"whitesmoke"}} />
+                </Button>
+              </Tooltip>                 
+            
               </td>
               <td>
+              {/* {isEmailTemplate(template) && 
+
               <Tooltip style={{marginRight:"5px"}} title="Send" className="color_blue" >
               <Button
                   onClick={() => {
@@ -121,9 +155,11 @@ const SheetContent: React.FC<SheetContentProps<EmailTemplate>> = ({ templates, t
                 >
               <Send style={{color:"whitesmoke"}}  />
               </Button>                           
-              </Tooltip>
+              </Tooltip>} */}
               </td>
               <td>
+              {/* {isEmailTemplate(template) && 
+
               <Tooltip style={{marginRight:"5px"}} title="ScheduleSend" className="color_baby_blue" >
               <Button
                   onClick={() => {
@@ -133,22 +169,26 @@ const SheetContent: React.FC<SheetContentProps<EmailTemplate>> = ({ templates, t
                 >
                         <ScheduleSend style={{color:"whitesmoke"}}  />
                         </Button>                           
-                        </Tooltip>
+                        </Tooltip>} */}
               </td>
               <td>
-              <Tooltip style={{marginRight:"5px"}} title="Remove Template" className="color_pink" >
-                                  <Button  onClick={() =>toggleFavoriteEmailFunc(template)}>
-                                  <BookmarkRemoveOutlined style={{color:"whitesmoke"}}  /> 
-                                  </Button>                           
-                                  </Tooltip>
+                <Tooltip style={{marginRight:"5px"}} title="Remove Template" className="color_pink">
+                  <Button onClick={() => {
+                    isEmailTemplate(template) ? toggleFavoriteEmailFunc(template) : toggleFavoriteSMSFunc(template);
+                  }}>
+                    <BookmarkRemoveOutlined style={{color:"whitesmoke"}} />
+                  </Button>
+                </Tooltip>
               </td>
             </tr>
           ))}
         </tbody>
         </Table>
-        {selectedTemplate && (
+        {selectedTemplate && isEmailTemplate(selectedTemplate) && (
               <ViewEmailTemplateSimple templateDesign={templateDesign} template={selectedTemplate} show={basicModal} onClose={handleUpdate} />
       )}
+      {selectedTemplate && !isEmailTemplate(selectedTemplate) &&  (<ViewSMSTemplate template={selectedTemplate} show={smsModal} onClose={()=>setSmsModal(false)}  />)}
+
 </Sheet>
 )
 }

@@ -40,15 +40,24 @@ export const smsApi = createApi({
             }),
         }),
 
-
-    
-        updateTemplate: builder.mutation({
-            query: ({ smsTemplate, id }) => ({
-                url: `/updateSmsTemplate/${id}`,
+        updateSMSTemplate: builder.mutation({
+            query: (body:{ smsTemplate:any, id:any }) => ({
+                url: `/updateSmsTemplate/${body.id}`,
                 method: "PUT",
-                body: {
-                    smsTemplate
-                },
+                body: body.smsTemplate
+            }),
+        }),
+        toggleFavoriteSMS: builder.mutation({
+            query: ( {idTemplate,idUser}) => ({
+                url: `/toggleFavoriteSMS/${idTemplate}/${idUser}`,
+                method: "PUT",
+            }),
+        }),
+
+        getSavedTemplatesSMS: builder.mutation({
+            query: ( id ) => ({
+                url: `/likedByUser/${id}`,
+                method: "GET",
             }),
         }),
 
@@ -56,4 +65,4 @@ export const smsApi = createApi({
  
 })
 
-export const {useAddTemplateSMSMutation,useDeleteSMSTemplateMutation,useGetAllSMSTemplatesMutation,useGetSMSTemplateByIdMutation}=smsApi;
+export const {useGetSavedTemplatesSMSMutation,useToggleFavoriteSMSMutation,useUpdateSMSTemplateMutation,useAddTemplateSMSMutation,useDeleteSMSTemplateMutation,useGetAllSMSTemplatesMutation,useGetSMSTemplateByIdMutation}=smsApi;

@@ -11,4 +11,5 @@ public interface SmsService {
     void deleteSmsTemplate(Long id);
     SmsTemplate updateSmsTemplate(UpdateSmsTemplate s, Long id);
     String sendSms(SendsSms sendsSms);
+    void toggleFavoriteSMS(Long smsTemplateId, Long userId);
 }

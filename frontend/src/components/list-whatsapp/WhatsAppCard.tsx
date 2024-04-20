@@ -31,7 +31,7 @@ const WhatsAppCard : React.FC<PropsWhatsapp> = ({ role ,templates ,user }) => {
     const[query,setQuery]=useState<string>('')
        /*Pagination*/
        const [currentPage, setCurrentPage] = useState(1);
-       const itemsPerPage = 4;
+       const itemsPerPage = 3;
        const indexOfLastItem = currentPage * itemsPerPage;
        const indexOfFirstItem = indexOfLastItem - itemsPerPage;
        const currentItems = templates.slice(indexOfFirstItem, indexOfLastItem);
@@ -41,7 +41,19 @@ const WhatsAppCard : React.FC<PropsWhatsapp> = ({ role ,templates ,user }) => {
        
   return (
     <MDBCard className='ms-5 whatsapp-card' >
+ 
 <MDBCardBody>
+<div className="d-flex align-items-center justify-content-end mb-2">
+            <input
+              type="text"
+              className="search-hover"
+              placeholder="Search here..."
+              onChange={(e) => setQuery(e.target.value)}
+              />
+                    <img className='ms-3' src="../../../assets/speech-bubble.png" alt="search" style={{width:"3%"}} />
+
+                      </div>
+          
   <MDBTable striped hover bordered>
     <MDBTableHead color="blue lighten-4">
       <tr>
@@ -51,7 +63,6 @@ const WhatsAppCard : React.FC<PropsWhatsapp> = ({ role ,templates ,user }) => {
         <th> View </th>
         {role===Role.USER && 
         (<>
-        <th>Save</th>
         <th> Send Immediatly </th>
         <th> Schedule </th>
         </>)}
@@ -59,7 +70,8 @@ const WhatsAppCard : React.FC<PropsWhatsapp> = ({ role ,templates ,user }) => {
       </tr>
     </MDBTableHead>
     <MDBTableBody>
-      {currentItems?.map((template:any) => (
+      {currentItems?.filter(
+    (template:any)=>template.name.toLowerCase().includes(query)).map((template:any) => (
         <tr key={template.id}>
           <td>{template.name}</td>
           <td>{getLanguageName(template.language)}</td>
@@ -97,18 +109,7 @@ const WhatsAppCard : React.FC<PropsWhatsapp> = ({ role ,templates ,user }) => {
             </td>     
           {role===Role.USER && (
             <>
-                      <td>
-                      <Tooltip style={{marginRight:"5px"}} title={user && template.userFavoriteEmails?.includes(user.id) ?"Remove Template":"Save Template"} className="color_pink" >
-                        <Button  
-                        // onClick={() =>toggleFavoriteEmailFunc(template)}
-                        >
-                        {user && template.userFavoriteEmails?.includes(user.id) ? (
-                        <BookmarkRemoveOutlined style={{color:"whitesmoke"}}  /> ):<BookmarkAddedOutlined style={{color:"whitesmoke"}}  /> }
-                        </Button>                           
-                        </Tooltip>
-                    </td>
           
-         
              <td>
             <Tooltip style={{marginRight:"5px"}} title="Send" className="color_blue" >
               <Button  

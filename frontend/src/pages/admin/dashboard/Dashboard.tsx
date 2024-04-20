@@ -8,6 +8,7 @@ import { useEffect } from "react"
 import { getTemplatesEmail } from "../../../redux/state/emailSlice"
 import { getUsers } from "../../../redux/state/usersSlice"
 import { getTemplatesSms, getTemplatesWhatsapp } from "../../../redux/state/smsSlice"
+import SmsStatistics from "../sms/statistic/SmsStatistics"
 
 const Dashboard = () => {
   const dispatch: AppDispatch = useDispatch(); 
@@ -24,7 +25,7 @@ const Dashboard = () => {
     <div style={{ display: 'flex', alignItems: 'flex-start' }}>
     <div style={{ width:"30%" ,marginLeft:"13%"}}>
       <EmailStatistics/>
-      
+      <SmsStatistics/>
     </div>
     <div style={{width:"55%",marginRight: '5.5%'}}>
     <Calendar/>

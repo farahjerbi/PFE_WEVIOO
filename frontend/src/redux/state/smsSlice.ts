@@ -41,7 +41,7 @@ export interface SMSState{
     smsTemplates: SmsTemplate[] | null;
     whatsappTemplates: WhatsAppTemplateResponse[] | null;
     savedSmsTemplates:SmsTemplate[]|null;
-    currentTemplate:WhatsAppTemplateResponse | SmsTemplate  |null;
+    currentTemplate: SmsTemplate | null;
 }
 export interface UpdateFav{
     id: number;
@@ -78,7 +78,7 @@ export const smsSlice = createSlice({
       },
       setSelectedSms:(
         state, 
-        action : PayloadAction<SmsTemplate | WhatsAppTemplateResponse>
+        action : PayloadAction<SmsTemplate >
         )=>{
         state.currentTemplate=action.payload;
     },
@@ -91,22 +91,30 @@ export const smsSlice = createSlice({
             if (state.whatsappTemplates) {
               state.whatsappTemplates.push(action.payload);
             }
-          }
-          // ,
-        // setUpdateSmsFav(state, action: PayloadAction<UpdateFav>) {
-        //     if (state.smsTemplates) {
-        //       const index = state.smsTemplates.findIndex((sms: SmsTemplate) => sms.id === action.payload.id);
-        //       if (index !== -1 ) {
-        //         const userIdx = state.smsTemplates[index].userFavoriteSms?.indexOf(action.payload.idUser);
-        //         if (userIdx !== -1) {
-        //           state.smsTemplates[index].userFavoriteSms?.splice(userIdx, 1);
-        //         } else {
-        //           state.smsTemplates[index].userFavoriteSms?.push(action.payload.idUser);
-        //         }
-        //       }
-        //     }
-        //   }         
-          ,
+          },
+          setUpdateSMSFav(state, action: PayloadAction<UpdateFav>) {
+            if (state.smsTemplates) {
+                const index = state.smsTemplates.findIndex((sms: SmsTemplate) => sms.id === action.payload.id);
+                if (index !== -1) {
+                    const userFavoriteSms = state.smsTemplates[index].userFavoriteSms;
+                    if (userFavoriteSms) {
+                        const userIdx = userFavoriteSms.indexOf(action.payload.idUser);
+                        if (userIdx !== -1) {
+                            const updatedUserFavoriteSms = userFavoriteSms.filter(id => id !== action.payload.idUser);
+                            state.smsTemplates[index].userFavoriteSms = updatedUserFavoriteSms;
+                        } else {
+                            if (!state.smsTemplates[index].userFavoriteSms) {
+                                state.smsTemplates[index].userFavoriteSms = [];
+                            }
+                            state.smsTemplates[index].userFavoriteSms!.push(action.payload.idUser);
+                        }
+                    } else {
+                        state.smsTemplates[index].userFavoriteSms = [action.payload.idUser];
+                    }
+                }
+            }
+        }
+        ,
           setUpdateSmsFavList(state, action: PayloadAction<number|undefined>) {
             if (state.savedSmsTemplates) {
               state.savedSmsTemplates = state.savedSmsTemplates.filter(sms => sms.id !== action.payload)
@@ -157,6 +165,6 @@ export const selectSMSs = (state: RootState) => state.sms.smsTemplates;
 export const selectWhatsapp = (state: RootState) => state.sms.whatsappTemplates;
 export const selectCurrentSms = (state: RootState) => state.sms.currentTemplate;
 export const selectSavedSMSs = (state: RootState) => state.sms.savedSmsTemplates;
-export const {setAddSMS, setDeleteSms,setDeleteWhatsapp,setSMSs,setSavedSMSs,setSelectedSms,setUpdateSMS,setUpdateSmsFavList,setWhatsapps} = smsSlice.actions
+export const {setUpdateSMSFav,setAddSMS, setDeleteSms,setDeleteWhatsapp,setSMSs,setSavedSMSs,setSelectedSms,setUpdateSMS,setUpdateSmsFavList,setWhatsapps} = smsSlice.actions
 
 export default smsSlice.reducer;
