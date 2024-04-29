@@ -33,10 +33,10 @@ const Section1 = () => {
         <MDBCol xl="2" md="4" className="mb-r me-4  mt-3">
         <MDBCard className="cascading-admin-card">
               <div className="admin-up">
-              <MDBIcon icon="home" className="color_baby_blue"/>
+              <MDBIcon icon="comments"  className="color_baby_blue"/>
                 <div className="data">
                   <h4>
-                    <strong></strong>
+                    <strong>Whats</strong>
                   </h4>
                 </div>
               </div>

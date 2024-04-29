@@ -6,4 +6,5 @@ import lombok.Data;
 public class Format {
     private String format;
     private String text;
+    private String[] examples;
 }

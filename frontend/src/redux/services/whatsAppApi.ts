@@ -1,5 +1,6 @@
 import {createApi , fetchBaseQuery} from "@reduxjs/toolkit/query/react"
 import { WhatsAppTemplatePayload } from "../../models/sms/WhatsAppTemplatePayload";
+import { SendWhatsAppMsg } from "../../models/sms/SendWhatsAppMsg";
 
 export const whatsAppApi = createApi({
     reducerPath: 'whatsAppApi',
@@ -28,7 +29,7 @@ export const whatsAppApi = createApi({
         
         getWhatsappTemplateById: builder.mutation({
             query: ( id ) => ({
-                url: `/getById/${id}`,
+                url: `/${id}`,
                 method: "GET",
             }),
         }),
@@ -51,9 +52,18 @@ export const whatsAppApi = createApi({
                 },
             }),
         }),
+        sendWhatsapp : builder.mutation({
+            query:(body:SendWhatsAppMsg)=>{
+                return{
+                    url:"/sendWhatsAppSms",
+                    method:"POST",
+                    body,
+                };
+            }
+        }),
 
     }),
  
 })
 
-export const {useAddTemplateWhatsappMutation,useDeleteWhatsappTemplateMutation,useGetAllWhatsappTemplatesMutation,useGetWhatsappTemplateByIdMutation}=whatsAppApi;
+export const {useSendWhatsappMutation,useAddTemplateWhatsappMutation,useDeleteWhatsappTemplateMutation,useGetAllWhatsappTemplatesMutation,useGetWhatsappTemplateByIdMutation}=whatsAppApi;

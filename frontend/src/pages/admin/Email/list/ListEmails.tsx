@@ -230,8 +230,7 @@ const ListEmails = () => {
                         <Tooltip style={{marginRight:"5px"}} title="Send" className="color_blue" >
                           <Button     onClick={() =>
                           {
-                            dispatch(setSelectedEmail(template));
-                            navigate(`${SEND_EMAIL}`)
+                            navigate(`${SEND_EMAIL}/${template.id}`)
                           }
                           }>
                           <Send style={{color:"whitesmoke"}}  />
@@ -242,8 +241,7 @@ const ListEmails = () => {
                         <Tooltip style={{marginRight:"5px"}} title="ScheduleSend" className="color_baby_blue" >
                           <Button   onClick={() =>
                           {                           
-                             dispatch(setSelectedEmail(template));
-                             navigate(`${SEND_EMAIL_SCHEDULED}`)     
+                             navigate(`${SEND_EMAIL_SCHEDULED}/${template.id}`)     
                           }
                                                   }>
                           <ScheduleSend style={{color:"whitesmoke"}}  />

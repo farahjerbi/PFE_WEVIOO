@@ -1,5 +1,6 @@
 import {createApi , fetchBaseQuery} from "@reduxjs/toolkit/query/react"
 import { SmsTemplate } from "../../models/sms/SmsTemplate";
+import { SendsSms } from "../../models/sms/SendsSms";
 
 export const smsApi = createApi({
     reducerPath: 'smsApi',
@@ -28,7 +29,7 @@ export const smsApi = createApi({
         
         getSMSTemplateById: builder.mutation({
             query: ( id ) => ({
-                url: `/getById/${id}`,
+                url: `/getSMSTemplateById/${id}`,
                 method: "GET",
             }),
         }),
@@ -60,9 +61,18 @@ export const smsApi = createApi({
                 method: "GET",
             }),
         }),
+        sendSMS : builder.mutation({
+            query:(body:SendsSms)=>{
+                return{
+                    url:"/sendSMS",
+                    method:"POST",
+                    body,
+                };
+            }
+        }),
 
     }),
  
 })
 
-export const {useGetSavedTemplatesSMSMutation,useToggleFavoriteSMSMutation,useUpdateSMSTemplateMutation,useAddTemplateSMSMutation,useDeleteSMSTemplateMutation,useGetAllSMSTemplatesMutation,useGetSMSTemplateByIdMutation}=smsApi;
+export const {useSendSMSMutation,useGetSavedTemplatesSMSMutation,useToggleFavoriteSMSMutation,useUpdateSMSTemplateMutation,useAddTemplateSMSMutation,useDeleteSMSTemplateMutation,useGetAllSMSTemplatesMutation,useGetSMSTemplateByIdMutation}=smsApi;

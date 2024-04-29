@@ -1,11 +1,15 @@
 package wevioo.tn.ms_sms.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
+import org.quartz.*;
 import org.springframework.stereotype.Service;
+import wevioo.tn.ms_sms.config.SMSJob;
+import wevioo.tn.ms_sms.dtos.request.ScheduleSMSRequest;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.time.ZonedDateTime;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 @Service
@@ -36,4 +40,37 @@ public class SmsUtils {
         String phoneRegex = "\\+?[0-9]+";
         return phoneNumber.matches(phoneRegex);
     }
+
+    public JobDetail buildJobDetail(ScheduleSMSRequest scheduleSMSRequest) {
+        JobDataMap jobDataMap = new JobDataMap();
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            String placeHoldersJson = objectMapper.writeValueAsString(scheduleSMSRequest.getPlaceHolders());
+            jobDataMap.put("placeholdersValues", placeHoldersJson);
+            String recipientsString = String.join(",", scheduleSMSRequest.getNumbers());
+            jobDataMap.put("numbers", recipientsString);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        jobDataMap.put("templateId", scheduleSMSRequest.getTemplateId());
+        jobDataMap.put("userId", scheduleSMSRequest.getUserId());
+
+        return JobBuilder.newJob(SMSJob.class)
+                .withIdentity(UUID.randomUUID().toString(), "sms-jobs")
+                .withDescription("Send SMS Job")
+                .usingJobData(jobDataMap)
+                .storeDurably()
+                .build();
+    }
+
+    public Trigger buildJobTrigger(JobDetail jobDetail, ZonedDateTime startAt) {
+        return TriggerBuilder.newTrigger()
+                .forJob(jobDetail)
+                .withIdentity(jobDetail.getKey().getName(), "sms-triggers")
+                .withDescription("Send SMS Trigger")
+                .startAt(Date.from(startAt.toInstant()))
+                .withSchedule(SimpleScheduleBuilder.simpleSchedule().withMisfireHandlingInstructionFireNow())
+                .build();
+    }
+
 }

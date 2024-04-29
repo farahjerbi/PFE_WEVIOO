@@ -1,24 +1,80 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="47b90f9d-f514-4815-89cb-02ca514b65ac" name="Changes" comment="" />
+    <list default="true" id="47b90f9d-f514-4815-89cb-02ca514b65ac" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/APIGateway/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Docker-compose.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/EurekaServer/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms_auth/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms_email/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms_email/src/main/resources/db/migration/V1_0_0__init.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms_sms/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms_sms/src/main/java/wevioo/tn/ms_sms/config/SMSJob.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms_sms/src/main/java/wevioo/tn/ms_sms/config/WhatsappJob.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms_sms/src/main/java/wevioo/tn/ms_sms/dtos/request/ScheduleSMSRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms_sms/src/main/java/wevioo/tn/ms_sms/dtos/request/ScheduleWhatsappRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms_sms/src/main/java/wevioo/tn/ms_sms/dtos/response/ScheduleSMSResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms_sms/src/main/java/wevioo/tn/ms_sms/dtos/response/ScheduledSMSInfo.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms_sms/src/main/java/wevioo/tn/ms_sms/services/WhatsappUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/ms-notificationPlatform.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ms-notificationPlatform.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/APIGateway/src/main/java/wevioo/tn/apigateway/ApiGatewayApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/APIGateway/src/main/java/wevioo/tn/apigateway/ApiGatewayApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/APIGateway/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/APIGateway/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms_auth/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/ms_auth/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms_email/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/ms_email/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms_sms/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ms_sms/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms_sms/src/main/java/wevioo/tn/ms_sms/controllers/SmsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms_sms/src/main/java/wevioo/tn/ms_sms/controllers/SmsController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms_sms/src/main/java/wevioo/tn/ms_sms/controllers/WhatsAppController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms_sms/src/main/java/wevioo/tn/ms_sms/controllers/WhatsAppController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms_sms/src/main/java/wevioo/tn/ms_sms/dtos/request/SendWhatsAppMsg.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms_sms/src/main/java/wevioo/tn/ms_sms/dtos/request/SendWhatsAppMsg.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms_sms/src/main/java/wevioo/tn/ms_sms/entities/Format.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms_sms/src/main/java/wevioo/tn/ms_sms/entities/Format.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms_sms/src/main/java/wevioo/tn/ms_sms/repositories/SmsRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms_sms/src/main/java/wevioo/tn/ms_sms/repositories/SmsRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms_sms/src/main/java/wevioo/tn/ms_sms/services/SmsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms_sms/src/main/java/wevioo/tn/ms_sms/services/SmsServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms_sms/src/main/java/wevioo/tn/ms_sms/services/SmsUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms_sms/src/main/java/wevioo/tn/ms_sms/services/SmsUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms_sms/src/main/java/wevioo/tn/ms_sms/services/WhatsAppTemplateService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms_sms/src/main/java/wevioo/tn/ms_sms/services/WhatsAppTemplateService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms_sms/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/ms_sms/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/components/emailInput/EmailInput.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/emailInput/EmailInput.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/components/list-sms/SMSCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/list-sms/SMSCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/components/list-whatsapp/WhatsAppCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/list-whatsapp/WhatsAppCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/components/section1/Section1.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/section1/Section1.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/components/sheet/SheetContent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/sheet/SheetContent.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/models/email/SchedularProps.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/models/email/SchedularProps.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/models/sms/Format.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/models/sms/Format.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/models/sms/WhatsAppTemplateResponse.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/models/sms/WhatsAppTemplateResponse.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/pages/admin/Email/list/ListEmails.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/pages/admin/Email/list/ListEmails.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/pages/user/email/sendSimpleEmail/SendSimpleEmail.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/pages/user/email/sendSimpleEmail/SendSimpleEmail.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/pages/user/sms/SendSMS.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/pages/user/sms/SendSMS.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/redux/services/smsApi.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/redux/services/smsApi.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/redux/services/whatsAppApi.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/redux/services/whatsAppApi.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/redux/state/smsSlice.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/redux/state/smsSlice.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/routes/paths.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/routes/paths.ts" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
   <component name="ProjectId" id="2efEXevghLwcN8VLPK8pYc0sEuS" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;spring.configuration.checksum&quot;: &quot;b43fdd98b1fd705ae4c3a10cf25aad8a&quot;
   }
-}]]></component>
+}</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -28,10 +84,29 @@
       <option name="presentableId" value="Default" />
       <updated>1712287272987</updated>
       <workItem from="1712287274310" duration="3000" />
+      <workItem from="1714317149879" duration="965000" />
+      <workItem from="1714318817348" duration="28000" />
+      <workItem from="1714320724928" duration="37000" />
+      <workItem from="1714321267983" duration="7000" />
+      <workItem from="1714321287963" duration="821000" />
+      <workItem from="1714323799411" duration="55000" />
+      <workItem from="1714324152633" duration="20000" />
+      <workItem from="1714393070846" duration="268000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>

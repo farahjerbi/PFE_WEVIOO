@@ -27,13 +27,13 @@ public class ApiGatewayApplication {
         return builder.routes()
                 .route("authentication", r -> r.path("/api/**","/uploads/**")
                        .filters(f -> f.filter(authenticationFilter))
-                        .uri("http://localhost:8090/"))
+                        .uri("http://auth:8090/"))
                 .route("email", r -> r.path("/apiEmail/**")
                        .filters(f -> f.filter(authenticationFilter))
-                        .uri("http://localhost:8091/"))
+                        .uri("http://email:8091/"))
                 .route("sms", r -> r.path("/apiSms/**","/apiWhatsApp/**")
                         .filters(f -> f.filter(authenticationFilter))
-                        .uri("http://localhost:8092/"))
+                        .uri("http://sms:8092/"))
                 .build();
     }
 

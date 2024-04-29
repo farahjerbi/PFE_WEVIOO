@@ -2,18 +2,18 @@ import { MDBBtn, MDBCard, MDBCardBody, MDBCheckbox, MDBContainer, MDBIcon, MDBIn
 import './SendSimpleEmail.css'
 import EmailInput from '../../../../components/emailInput/EmailInput'
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
-import {  useGetTemplatePlaceholdersMutation } from '../../../../redux/services/emailApi';
+import {  useGetAllEmailTemplatesMutation, useGetTemplateByIdMutation, useGetTemplatePlaceholdersMutation } from '../../../../redux/services/emailApi';
 import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import ScheduleModal from '../../../../components/modals/ScheduleModal';
 import { selectUser } from '../../../../redux/state/authSlice';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { LIST_EMAIL_TEMPLATES } from '../../../../routes/paths';
 import { Button, styled } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import BreadcrumSection from '../../../../components/BreadcrumSection/BreadcrumSection';
-import { selectEmail } from '../../../../redux/state/emailSlice';
+import { selectEmail, setSelectedEmail } from '../../../../redux/state/emailSlice';
 import InstructionsUserModal from '../../../../components/modals/InstructionsUserModal';
 import React from 'react';
 const VisuallyHiddenInput = styled('input')({
@@ -32,6 +32,8 @@ interface SendSimpleEmailProps {
 }
 const SendSimpleEmail : React.FC<SendSimpleEmailProps> = ({isScheduled }) => {
     const user=useSelector(selectUser)
+    const {id}=useParams()
+    const dispatch=useDispatch()
     const [isSignatureEnabled, setIsSignatureEnabled] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [schedularModal, setSchedularModal] = useState<boolean>(false);
@@ -45,16 +47,29 @@ const SendSimpleEmail : React.FC<SendSimpleEmailProps> = ({isScheduled }) => {
     const[isSentSeparately,setIsSentSeparately]=useState<boolean>(false);
     const navigate=useNavigate()
     const[getTemplatePlaceholders]=useGetTemplatePlaceholdersMutation()
+    const[getTemplateById]=useGetTemplateByIdMutation()
     const template=useSelector(selectEmail)
     const [openInstruction, setOpenInstruction] = React.useState<boolean>(true);
     useEffect(() => {
+        fetchDataTemplate();
         fetchData();
       },[]);
 
     const fetchData = async () => {
         try {
-          const response = await getTemplatePlaceholders(template?.id).unwrap();
+          const response = await getTemplatePlaceholders(id).unwrap();
           setPlaceholders(response); 
+          console.error("🚀 ~ error:", placeholders);
+        } catch (error) {
+          toast.error("Error! Yikes");
+          console.error("🚀 ~ error:", error);
+        }
+      };
+
+      const fetchDataTemplate = async () => {
+        try {
+          const response = await getTemplateById(id).unwrap();
+          dispatch(setSelectedEmail(response))
           console.error("🚀 ~ error:", placeholders);
         } catch (error) {
           toast.error("Error! Yikes");

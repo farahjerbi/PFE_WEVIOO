@@ -2,7 +2,7 @@ package wevioo.tn.ms_sms.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import java.util.Random;
 import com.infobip.ApiClient;
 import com.infobip.api.WhatsAppApi;
 import com.infobip.model.*;
@@ -60,7 +60,7 @@ public class WhatsAppTemplateService implements WhatsAppService {
     }
 
     public WhatsAppTemplateResponse getWhatsAppTemplateById(Long id) throws IOException {
-        String url = String.format("https://3glv2v.api.infobip.com/whatsapp/2/senders/21695372490/templates/%s", id);
+        String url = String.format("https://3glv2v.api.infobip.com/whatsapp/2/senders/447860099299/templates/%s", id);
         Request request = new Request.Builder()
                 .url(url)
                 .get()
@@ -77,7 +77,7 @@ public class WhatsAppTemplateService implements WhatsAppService {
     }
 
     public Response deleteWhatsAppTemplate(String templateName) throws IOException {
-        String url = String.format("https://3glv2v.api.infobip.com/whatsapp/2/senders/21695372490/templates/%s", templateName);
+        String url = String.format("https://3glv2v.api.infobip.com/whatsapp/2/senders/447860099299/templates/%s", templateName);
 
         Request request = new Request.Builder()
                 .url(url)
@@ -97,24 +97,22 @@ public class WhatsAppTemplateService implements WhatsAppService {
         }
 
         try {
-            WhatsAppTemplateResponse templateResponse = getWhatsAppTemplateById(sendWhatsAppMsg.getIdTemplate());
             WhatsAppTemplateBodyContent bodyContent = new WhatsAppTemplateBodyContent();
-            if (!sendWhatsAppMsg.getPlaceholders().isEmpty()) {
-                for (String placeholder : sendWhatsAppMsg.getPlaceholders()) {
-                    bodyContent.addPlaceholdersItem(placeholder);
-                }
+            for (String placeholder : sendWhatsAppMsg.getPlaceholders()) {
+                bodyContent.addPlaceholdersItem(placeholder);
             }
             for (String number : sendWhatsAppMsg.getNumbers()) {
                 WhatsAppMessage message = new WhatsAppMessage()
                         .from("447860099299")
                         .to(number)
                         .content(new WhatsAppTemplateContent()
-                                .language(templateResponse.getLanguage())
-                                .templateName(templateResponse.getName())
+                                .language(sendWhatsAppMsg.getWhatsAppTemplateResponse().getLanguage())
+                                .templateName(sendWhatsAppMsg.getWhatsAppTemplateResponse().getName())
                                 .templateData(new WhatsAppTemplateDataContent()
                                         .body(bodyContent)
                                 )
                         );
+
                 WhatsAppBulkMessage bulkMessage = new WhatsAppBulkMessage()
                         .addMessagesItem(message);
                 WhatsAppBulkMessageInfo messageInfo = whatsAppApi

@@ -9,3 +9,22 @@ export interface SchedularProps {
     replyTo:string;
     templateId:any
   }
+
+
+  export interface SchedularSMSProps {
+    onClose: () => void;
+    show:boolean;
+    numbers:string[];
+    placeholdersValues:{ [key: string]: string };
+    templateId:any
+  }
+
+  export interface SchedularWhatsappProps {
+    onClose: () => void;
+    show:boolean;
+    numbers:string[];
+    placeholders:string[];
+    templateId:any;
+    name:String;
+    language:String;
+  }

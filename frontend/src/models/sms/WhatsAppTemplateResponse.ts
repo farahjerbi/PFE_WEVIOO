@@ -6,5 +6,7 @@ export interface WhatsAppTemplateResponse extends WhatsAppTemplatePayload{
     businessAccountId:number,
     quality:string,
     status?:string,
+    placeholders?:string[]
+
 
 }

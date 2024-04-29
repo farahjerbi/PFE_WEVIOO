@@ -2,7 +2,6 @@ import React, { ChangeEvent, useEffect, useState } from 'react';
 import { MDBBtn, MDBIcon, MDBInput } from 'mdb-react-ui-kit';
 import './EmailInput.css';
 import *as xlsx from 'xlsx';
-
 interface EmailInputProps {
   label: string;
   onChange: (emails: string[]) => void;

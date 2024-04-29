@@ -1,0 +1,95 @@
+version: "3.9"
+
+services:
+
+  eureka:
+    build: ./EurekaServer
+    ports:
+      - "8761:8761"
+    image: eureka
+    hostname: serviceregistry
+    environment:
+      - eureka.client.service-url.defaultZone=http://serviceregistry:8761/eureka/
+    networks:
+      - mynetwork  # Define a network for inter-service communication
+
+  apiGateway:
+    image: gatewayapi
+    build: ./APIGateway
+    ports:
+      - "8099:8099"
+    environment:
+      - eureka.client.service-url.defaultZone=http://serviceregistry:8761/eureka/
+    depends_on:
+      - eureka
+    networks:
+      - mynetwork
+
+
+
+  auth:
+    container_name: auth
+    image: auth
+    build: ./ms_auth
+    ports:
+      - "8090:8090"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db-postgres:5432/Ms_Auth_Notification?useSSL=false
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=admin
+      - eureka.client.service-url.defaultZone=http://serviceregistry:8761/eureka/
+    depends_on:
+      - eureka
+      - db-postgres
+    networks:
+      - mynetwork
+
+  email:
+    container_name: email
+    image: email
+    build: ./ms_email
+    ports:
+      - "8091:8091"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db-postgres:5432/Ms_Email_Notification?useSSL=false
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=admin
+      - eureka.client.service-url.defaultZone=http://serviceregistry:8761/eureka/
+    depends_on:
+      - eureka
+      - db-postgres
+    networks:
+      - mynetwork
+
+  sms:
+    container_name: sms
+    image: sms
+    build: ./ms_sms
+    ports:
+      - "9092:9092"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db-postgres:5432/Ms_SMS_Notification?useSSL=false
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=admin
+      - eureka.client.service-url.defaultZone=http://serviceregistry:8761/eureka/
+    depends_on:
+      - eureka
+      - db-postgres
+    networks:
+      - mynetwork
+
+
+  db-postgres:
+    image: postgres:alpine
+    container_name: db-postgres
+    environment:
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_USER=postgres
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:

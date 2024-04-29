@@ -27,8 +27,9 @@ export const getTemplatesWhatsapp = createAsyncThunk<any| null, void>(
                 const response = await axios.get<any>(
                     `http://localhost:8099/apiWhatsApp/getAll`
                 );
-                console.log("🚀 ~ response.data:", response.data)
-                return response.data.templates;
+                const textTemplates = response.data.templates.filter((template:any )=> template.structure.type === "TEXT");
+                console.log("🚀 ~ response.data:", textTemplates)
+                return  textTemplates;
               } catch (error) {
                 console.error("Error decoding token:", error);
                 return rejectWithValue(null);
@@ -42,6 +43,7 @@ export interface SMSState{
     whatsappTemplates: WhatsAppTemplateResponse[] | null;
     savedSmsTemplates:SmsTemplate[]|null;
     currentTemplate: SmsTemplate | null;
+    currentWhatsappTemplate:WhatsAppTemplateResponse|null;
 }
 export interface UpdateFav{
     id: number;
@@ -51,7 +53,8 @@ const initialState: SMSState={
     smsTemplates:null,
     whatsappTemplates:null,
     savedSmsTemplates:null,
-    currentTemplate:null
+    currentTemplate:null,
+    currentWhatsappTemplate:null
 }
 
 export const smsSlice = createSlice({
@@ -81,6 +84,13 @@ export const smsSlice = createSlice({
         action : PayloadAction<SmsTemplate >
         )=>{
         state.currentTemplate=action.payload;
+    },
+    
+      setCurrentWhatsappTemplate:(
+        state, 
+        action : PayloadAction<WhatsAppTemplateResponse >
+        )=>{
+        state.currentWhatsappTemplate=action.payload;
     },
         setAddSMS(state, action: PayloadAction<SmsTemplate>) {
             if (state.smsTemplates) {
@@ -165,6 +175,7 @@ export const selectSMSs = (state: RootState) => state.sms.smsTemplates;
 export const selectWhatsapp = (state: RootState) => state.sms.whatsappTemplates;
 export const selectCurrentSms = (state: RootState) => state.sms.currentTemplate;
 export const selectSavedSMSs = (state: RootState) => state.sms.savedSmsTemplates;
-export const {setUpdateSMSFav,setAddSMS, setDeleteSms,setDeleteWhatsapp,setSMSs,setSavedSMSs,setSelectedSms,setUpdateSMS,setUpdateSmsFavList,setWhatsapps} = smsSlice.actions
+export const selectCurrentWhatsappTemplate = (state: RootState) => state.sms.currentWhatsappTemplate;
+export const {setCurrentWhatsappTemplate,setUpdateSMSFav,setAddSMS, setDeleteSms,setDeleteWhatsapp,setSMSs,setSavedSMSs,setSelectedSms,setUpdateSMS,setUpdateSmsFavList,setWhatsapps} = smsSlice.actions
 
 export default smsSlice.reducer;

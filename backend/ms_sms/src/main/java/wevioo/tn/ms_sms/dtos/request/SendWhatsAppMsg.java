@@ -1,13 +1,13 @@
 package wevioo.tn.ms_sms.dtos.request;
 
 import lombok.Data;
+import wevioo.tn.ms_sms.dtos.response.WhatsAppTemplateResponse;
 
 import java.util.List;
-import java.util.Set;
 
 @Data
 public class SendWhatsAppMsg {
-    private Long idTemplate;
+    private WhatsAppTemplateResponse whatsAppTemplateResponse;
     private List<String> numbers;
-    private Set<String> placeholders;
+    private List<String> placeholders;
 }

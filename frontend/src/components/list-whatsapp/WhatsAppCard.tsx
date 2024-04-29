@@ -1,11 +1,7 @@
 import React, { useState } from 'react'
 import Visibility from '@mui/icons-material/Visibility';
-import Update from '@mui/icons-material/Update';
-import Delete from '@mui/icons-material/Delete';
-import BookmarkRemoveOutlined from '@mui/icons-material/BookmarkRemoveOutlined';
-import BookmarkAddedOutlined from '@mui/icons-material/BookmarkAddedOutlined';
+
 import Send from '@mui/icons-material/Send';
-import ScheduleSend from '@mui/icons-material/ScheduleSend';
 import { MDBBadge, MDBCard, MDBCardBody, MDBPagination, MDBPaginationItem, MDBPaginationLink, MDBTable, MDBTableBody, MDBTableHead } from 'mdb-react-ui-kit';
 import { Button, Tooltip } from '@mui/material'
 import { useNavigate } from 'react-router-dom';
@@ -16,6 +12,9 @@ import { WhatsAppTemplateResponse } from '../../models/sms/WhatsAppTemplateRespo
 import ViewSMSTemplate from '../modals/ViewSMSTemplate';
 import DeleteSMSTemplate from '../modals/DeleteSMSTemplate';
 import { getLanguageName } from '../../models/sms/Language';
+import { selectCurrentSms } from '../../redux/state/smsSlice';
+import { useDispatch } from 'react-redux';
+import { SEND_WHATSAPP } from '../../routes/paths';
 interface PropsWhatsapp{
     role:Role | null,
     templates:WhatsAppTemplateResponse[] ,
@@ -26,7 +25,7 @@ const WhatsAppCard : React.FC<PropsWhatsapp> = ({ role ,templates ,user }) => {
   const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
   const [selectedTemplate, setSelectedTemplate] = useState<WhatsAppTemplateResponse>();
   const [selectedId, setSelectedId] = useState<string>();
-
+  const dispatch=useDispatch()
     const navigate = useNavigate();
     const[query,setQuery]=useState<string>('')
        /*Pagination*/
@@ -63,8 +62,7 @@ const WhatsAppCard : React.FC<PropsWhatsapp> = ({ role ,templates ,user }) => {
         <th> View </th>
         {role===Role.USER && 
         (<>
-        <th> Send Immediatly </th>
-        <th> Schedule </th>
+        <th> Send </th>
         </>)}
 
       </tr>
@@ -113,28 +111,13 @@ const WhatsAppCard : React.FC<PropsWhatsapp> = ({ role ,templates ,user }) => {
              <td>
             <Tooltip style={{marginRight:"5px"}} title="Send" className="color_blue" >
               <Button  
-            //      onClick={() =>
-            //   {
-            //     dispatch(setSelectedEmail(template));
-            //     navigate(`${SEND_EMAIL}`)
-            //   }
-            //   }
+                 onClick={() =>
+              {
+                navigate(`${SEND_WHATSAPP}/${template.id}`)
+              }
+              }
               >
               <Send style={{color:"whitesmoke"}}  />
-              </Button>                           
-              </Tooltip>
-          </td>
-          <td>
-            <Tooltip style={{marginRight:"5px"}} title="ScheduleSend" className="color_baby_blue" >
-              <Button   
-            //   onClick={() =>
-            //   {                           
-            //      dispatch(setSelectedEmail(template));
-            //      navigate(`${SEND_EMAIL_SCHEDULED}`)     
-            //   }
-            //                           }
-                                      >
-              <ScheduleSend style={{color:"whitesmoke"}}  />
               </Button>                           
               </Tooltip>
           </td>
