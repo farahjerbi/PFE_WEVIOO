@@ -1,14 +1,14 @@
 import { useDispatch } from "react-redux"
-import BreadcrumSection from "../../../components/BreadcrumSection/BreadcrumSection"
-import Section1 from "../../../components/section1/Section1"
-import { AppDispatch } from "../../../redux/store"
-import Calendar from "../Email/calendar/Calendar"
-import EmailStatistics from "../Email/statistics/EmailStatistics"
+import BreadcrumSection from "../../components/BreadcrumSection/BreadcrumSection"
+import Section1 from "../../components/section1/Section1"
+import { AppDispatch } from "../../redux/store"
+import Calendar from "../admin/Email/calendar/Calendar"
+import EmailStatistics from "../admin/Email/statistics/EmailStatistics"
 import { useEffect } from "react"
-import { getTemplatesEmail } from "../../../redux/state/emailSlice"
-import { getUsers } from "../../../redux/state/usersSlice"
-import { getTemplatesSms, getTemplatesWhatsapp } from "../../../redux/state/smsSlice"
-import SmsStatistics from "../sms/statistic/SmsStatistics"
+import { getTemplatesEmail } from "../../redux/state/emailSlice"
+import { getUsers } from "../../redux/state/usersSlice"
+import { getTemplatesSms, getTemplatesWhatsapp } from "../../redux/state/smsSlice"
+import SmsStatistics from "../admin/sms/statistic/SmsStatistics"
 
 const Dashboard = () => {
   const dispatch: AppDispatch = useDispatch(); 

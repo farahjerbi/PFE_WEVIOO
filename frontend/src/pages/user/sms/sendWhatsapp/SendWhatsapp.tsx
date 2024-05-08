@@ -8,11 +8,11 @@ import { toast } from 'sonner'
 import BreadcrumSection from '../../../../components/BreadcrumSection/BreadcrumSection'
 import { MDBBtn, MDBCard, MDBCardBody, MDBCol, MDBContainer, MDBInput, MDBRow, MDBSpinner } from 'mdb-react-ui-kit'
 import { ReactTyped } from 'react-typed'
-import EmailInput from '../../../../components/emailInput/EmailInput'
 import ViewSMSTemplate from '../../../../components/modals/ViewSMSTemplate'
 import { SendWhatsAppMsg } from '../../../../models/sms/SendWhatsAppMsg'
 import { LIST_SMS_TEMPLATES } from '../../../../routes/paths'
 import ScheduleWhatsapp from '../../../../components/modals/ScheduleWhatsapp'
+import NumberInput from '../../../../components/numberInput/NumberInput'
 const SendWhatsapp = () => {
     const template=useSelector(selectCurrentWhatsappTemplate)
     const dispatch=useDispatch()
@@ -108,8 +108,7 @@ const SendWhatsapp = () => {
    <MDBCardBody className='p-5'>
    <MDBCard className='my-5'>
    <MDBCardBody className='p-5'>
-     <EmailInput  label="Numbers:" onChange={setNumbers} />
-     {/* <NumberInput label="Numbers:" onChange={setNumbers}  /> */}
+     <NumberInput label="Numbers:" onChange={setNumbers}  />
      </MDBCardBody>
      </MDBCard>
 

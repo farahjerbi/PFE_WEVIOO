@@ -1,8 +1,9 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { MDBBtn, MDBIcon, MDBInput } from 'mdb-react-ui-kit';
 import *as xlsx from 'xlsx';
-import { FormControl, MenuItem, Select, SelectChangeEvent } from '@mui/material';
-import { CountryCode } from '../../models/sms/CountryCode';
+import PhoneInput from 'react-phone-input-2'
+import "react-phone-input-2/lib/style.css";
+
 interface NumberInputProps {
     label: string;
     onChange: (numbers: string[]) => void;
@@ -10,46 +11,32 @@ interface NumberInputProps {
   }
 const NumberInput : React.FC<NumberInputProps> = ({ label,onChange }) => {
     const [numbers, setNumbers] = useState<string[]>(['']);  
-    const[countryCode,setCountryCode]=useState<string[]>(['']);
-    const[newNumberWithCountryCode,setNumberWithCountryCode]=useState<string[]>(['']);
-    console.log("🚀 ~ newNumberWithCountryCode:", newNumberWithCountryCode)
+    console.log("🚀 ~ numbers:", numbers)
 
-    const numericRegex = /^[0-9]+$/;
     
     useEffect(() => {
       onChange(numbers);
-      onChange(countryCode)
-    }, [numbers,countryCode, onChange]);
+    }, [numbers, onChange]);
 
     const handleSMSChange = (index: number, value: string) => {
-        const newNumbers = [...numbers];
-        newNumbers[index] = value; 
-        setNumbers(newNumbers);
-        newNumberWithCountryCode[index] = countryCode[index] + value;
-        setNumberWithCountryCode(newNumberWithCountryCode);
-      };
-    
-      const addSMSField = () => {
-        if (numbers.length < 4 && countryCode.length<4) {
-            setNumbers([...numbers, '']);
-            setCountryCode([...countryCode, ''])
-        }
-      };
-    
-      const removeEmailField = (index: number) => {
-        const newSMSs = [...numbers];
-        const countryCodes = [...countryCode];
-        newSMSs.splice(index, 1);
-        countryCodes.splice(index, 1);
-        setCountryCode(countryCodes)
-        setNumbers(newSMSs);
-      };
-      const handleChangeCountry =  (event: SelectChangeEvent,index:number) => {
-        const newSMSs = [...numbers];
-        newSMSs[index] = event.target.value;
-        setCountryCode(newSMSs);
-        
-      };
+      const newSMS = [...numbers];
+      newSMS[index] = value;
+      setNumbers(newSMS);
+    };
+  
+    const addSMSField = () => {
+      if (numbers.length < 4) {
+        setNumbers([...numbers, '']);
+      }
+    };
+  
+    const removeSMSField = (index: number) => {
+      const newSMS = [...numbers];
+      newSMS.splice(index, 1);
+      setNumbers(newSMS);
+    };
+  
+
 
       const readExcel = async (e: ChangeEvent<HTMLInputElement>) => {
         try {
@@ -91,50 +78,24 @@ const NumberInput : React.FC<NumberInputProps> = ({ label,onChange }) => {
       };
   return (
     <div className='container-input'>
-        <label className='me-5'>Country:</label>
 
       <label className='ms-5'>{label}</label>
-      {numbers.map((email, index) => (
+      {numbers.map((number, index) => (
         <>
-               <div  key={`${index}-${countryCode[index]}`} className='d-flex mb-2'>
-              <FormControl style={{width:"20%"}} className='me-2'>
-                <Select
-                    id={`country-select-${index}`}
-                  value={countryCode[index]}
-                  onChange={(e) => handleChangeCountry(e, index)}
-                  variant="outlined"
-                  >
-               {Object.entries(CountryCode).map(([key, value]) => (
-                  <MenuItem key={value} value={value}>
-                      {key}
-                  </MenuItem>
-              ))}
-                              
-                      </Select>
-              </FormControl>
-          <MDBInput
-            name="number"
-            type="text"
-            value={email}
-            onChange={(e) => handleSMSChange(index, e.target.value)}
-            required
-          />
+               <div key={index} className='d-flex mb-2'>
+        
+              <PhoneInput
+              country={'us'}
+              value={number}
+              onChange={(e) => handleSMSChange(index, e)}
+              />
+   
           {index > 0 && (
-            <MDBBtn type="button" onClick={() => removeEmailField(index)} className="remove-btn">
+            <MDBBtn type="button" onClick={() => removeSMSField(index)} className="remove-btn">
                <MDBIcon icon="remove" style={{marginRight:"3px"}}/>
             </MDBBtn>
           )}
         </div>
-        {countryCode[index]==="" && (<label style={{color:"red"}}>
-            <i style={{ color: "red" }} className="fas fa-exclamation-circle trailing"></i>
-            Choose a country
-            </label>)}
-
-        {(numericRegex.test(numbers[index]) || numbers[index].length!==10) && (
-        <label style={{color:"red"}} className='ms-4'>
-               <i style={{ color: "red" }} className="fas fa-exclamation-circle trailing"></i>
-            Incorrect Number
-            </label>)}
         <div>
            {numbers.length- 1 === index && numbers.length < 4 && (
             <>

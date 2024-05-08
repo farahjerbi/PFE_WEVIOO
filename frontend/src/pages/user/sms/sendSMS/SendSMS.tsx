@@ -2,7 +2,6 @@ import React, { FormEvent, useEffect, useState } from 'react'
 import './SendSMS.css'
 import { MDBBtn, MDBCard, MDBCardBody, MDBCol, MDBContainer, MDBInput, MDBRow, MDBSpinner } from 'mdb-react-ui-kit'
 import BreadcrumSection from '../../../../components/BreadcrumSection/BreadcrumSection'
-import EmailInput from '../../../../components/emailInput/EmailInput'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useGetSMSTemplateByIdMutation, useSendSMSMutation } from '../../../../redux/services/smsApi'
 import { useDispatch, useSelector } from 'react-redux'
@@ -13,6 +12,7 @@ import { LIST_SMS_TEMPLATES } from '../../../../routes/paths'
 import { ReactTyped } from 'react-typed'
 import ScheduleSMS from '../../../../components/modals/ScheduleSMS'
 import ViewSMSTemplate from '../../../../components/modals/ViewSMSTemplate'
+import NumberInput from '../../../../components/numberInput/NumberInput'
 const SendSMS = () => {
   const[numbers,setNumbers]=useState<string[]>([]);
   const[getSMSTemplateById]=useGetSMSTemplateByIdMutation();
@@ -106,8 +106,7 @@ const SendSMS = () => {
    <MDBCardBody className='p-5'>
    <MDBCard className='my-5'>
    <MDBCardBody className='p-5'>
-     <EmailInput  label="Numbers:" onChange={setNumbers} />
-     {/* <NumberInput label="Numbers:" onChange={setNumbers}  /> */}
+     <NumberInput label="Numbers:" onChange={setNumbers}  />
      </MDBCardBody>
      </MDBCard>
 

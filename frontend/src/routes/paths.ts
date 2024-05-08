@@ -23,3 +23,4 @@ export const AUTHENTICATION="/authentication"
 export const CALENDAR="/calendar"
 export const SAVEDTEMPLATES="/saved-templates"
 
+//docker exec -it db-postgres psql -U postgres -d Ms_Email_Notification

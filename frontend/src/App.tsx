@@ -11,7 +11,7 @@ import { getTemplatesEmail } from './redux/state/emailSlice';
 import AddSMS from './pages/admin/sms/add/AddSMS';
 import CreateWhatsapp from './pages/admin/sms/createWhatsapp/CreateWhatsapp';
 // Lazy load components
-const Dashboard = React.lazy(() => import('./pages/admin/dashboard/Dashboard'));
+const Dashboard = React.lazy(() => import('./pages/dashboard/Dashboard'));
 const Authentication = React.lazy(() => import('./pages/authentication/Authentication'));
 const AddEmail = React.lazy(() => import('./pages/admin/Email/Add/AddEmail'));
 const CreateSimpleTemplate = React.lazy(() => import('./pages/admin/Email/create/CreateSimpleTemplate'));
@@ -27,7 +27,7 @@ const Profile = React.lazy(() => import('./pages/user/profile/Profile'));
 const SendSimpleEmail = React.lazy(() => import('./pages/user/email/sendSimpleEmail/SendSimpleEmail'));
 const UpdateEmail = React.lazy(() => import('./pages/admin/Email/update/UpdateEmail'));
 const UpdateSMS = React.lazy(() => import('./pages/admin/sms/update/UpdateSMS'));
-const Calendar = React.lazy(() => import('./pages/admin/Email/calendar/Calendar'));
+const Scheduled = React.lazy(() => import('./pages/scheduled/Scheduled'));
 const ForgotPassword = React.lazy(() => import('./pages/authentication/forgotPassword/ForgotPassword'));
 const NotFound = React.lazy(() => import('./components/404Error/NotFound'));
 const SavedTemplates = React.lazy(() => import('./pages/user/email/savedTemplates/SavedTemplates'));
@@ -54,7 +54,7 @@ function App() {
                     <Route path={DASHBOARD} element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
                     <Route path={PROFILE} element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                     <Route path={LIST_EMAIL_TEMPLATES} element={<ProtectedRoute><ListEmails /></ProtectedRoute>} />                 
-                    <Route path={CALENDAR} element={<ProtectedRoute><Calendar /></ProtectedRoute>} />
+                    <Route path={CALENDAR} element={<ProtectedRoute><Scheduled /></ProtectedRoute>} />
                     <Route path={EMAILS_STATISTICS} element={<ProtectedRoute><EmailStatistics /></ProtectedRoute>} />
                     <Route path='*' element={<NotFound />} />
                     <Route path={LIST_SMS_TEMPLATES} element={<ProtectedRoute><ListSMS /></ProtectedRoute>} />
@@ -68,8 +68,8 @@ function App() {
                       <Route path={ADD_ADVANCED_EMAIL_TEMPLATE} element={<ProtectedRoute><EmailDragAndDrop /></ProtectedRoute>} />
                                       <Route path={LIST_USERS} element={<ProtectedRoute><ListUsers /></ProtectedRoute>} />
                                       <Route path={USERS_STATISTICS} element={<ProtectedRoute><UsersStatistics /></ProtectedRoute>} />
-                                      <Route path={`${EDIT_EMAIL_TEMPLATE}`} element={<ProtectedRoute><UpdateEmail /></ProtectedRoute>} />
-                                      <Route path={`${UPDATE_SMS_TEMPLATE}`} element={<ProtectedRoute><UpdateSMS /></ProtectedRoute>} />
+                                      <Route path={`${EDIT_EMAIL_TEMPLATE}/:id`} element={<ProtectedRoute><UpdateEmail /></ProtectedRoute>} />
+                                      <Route path={`${UPDATE_SMS_TEMPLATE}/:id`} element={<ProtectedRoute><UpdateSMS /></ProtectedRoute>} />
 
                   </>)}
               

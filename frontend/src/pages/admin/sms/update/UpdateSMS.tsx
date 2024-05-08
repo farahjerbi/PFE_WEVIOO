@@ -1,23 +1,39 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './UpdateSMS.css'
 import BreadcrumSection from '../../../../components/BreadcrumSection/BreadcrumSection'
-import { selectCurrentSms, setUpdateSMS } from '../../../../redux/state/smsSlice'
+import { selectCurrentSms, setSelectedSms, setUpdateSMS } from '../../../../redux/state/smsSlice'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { MDBBtn, MDBCard, MDBCardBody, MDBCol, MDBInput, MDBRow, MDBSpinner, MDBTextArea } from 'mdb-react-ui-kit'
 import { Box, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
 import { Language, getLanguageName } from "../../../../models/sms/Language"
 import Textarea from '@mui/joy/Textarea'
 import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'
-import { useUpdateSMSTemplateMutation } from '../../../../redux/services/smsApi'
+import { useGetSMSTemplateByIdMutation, useUpdateSMSTemplateMutation } from '../../../../redux/services/smsApi'
 import { toast } from 'sonner'
 import { LIST_SMS_TEMPLATES } from '../../../../routes/paths'
 const UpdateSMS = () => {
     const dispatch=useDispatch()
     const template=useSelector(selectCurrentSms)
     const navigate=useNavigate();
-
+    const [getSMSTemplateById]=useGetSMSTemplateByIdMutation()
+    const{id}=useParams();
+    useEffect(() => {
+      fetchData();
+    },[]);
+  
+      
+    const fetchData = async () => {
+      try {
+          const template = await getSMSTemplateById(Number(id)).unwrap();
+          dispatch(setSelectedSms(template))
+      } catch (error) {
+        toast.error("Error! Yikes");
+        console.error("🚀 ~ error:", error);
+      }
+    };
+  
     const initialState={
         name: template?.name,
         language:getLanguageName(template?.language ?? "unknown"),

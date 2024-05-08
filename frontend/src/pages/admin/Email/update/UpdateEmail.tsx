@@ -2,13 +2,13 @@ import React, { useEffect, useRef, useState } from 'react'
 import './UpdateEmail.css'
 import BreadcrumSection from '../../../../components/BreadcrumSection/BreadcrumSection'
 import { MDBBtn, MDBCard, MDBCardBody, MDBCol, MDBInput, MDBRow, MDBSpinner, MDBTextArea } from 'mdb-react-ui-kit'
-import { useGetDesignTemplateMutation, useUpdateTemplateMutation } from '../../../../redux/services/emailApi'
+import { useGetDesignTemplateMutation, useGetTemplateByIdMutation, useUpdateTemplateMutation } from '../../../../redux/services/emailApi'
 import EmailEditor, {  EmailEditorProps } from 'react-email-editor'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { LIST_EMAIL_TEMPLATES } from '../../../../routes/paths'
 import { useDispatch, useSelector } from 'react-redux'
-import { selectEmail, setUpdateEmail } from '../../../../redux/state/emailSlice'
+import { selectEmail, setSelectedEmail, setUpdateEmail } from '../../../../redux/state/emailSlice'
 
 const UpdateEmail = () => {
   const emailEditorRef = useRef<any>(null); 
@@ -31,12 +31,24 @@ const UpdateEmail = () => {
   const {name,state,content,subject,language}=formData;
   const navigate=useNavigate();
   const[updateTemplate]=useUpdateTemplateMutation();
+  const[getTemplateById]=useGetTemplateByIdMutation()
+  const{id}=useParams();
+
   useEffect(() => {
+    fetchDataTemplate();
     if(template?.state ==="COMPLEX"){
     fetchData();
   }
   },[]);
-
+  const fetchDataTemplate = async () => {
+    try {
+        const template = await getTemplateById(Number(id)).unwrap();
+        setSelectedEmail(template);
+    } catch (error) {
+      toast.error("Error! Yikes");
+      console.error("🚀 ~ error:", error);
+    }
+  };
     
   const fetchData = async () => {
     try {
