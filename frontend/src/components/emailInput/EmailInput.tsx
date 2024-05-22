@@ -55,13 +55,10 @@ const EmailInput: React.FC<EmailInputProps> = ({ label,onChange }) => {
         console.log("🚀 ~ reader.onload= ~ sheet:", sheet);
         const exceljson: any[] = xlsx.utils.sheet_to_json(sheet, { defval: "" }); 
         
-        // Extract values from each row
         const rowValuesArray = exceljson.map(row => Object.values(row));
         
-        // Flatten the array of arrays to get a single array of all values
         const allValues = rowValuesArray.flat();
         
-        // Filter out empty or undefined values
         const filteredValues = allValues.filter((value: unknown): value is string => 
           typeof value === 'string' && value.trim() !== ""
         );

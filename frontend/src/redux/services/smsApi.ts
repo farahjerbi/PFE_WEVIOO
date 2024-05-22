@@ -70,9 +70,18 @@ export const smsApi = createApi({
                 };
             }
         }),
+        getScheduledSMS: builder.mutation({
+            query: ( id ) => ({
+                url: `/getScheduledSMSsByUser/${id}`,
+                method: "GET",
+            }),
+        }),
 
     }),
  
 })
 
-export const {useSendSMSMutation,useGetSavedTemplatesSMSMutation,useToggleFavoriteSMSMutation,useUpdateSMSTemplateMutation,useAddTemplateSMSMutation,useDeleteSMSTemplateMutation,useGetAllSMSTemplatesMutation,useGetSMSTemplateByIdMutation}=smsApi;
+export const {useSendSMSMutation,useGetSavedTemplatesSMSMutation,useToggleFavoriteSMSMutation,useUpdateSMSTemplateMutation,
+    useAddTemplateSMSMutation,useDeleteSMSTemplateMutation,useGetAllSMSTemplatesMutation,useGetSMSTemplateByIdMutation,
+    useGetScheduledSMSMutation
+}=smsApi;

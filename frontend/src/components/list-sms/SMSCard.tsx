@@ -123,7 +123,7 @@ const SMSCard : React.FC<PropsSMS> = ({ role ,templates ,user }) => {
               onClick={() =>
               {
                   dispatch(setSelectedSms(template));
-                  navigate(`${UPDATE_SMS_TEMPLATE}`)
+                  navigate(`${UPDATE_SMS_TEMPLATE}/${template.id}`)
                 }}
                 >
               <Update style={{color:"whitesmoke"}}  />

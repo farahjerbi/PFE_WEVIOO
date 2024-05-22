@@ -136,10 +136,10 @@ const SendSMS = () => {
                         />
                     </div>
         ))}
-         <MDBBtn className='w-100 mb-4 me-5 color_pink ' onClick={()=>setViewTemplate(true)} >View Template</MDBBtn>
+         <MDBBtn type='button' className='w-100 mb-4 me-5 color_pink ' onClick={()=>setViewTemplate(true)} >View Template</MDBBtn>
      </MDBCardBody>
      </MDBCard>
-     <MDBBtn className='w-60 mb-4' color='secondary' onClick={()=>setNext(false)}>Go back</MDBBtn>
+     <MDBBtn type='button' className='w-60 mb-4' color='secondary' onClick={()=>setNext(false)}>Go back</MDBBtn>
      {loading && (
         <div className='d-flex justify-content-center mt-4'>
         <MDBBtn disabled className='btn w-50 ' >

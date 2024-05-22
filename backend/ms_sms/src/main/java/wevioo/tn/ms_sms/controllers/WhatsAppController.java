@@ -124,8 +124,7 @@ public class WhatsAppController {
         List<ScheduledSMSInfo> scheduledEmails = new ArrayList<>();
 
         try {
-            for (String groupName : scheduler.getJobGroupNames()) {
-                for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
+                for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals("whatsapp-jobs"))) {
                     String jobName = jobKey.getName();
 
                     // Get job's triggers
@@ -159,8 +158,6 @@ public class WhatsAppController {
                     }
                     }
 
-            }
-
             return ResponseEntity.ok(scheduledEmails);
         } catch (SchedulerException ex) {
             ex.printStackTrace();
@@ -175,8 +172,7 @@ public class WhatsAppController {
         List<ScheduledSMSInfo> scheduledEmails = new ArrayList<>();
 
         try {
-            for (String groupName : scheduler.getJobGroupNames()) {
-                for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
+                for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals("whatsapp-jobs"))) {
                     String jobName = jobKey.getName();
 
                     // Get job's triggers
@@ -210,7 +206,7 @@ public class WhatsAppController {
                             scheduledEmails.add(emailInfo);
                         }
                     }
-                }
+
             }
 
             return ResponseEntity.ok(scheduledEmails);

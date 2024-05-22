@@ -61,9 +61,16 @@ export const whatsAppApi = createApi({
                 };
             }
         }),
+        getScheduledWhatsapp: builder.mutation({
+            query: ( id ) => ({
+                url: `/getScheduledWhatsappByUser/${id}`,
+                method: "GET",
+            }),
+        }),
 
     }),
  
 })
 
-export const {useSendWhatsappMutation,useAddTemplateWhatsappMutation,useDeleteWhatsappTemplateMutation,useGetAllWhatsappTemplatesMutation,useGetWhatsappTemplateByIdMutation}=whatsAppApi;
+export const {useSendWhatsappMutation,useAddTemplateWhatsappMutation,useDeleteWhatsappTemplateMutation,useGetAllWhatsappTemplatesMutation,
+    useGetWhatsappTemplateByIdMutation,useGetScheduledWhatsappMutation}=whatsAppApi;

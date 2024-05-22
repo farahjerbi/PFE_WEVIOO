@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import Table from '@mui/joy/Table';
 import Sheet from '@mui/joy/Sheet';
 
-import { SEND_EMAIL, SEND_EMAIL_SCHEDULED } from '../../routes/paths';
+import { SEND_EMAIL, SEND_EMAIL_SCHEDULED, SEND_SMS } from '../../routes/paths';
 import { EmailTemplate, isEmailTemplate } from '../../models/email/EmailTemplate';
 import { useGetDesignTemplateMutation, useToggleFavoriteEmailMutation } from '../../redux/services/emailApi';
 import { useDispatch, useSelector } from 'react-redux';
@@ -145,6 +145,17 @@ const SheetContent: React.FC<SheetContentProps<EmailTemplate|SmsTemplate>> = ({ 
             
               </td>
               <td>
+              <Tooltip style={{marginRight:"5px"}} title="send" className="color_blue">
+                <Button onClick={() => {
+                  if (isEmailTemplate(template)) {
+                    navigate(`${SEND_EMAIL}/${template.id}`);
+                  } else {
+                    navigate(`${SEND_SMS}/${template.id}`);
+                  }
+                }}>
+                  <Send style={{color:"whitesmoke"}} />
+                </Button>
+              </Tooltip>       
               {/* {isEmailTemplate(template) && 
 
               <Tooltip style={{marginRight:"5px"}} title="Send" className="color_blue" >
@@ -158,17 +169,20 @@ const SheetContent: React.FC<SheetContentProps<EmailTemplate|SmsTemplate>> = ({ 
               </Tooltip>} */}
               </td>
               <td>
-              {/* {isEmailTemplate(template) && 
 
               <Tooltip style={{marginRight:"5px"}} title="ScheduleSend" className="color_baby_blue" >
               <Button
                   onClick={() => {
+                    if (isEmailTemplate(template)) {
                     navigate(`${SEND_EMAIL_SCHEDULED}/${template.id}`);
+                  }else {
+                    navigate(`${SEND_SMS}/${template.id}`);
+                  }
                   }}
                 >
                         <ScheduleSend style={{color:"whitesmoke"}}  />
                         </Button>                           
-                        </Tooltip>} */}
+                        </Tooltip>
               </td>
               <td>
                 <Tooltip style={{marginRight:"5px"}} title="Remove Template" className="color_pink">

@@ -8,11 +8,16 @@ import wevioo.tn.ms_auth.dtos.requests.ChangePasswordRequest;
 import wevioo.tn.ms_auth.dtos.requests.ForgotPassword;
 import wevioo.tn.ms_auth.dtos.requests.UpdateUser;
 import wevioo.tn.ms_auth.dtos.responses.UserResponse;
+import wevioo.tn.ms_auth.entities.Member;
+import wevioo.tn.ms_auth.entities.Team;
 import wevioo.tn.ms_auth.entities.UserEntity;
+import wevioo.tn.ms_auth.repositories.MemberRepository;
+import wevioo.tn.ms_auth.repositories.TeamRepository;
 import wevioo.tn.ms_auth.repositories.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -22,6 +27,10 @@ public class ProfileServiceImpl implements ProfileService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final FileStorageService fileStorageService;
+    private final TeamRepository teamRepository;
+    private final MemberRepository memberRepository;
+
+
 
 
 
@@ -96,6 +105,39 @@ public class ProfileServiceImpl implements ProfileService {
         }
 
         return userResponses;
+    }
+
+
+    public Team createTeamWithMembers(Team teamDto, Long userId) {
+        Team team = new Team();
+        team.setName(teamDto.getName());
+        team.setDescription(teamDto.getDescription());
+
+        Optional<UserEntity> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            UserEntity user = userOptional.get();
+            team.setUser(user);
+        } else {
+            throw new IllegalArgumentException("User not found for the provided userId: " + userId);
+        }
+        teamRepository.save(team);
+        List<Member> members = new ArrayList<>();
+
+        for (Member memberDto : teamDto.getMembers()) {
+            Member member = new Member();
+            member.setFullName(memberDto.getFullName());
+            member.setPhone(memberDto.getPhone());
+            member.setWhatsapp(memberDto.getWhatsapp());
+            member.setEmail(memberDto.getEmail());
+            member.setTeam(team);
+            members.add(member);
+        }
+
+        team.setMembers(members);
+
+        memberRepository.saveAll(members);
+
+        return team;
     }
 
 

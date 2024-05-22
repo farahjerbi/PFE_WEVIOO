@@ -10,6 +10,7 @@ import wevioo.tn.ms_auth.dtos.requests.ChangePasswordRequest;
 import wevioo.tn.ms_auth.dtos.requests.ForgotPassword;
 import wevioo.tn.ms_auth.dtos.requests.UpdateUser;
 import wevioo.tn.ms_auth.dtos.responses.UserResponse;
+import wevioo.tn.ms_auth.entities.Team;
 import wevioo.tn.ms_auth.entities.UserEntity;
 import wevioo.tn.ms_auth.repositories.UserRepository;
 import wevioo.tn.ms_auth.services.AuthenticationService;
@@ -75,9 +76,16 @@ public class ProfileController {
 
     @GetMapping("getUserById/{id}")
     public UserResponse getUserById(@PathVariable Long id){
-        UserEntity user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalStateException("User not found"));
+        UserEntity user = userRepository.findByIdWithTeams(id);
         return  modelMapper.map(user, UserResponse.class);
     }
-
+    @PostMapping("createTeam/{id}")
+    public ResponseEntity<Team> createTeamWithMembers(@RequestBody Team teamDto,@PathVariable Long id) {
+        try {
+            Team team = profileService.createTeamWithMembers(teamDto,id);
+            return ResponseEntity.status(HttpStatus.CREATED).body(team);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
 }

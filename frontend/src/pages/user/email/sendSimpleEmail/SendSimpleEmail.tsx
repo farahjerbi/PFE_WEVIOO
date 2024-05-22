@@ -2,7 +2,7 @@ import { MDBBtn, MDBCard, MDBCardBody, MDBCheckbox, MDBContainer, MDBIcon, MDBIn
 import './SendSimpleEmail.css'
 import EmailInput from '../../../../components/emailInput/EmailInput'
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
-import {  useGetAllEmailTemplatesMutation, useGetTemplateByIdMutation, useGetTemplatePlaceholdersMutation } from '../../../../redux/services/emailApi';
+import { useGetTemplateByIdMutation, useGetTemplatePlaceholdersMutation } from '../../../../redux/services/emailApi';
 import { toast } from 'sonner';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';

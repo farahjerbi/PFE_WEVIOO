@@ -1,5 +1,6 @@
 package wevioo.tn.ms_email.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
@@ -14,6 +15,7 @@ import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMultipart;
 import jakarta.mail.util.ByteArrayDataSource;
 import lombok.AllArgsConstructor;
+import org.quartz.*;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -21,6 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+import wevioo.tn.ms_email.config.EmailJob;
+import wevioo.tn.ms_email.dtos.request.ScheduleEmailRequest;
 import wevioo.tn.ms_email.entities.TemplateBody;
 
 import java.io.File;
@@ -29,6 +33,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -231,6 +236,43 @@ public class TemplateUtils {
             default:
                 throw new IllegalArgumentException("SMTP server not configured for domain: " + domain);
         }
+    }
+
+
+    public JobDetail buildJobDetail(ScheduleEmailRequest scheduleEmailRequest) {
+        JobDataMap jobDataMap = new JobDataMap();
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            String placeHoldersJson = objectMapper.writeValueAsString(scheduleEmailRequest.getPlaceHolders());
+            jobDataMap.put("requestBody", placeHoldersJson);
+            String recipientsString = String.join(",", scheduleEmailRequest.getRecipients());
+            jobDataMap.put("recipients", recipientsString);
+            String ccString = String.join(",", scheduleEmailRequest.getCc());
+            jobDataMap.put("cc", ccString);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        jobDataMap.put("templateId", scheduleEmailRequest.getTemplateId());
+        jobDataMap.put("userId", scheduleEmailRequest.getUserId());
+        jobDataMap.put("replyTo", scheduleEmailRequest.getReplyTo());
+        jobDataMap.put("addSignature", scheduleEmailRequest.getAddSignature());
+
+        return JobBuilder.newJob(EmailJob.class)
+                .withIdentity(UUID.randomUUID().toString(), "email-jobs")
+                .withDescription("Send Email Job")
+                .usingJobData(jobDataMap)
+                .storeDurably()
+                .build();
+    }
+
+    public Trigger buildJobTrigger(JobDetail jobDetail, ZonedDateTime startAt) {
+        return TriggerBuilder.newTrigger()
+                .forJob(jobDetail)
+                .withIdentity(jobDetail.getKey().getName(), "email-triggers")
+                .withDescription("Send Email Trigger")
+                .startAt(Date.from(startAt.toInstant()))
+                .withSchedule(SimpleScheduleBuilder.simpleSchedule().withMisfireHandlingInstructionFireNow())
+                .build();
     }
 }
 

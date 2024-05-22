@@ -113,6 +113,7 @@ const EmailDragAndDrop: React.FC = () => {
       setFormData(initialState);
       setBasicModal(!basicModal);
       navigate(LIST_EMAIL_TEMPLATES)
+      window.location.reload();
     } catch (error) {
       toast.error("Error! Yikes");
       console.error("🚀 ~ error:", error);

@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 import { selectIsAuth } from "../redux/state/authSlice";
 const Layout = () => {
   const isAuth = useSelector(selectIsAuth);
-
   return (
     <>
           <Navbar/>

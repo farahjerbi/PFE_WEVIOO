@@ -10,6 +10,7 @@ import Loading from "./components/loading/Loading";
 import { getTemplatesEmail } from './redux/state/emailSlice';
 import AddSMS from './pages/admin/sms/add/AddSMS';
 import CreateWhatsapp from './pages/admin/sms/createWhatsapp/CreateWhatsapp';
+import PushNotification from './components/PushNotification/PushNotification';
 // Lazy load components
 const Dashboard = React.lazy(() => import('./pages/dashboard/Dashboard'));
 const Authentication = React.lazy(() => import('./pages/authentication/Authentication'));
@@ -72,7 +73,7 @@ function App() {
                                       <Route path={`${UPDATE_SMS_TEMPLATE}/:id`} element={<ProtectedRoute><UpdateSMS /></ProtectedRoute>} />
 
                   </>)}
-              
+                  <Route path="/push/list" element={<PushNotification />}/>
 
                   {role===Role.USER && ( <>
                     <Route path={SAVEDTEMPLATES} element={<ProtectedRoute><SavedTemplates /></ProtectedRoute>} />
@@ -89,6 +90,7 @@ function App() {
               <Route path='/forgotPassword/:email' element={<ForgotPassword />} />
               <Route path={`${AUTHENTICATION}/:emailUser`} element={<Authentication />} />
               <Route path="" element={<Navigate to={AUTHENTICATION} replace/> } />
+
         </Routes>
         </Suspense>
       </BrowserRouter>

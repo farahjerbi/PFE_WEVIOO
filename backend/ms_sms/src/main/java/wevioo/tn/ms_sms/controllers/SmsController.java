@@ -115,8 +115,8 @@ public class SmsController {
         List<ScheduledSMSInfo> scheduledEmails = new ArrayList<>();
 
         try {
-            for (String groupName : scheduler.getJobGroupNames()) {
-                for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
+
+                for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals("sms-jobs"))) {
                     String jobName = jobKey.getName();
 
                     // Get job's triggers
@@ -150,7 +150,7 @@ public class SmsController {
 
                     }
                 }
-            }
+
 
             return ResponseEntity.ok(scheduledEmails);
         } catch (SchedulerException ex) {
@@ -164,8 +164,8 @@ public class SmsController {
         List<ScheduledSMSInfo> scheduledEmails = new ArrayList<>();
 
         try {
-            for (String groupName : scheduler.getJobGroupNames()) {
-                for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
+
+                for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals("sms-jobs"))) {
                     String jobName = jobKey.getName();
 
                     // Get job's triggers
@@ -201,7 +201,7 @@ public class SmsController {
                         }
                     }
                 }
-            }
+
 
             return ResponseEntity.ok(scheduledEmails);
         } catch (SchedulerException ex) {

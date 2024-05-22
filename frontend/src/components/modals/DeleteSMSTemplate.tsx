@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { DeleteTemplateModalProps, DeleteTemplateSMSModalProps } from '../../models/DeleteModels'
+import {  DeleteTemplateSMSModalProps } from '../../models/DeleteModels'
 import { useDeleteSMSTemplateMutation } from '../../redux/services/smsApi';
 import { useDispatch } from 'react-redux';
 import { setDeleteSms, setDeleteWhatsapp } from '../../redux/state/smsSlice';
@@ -10,6 +10,10 @@ import { MDBBtn } from 'mdb-react-ui-kit';
 import { useDeleteWhatsappTemplateMutation } from '../../redux/services/whatsAppApi';
 
 const DeleteSMSTemplate: React.FC<DeleteTemplateSMSModalProps> = ({ id , onClose ,show }) => {
+  useEffect(() => {
+    setOpen(show);
+}, [show]);
+
     const [deleteSMSTemplate] = useDeleteSMSTemplateMutation();
     const [deleteWhatsappTemplate] = useDeleteWhatsappTemplateMutation();
 
@@ -18,9 +22,7 @@ const DeleteSMSTemplate: React.FC<DeleteTemplateSMSModalProps> = ({ id , onClose
         return typeof value === 'string';
     }
     const dispatch=useDispatch();
-      useEffect(() => {
-        setOpen(show);
-    }, [show]);
+  
 
     const deleteT= async (id:number|string) => {
         try {

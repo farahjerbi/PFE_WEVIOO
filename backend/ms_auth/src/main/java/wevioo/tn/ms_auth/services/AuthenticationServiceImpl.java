@@ -9,10 +9,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.server.ResponseStatusException;
 import wevioo.tn.ms_auth.dtos.requests.SignInRequest;
 import wevioo.tn.ms_auth.dtos.requests.SignUpRequest;
 import wevioo.tn.ms_auth.dtos.requests.VerificationRequest;
@@ -105,26 +107,52 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     public AuthenticationResponse verifyCode(VerificationRequest verificationRequest) {
+        try {
+            // Retrieve user from repository
+            UserEntity user = userRepository.findByEmail(verificationRequest.getEmail())
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid email"));
 
-        UserEntity user= userRepository.findByEmail(verificationRequest.getEmail()).orElseThrow(()->new IllegalArgumentException("Invalid email"));
+            // Validate OTP
+            if (!tfaService.isOtpValid(user.getSecret(), verificationRequest.getCode())) {
+                throw new BadCredentialsException("Code is not correct");
+            }
 
-        if ( !tfaService.isOtpValid(user.getSecret(), verificationRequest.getCode())) {
+            // Authenticate user
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(verificationRequest.getEmail(), verificationRequest.getPassword())
+            );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            throw new BadCredentialsException("Code is not correct");
+            // Generate JWT token
+            String token = jwtGenerator.generateToken(authentication);
+
+            // Map user to response object
+            UserResponse userResponse = modelMapper.map(user, UserResponse.class);
+
+            // Build and return authentication response
+            return AuthenticationResponse.builder()
+                    .token(token)
+                    .user(userResponse)
+                    .build();
+        } catch (IllegalArgumentException ex) {
+            // Handle invalid email exception
+            System.out.println("Invalid email provided: " + verificationRequest.getEmail());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email", ex);
+        } catch (BadCredentialsException ex) {
+            // Handle incorrect OTP exception
+            System.out.println("Incorrect code provided: " + ex.getMessage());
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Incorrect code", ex);
+        } catch (AuthenticationException ex) {
+            // Handle authentication failure
+            System.out.println("Authentication failed: " + ex.getMessage());
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication failed", ex);
+        } catch (Exception ex) {
+            // Handle unexpected errors
+            System.out.println("An unexpected error occurred: " + ex.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error", ex);
         }
-
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(verificationRequest.getEmail(),verificationRequest.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String token = jwtGenerator.generateToken(authentication);
-
-        UserResponse userResponse = modelMapper.map(user, UserResponse.class);
-
-
-        return AuthenticationResponse.builder()
-                .token(token)
-                .user(userResponse)
-                .build();
     }
+
 
 
     public String enableUser(String email){

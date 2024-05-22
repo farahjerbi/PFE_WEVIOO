@@ -126,8 +126,8 @@ public class EmailController {
                 return ResponseEntity.badRequest().body(scheduleEmailResponse);
             }
 
-            JobDetail jobDetail = buildJobDetail(scheduleEmailRequest);
-            Trigger trigger = buildJobTrigger(jobDetail, dateTime);
+            JobDetail jobDetail = templateUtils.buildJobDetail(scheduleEmailRequest);
+            Trigger trigger = templateUtils.buildJobTrigger(jobDetail, dateTime);
             scheduler.scheduleJob(jobDetail, trigger);
 
             ScheduleEmailResponse scheduleEmailResponse = new ScheduleEmailResponse(true,
@@ -141,42 +141,6 @@ public class EmailController {
         }
     }
 
-
-    public JobDetail buildJobDetail(ScheduleEmailRequest scheduleEmailRequest) {
-        JobDataMap jobDataMap = new JobDataMap();
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            String placeHoldersJson = objectMapper.writeValueAsString(scheduleEmailRequest.getPlaceHolders());
-            jobDataMap.put("requestBody", placeHoldersJson);
-            String recipientsString = String.join(",", scheduleEmailRequest.getRecipients());
-            jobDataMap.put("recipients", recipientsString);
-            String ccString = String.join(",", scheduleEmailRequest.getCc());
-            jobDataMap.put("cc", ccString);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        jobDataMap.put("templateId", scheduleEmailRequest.getTemplateId());
-        jobDataMap.put("userId", scheduleEmailRequest.getUserId());
-        jobDataMap.put("replyTo", scheduleEmailRequest.getReplyTo());
-        jobDataMap.put("addSignature", scheduleEmailRequest.getAddSignature());
-
-        return JobBuilder.newJob(EmailJob.class)
-                .withIdentity(UUID.randomUUID().toString(), "email-jobs")
-                .withDescription("Send Email Job")
-                .usingJobData(jobDataMap)
-                .storeDurably()
-                .build();
-    }
-
-    public Trigger buildJobTrigger(JobDetail jobDetail, ZonedDateTime startAt) {
-        return TriggerBuilder.newTrigger()
-                .forJob(jobDetail)
-                .withIdentity(jobDetail.getKey().getName(), "email-triggers")
-                .withDescription("Send Email Trigger")
-                .startAt(Date.from(startAt.toInstant()))
-                .withSchedule(SimpleScheduleBuilder.simpleSchedule().withMisfireHandlingInstructionFireNow())
-                .build();
-    }
 
     @DeleteMapping("deleteTemplate/{id}")
     public String deleteEmailTemplate(@PathVariable Long id) {
@@ -342,8 +306,8 @@ public class EmailController {
                 scheduler.deleteJob(JobKey.jobKey(jobName, "email-jobs"));
 
                 // Build a new job with updated parameters
-                JobDetail updatedJobDetail = buildJobDetail(updatedRequest);
-                Trigger updatedTrigger = buildJobTrigger(updatedJobDetail, ZonedDateTime.now());
+                JobDetail updatedJobDetail = templateUtils.buildJobDetail(updatedRequest);
+                Trigger updatedTrigger = templateUtils.buildJobTrigger(updatedJobDetail, ZonedDateTime.now());
 
                 scheduler.scheduleJob(updatedJobDetail, updatedTrigger);
 

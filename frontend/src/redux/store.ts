@@ -10,10 +10,13 @@ import usersSlice from './state/usersSlice';
 import smsSlice from './state/smsSlice';
 import { smsApi } from './services/smsApi';
 import { whatsAppApi } from './services/whatsAppApi';
+import { pushApi } from './services/pushApi';
+import pushSlice from './state/pushSlice';
 export const store = configureStore({
   reducer: {
     auth:authReducer,
     [authApi.reducerPath]:authApi.reducer,
+    [pushApi.reducerPath]:pushApi.reducer,
     [emailApi.reducerPath]:emailApi.reducer,
     [usersApi.reducerPath]:usersApi.reducer,
     [smsApi.reducerPath]:smsApi.reducer,
@@ -21,10 +24,11 @@ export const store = configureStore({
     style: styleSlice,
     email:emailSlice,
     users:usersSlice,
-    sms:smsSlice
+    sms:smsSlice,
+    push:pushSlice
 
   },
-  middleware:(curryGetDefaultMiddleware)=>curryGetDefaultMiddleware().concat(whatsAppApi.middleware,smsApi.middleware,authApi.middleware,emailApi.middleware,usersApi.middleware)
+  middleware:(curryGetDefaultMiddleware)=>curryGetDefaultMiddleware().concat(whatsAppApi.middleware,smsApi.middleware,authApi.middleware,emailApi.middleware,usersApi.middleware,pushApi.middleware)
 });
 
 export type AppDispatch = typeof store.dispatch;

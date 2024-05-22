@@ -81,6 +81,8 @@ const ListEmails = () => {
   const handleUpdate = () => {
     setDeleteModalOpen(false)
     setBasicModal(false)
+    setIdDelete(undefined)
+    setSelectedTemplate(undefined)
         };
 
   const toggleFavoriteEmailFunc=async(template:EmailTemplate)=>{
@@ -197,7 +199,7 @@ const ListEmails = () => {
                           <Button onClick={() =>
                           {
                               dispatch(setSelectedEmail(template));
-                              navigate(`${EDIT_EMAIL_TEMPLATE}`)
+                              navigate(`${EDIT_EMAIL_TEMPLATE}/${template.id}`)
                             }}>
                           <Update style={{color:"whitesmoke"}}  />
                           </Button>                           

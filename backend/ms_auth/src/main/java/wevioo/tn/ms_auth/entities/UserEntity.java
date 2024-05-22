@@ -1,5 +1,6 @@
 package wevioo.tn.ms_auth.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,7 +29,8 @@ public class UserEntity implements UserDetails {
     private String secret;
     private String signature;
     private String emailSecret;
-
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    private List<Team> teams;
 
     @Enumerated(EnumType.STRING)
     private Role role= Role.valueOf("USER");

@@ -35,7 +35,7 @@ const DeleteTemplateModal: React.FC<DeleteTemplateModalProps> = ({ id , onClose 
 
   return (
     <div>
-         <Modal open={open} onClose={() => setOpen(false)}>
+         <Modal open={open} onClose={toggleOpen}>
         <ModalDialog>
           <DialogTitle>Delete Template</DialogTitle>
           <DialogContent>Are you sure you want to delete this template ?</DialogContent>

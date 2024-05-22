@@ -29,7 +29,7 @@ public class TwoFactorAuthenticationService {
                 .issuer("Notifications Platform 2FA ")
                 .algorithm(HashingAlgorithm.SHA1)
                 .digits(6)
-                .period(60)
+                .period(30)
                 .build();
 
         QrGenerator generator = new ZxingPngQrGenerator();

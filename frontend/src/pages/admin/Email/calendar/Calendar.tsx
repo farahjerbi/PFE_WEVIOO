@@ -8,6 +8,9 @@ import { toast } from 'sonner';
 import { Button, Tooltip } from '@mui/material';
 import { EventClickArg, EventContentArg } from '@fullcalendar/core';
 import ForwardToInbox from "@mui/icons-material/ForwardToInbox";
+import PermPhoneMsgOutlined from "@mui/icons-material/PermPhoneMsgOutlined";
+import ChatBubbleOutline from "@mui/icons-material/ChatBubbleOutline";
+
 import Clear from "@mui/icons-material/Clear";
 import Info from "@mui/icons-material/Info"
 import styled from '@emotion/styled';
@@ -16,6 +19,8 @@ import { useSelector } from 'react-redux';
 import { Role } from '../../../../models/user/Role';
 import { MDBBadge, MDBBtn, MDBCard, MDBCardHeader, MDBModal, MDBModalBody, MDBModalContent, MDBModalDialog, MDBModalFooter, MDBModalHeader, MDBModalTitle } from 'mdb-react-ui-kit';
 import { useLocation } from 'react-router-dom';
+import { ScheduledSMSResponse } from '../../../../models/sms/ScheduledSMSResponse';
+import { ScheduledEmailResponse } from '../../../../models/email/ScheduledEmailRespose';
 export const StyleWrapper = styled.div`
   .fc-button.fc-prev-button, .fc-button.fc-next-button, .fc-button.fc-button-primary{
     background:white;
@@ -35,12 +40,14 @@ export const StyleWrapper = styled.div`
   color:white;
 }
 `
-const Calendar  : React.FC= () => {
+interface Props{
+  emails:ScheduledEmailResponse[] | undefined,
+  sms:ScheduledSMSResponse[] | undefined,
+  whatsapp:ScheduledSMSResponse[] | undefined
+  }
+const Calendar  : React.FC<Props> = ({ emails ,sms,whatsapp })=> {
 const role = useSelector(selectRole);
-const user=useSelector(selectUser)
-const[getScheduledEmails]=useGetScheduledEmailsMutation()
-const[getScheduledEmailsByUser]=useGetScheduledEmailsByUserMutation()
-const[data,setData]=useState();
+const [data, setData] = useState<any[]>([]);
 const [eventInfoBoxes, setEventInfoBoxes] = useState<{ [key: string]: boolean }>({});
 const [basicModal, setBasicModal] = useState<boolean>(false);
 const [update, setUpdate] = useState<boolean>(false);
@@ -72,60 +79,46 @@ const handleEventMouseLeave = (eventId: string) => {
   const formattedDashboardName =dashboardNameFromPath.slice(1).join('/');
   setDashboardName(formattedDashboardName);
   console.log("🚀 ~ useEffect ~ formattedDashboardName:", formattedDashboardName)
+  
+  populateDataEmail(emails);
+  populateDataSMS(sms);
+  populateDataWhatsapp(whatsapp);
 
-      role === Role.ADMIN ? fetchDataAdmin() : fetchDataUser();
     }, [update]);
     
-      const fetchDataAdmin = async () => {
-        try {
-          const response = await getScheduledEmails({}).unwrap();
-          console.log("🚀 ~ fetchData ~ response:", response);
-          populateDataAdmin(response);
-          console.error("🚀 ~ error:", data);
-        } catch (error) {
-          toast.error("Error! Yikes");
-          console.error("🚀 ~ error:", error);
-        }
-      };
 
-      const fetchDataUser = async () => {
-        if(user){
-          try {
-            const response = await getScheduledEmailsByUser(user.id).unwrap();
-            console.log("🚀 ~ fetchData ~ response:", response);
-            populateDataUser(response);
-            console.error("🚀 ~ error:", data);
-          } catch (error) {
-            toast.error("Error! Yikes");
-            console.error("🚀 ~ error:", error);
-          }
-        }
-      };
-
-      function populateDataAdmin(data:any) {
-        const newData = data.map((e:any) => ({
-          title:"Template " + e.templateName + " used by " + e.username,
-          date:e.nextTimeFired,
-          type:"Email",
-          id:e.jobId,
-          sentTo:"",
-
-        }));
-        setData(newData);
-      }
-
-      function populateDataUser(data:any) {
+      function populateDataEmail(data:any) {
         const newData = data.map((e:any) => ({
           title:e.templateName ,
           sentTo:e.recipients,
           id:e.jobId,
           date:e.nextTimeFired,
-          type:"Email",
+          type:"email",
           cc:e.cc,
           replyTo:e.replyTo
         }));
         setData(newData);
       }
+
+      function populateDataSMS(data:any) {
+        const newData = data.map((e:any) => ({
+          title:e.templateName ,
+          numbers:e.numbers,
+          id:e.jobId,
+          date:e.nextTimeFired,
+          type:"sms",
+        }));
+        setData(prevData => [...prevData, ...newData]);       }
+
+      function populateDataWhatsapp(data:any) {
+        const newData = data.map((e:any) => ({
+          title:e.templateName ,
+          numbers:e.numbers,
+          id:e.jobId,
+          date:e.nextTimeFired,
+          type:"whatsapp",
+        }));
+        setData(prevData => [...prevData, ...newData]);       }
 
       const handleDelete=async()=>{
           await deleteScheduledEmail(id).unwrap()
@@ -198,75 +191,45 @@ const handleEventMouseLeave = (eventId: string) => {
       )
 }
 const renderEventContent = (eventContent: EventContentArg, showInfoBox: boolean,role:any) => {
-  const { start } = eventContent.event;
-  const dayOfWeek = start?.getDay(); 
-  console.log("Day of the week:", dayOfWeek); 
   const { title, extendedProps } = eventContent.event;
-  const sentTo = extendedProps?.sentTo || []; 
-  const cc = extendedProps?.cc || []; 
-  const replyTo = extendedProps?.replyTo || ''; 
-
-  const renderedSentTo = sentTo.map((email: string, index: number) => (
-    <p key={index} style={{color:"black"}}>{email}</p>
-  ));
-
-  const renderedCC = cc.map((email: string, index: number) => (
-    <p key={index} style={{color:"black"}}>{email}</p>
-  ));
-  const { view } = eventContent;
-  console.log("🚀 ~ renderEventContent ~ view:", view)
-
+  const type = extendedProps?.type || ''; 
 
     return (
       <>
-        {role===Role.ADMIN && (
-              <div >
-              
-              <Tooltip style={{color:"whitesmoke"}}   title={eventContent.event.title} className="color_baby_blue" >
-                      <Button >
+      {type==="email" && (
+        <>
+        <Button className="color_baby_bluee" style={{color:"white"}} >
+                      
                       <ForwardToInbox style={{marginRight:"3px"}} />
                           {eventContent.timeText}
-                        </Button>         
-                </Tooltip >
-              {role===Role.USER && (<Clear style={{marginLeft:"30%"}} color='error' />   )}                 
-
-            </div>
-        )}
-    {role===Role.USER && ( <Button className="color_baby_blue" style={{color:"white"}} >
-                          <ForwardToInbox style={{marginRight:"3px"}} />
-                              {eventContent.timeText}
-                            </Button>   )}
-                         
-      {role===Role.USER && showInfoBox && ( 
-
-        <>
-          <div style={{ position: 'absolute', zIndex: 999, bottom: 30, right: 30, maxHeight: "20vh", overflowY: "auto" }}>
-    <MDBCard style={{ minHeight: "100px" }}>
-        <MDBCardHeader>  
-          <h6><Info style={{marginLeft:"8px"}}/> Informations <Info/></h6>
-          <hr/>
-          <MDBBadge color='info' pill>
-            <b>TemplateName:</b>        
-          </MDBBadge> <p style={{color:"black"}}> {title}</p>
-          <MDBBadge color='secondary' pill>
-          <b>Recipients:</b> 
-          </MDBBadge> 
-          <p style={{color:"black"}}>{renderedSentTo}</p> 
-          <MDBBadge color='warning' pill>
-            <b>CC:</b> 
-          </MDBBadge> 
-            <p style={{color:"black"}}>{renderedCC}</p> 
-          <MDBBadge color='success' pill>
-            <b>ReplyTo:</b> 
-          </MDBBadge> 
-            <p style={{color:"black"}}>{replyTo}</p> 
-          </MDBCardHeader>
-        </MDBCard>
-        </div>
+                        </Button>   
         </>
-       
+             
+      )}
 
-    )}
+      {type==="sms" && (
+              <>
+              <Button className="color_blue" style={{color:"white"}} >    
+                            <PermPhoneMsgOutlined style={{marginRight:"3px",width:"50%"}} />
+                                {eventContent.timeText}
+                              </Button>   
+              </>
+                  
+            )}
+
+      {type==="whatsapp" && (
+              <>
+              <Button className="color_white" style={{color:"white"}} >
+                            
+                            <ChatBubbleOutline style={{marginRight:"3px"}} />
+                                {eventContent.timeText}
+                              </Button>   
+              </>
+                  
+            )}
+
+                          
+
       </>
     )
   }

@@ -146,7 +146,7 @@ const Profile = () => {
             
                             <MDBInput disabled name='email' value={email} onChange={handleChange} wrapperClass='mb-4' label='Email' type='email'/>
                             <MDBInput name='emailSecret' value={emailSecret} onChange={handleChange}  wrapperClass='mb-4' label='Email Secret' type='password'/>
-                            <Tooltip title="  Upload Electronic Signature">
+                            <Tooltip title="Upload Electronic Signature">
                             <Button
                                 className='mb-4'
                                 component="label"
@@ -168,7 +168,7 @@ const Profile = () => {
                             <div className='d-flex '>
                             <MDBBtn className='w-50 me-2 color_baby_blue'>Update Profile</MDBBtn>                            
                             <MDBBtn className='w-50 me-2 color_baby_bluee'  onClick={()=>setResetPassword(true)}  >Change Password</MDBBtn>
-                            <MDBBtn className='w-50 color_blue'  onClick={() => { setDeleteModalOpen(true); setIdDelete(user.id)}}>Delete Profile</MDBBtn>
+                            <MDBBtn className='w-50 color_blue' onClick={() => { setDeleteModalOpen(true); setIdDelete(user.id)}}>Delete Profile</MDBBtn>
                             </div>
                             </MDBCardBody>
                             </form>
