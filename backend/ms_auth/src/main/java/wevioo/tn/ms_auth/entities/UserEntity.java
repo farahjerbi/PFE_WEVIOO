@@ -8,9 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Data
 @Entity
@@ -29,8 +27,8 @@ public class UserEntity implements UserDetails {
     private String secret;
     private String signature;
     private String emailSecret;
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private List<Team> teams;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Team> teams = new HashSet<>();
 
     @Enumerated(EnumType.STRING)
     private Role role= Role.valueOf("USER");

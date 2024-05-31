@@ -12,9 +12,11 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 @Service
 @AllArgsConstructor
 public class WebPushMessageUtil {
+
     private final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\{\\{([^{}]*)\\}\\}");
 
     public Set<String> extractPlaceholders(String template) {
@@ -42,13 +44,16 @@ public class WebPushMessageUtil {
         try {
             String placeHoldersJson = objectMapper.writeValueAsString(schedulePushRequest.getPlaceHolders());
             jobDataMap.put("placeholdersValues", placeHoldersJson);
-            String recipientsString = String.join(",", schedulePushRequest.getWebPushSubscriptions());
-            jobDataMap.put("numbers", recipientsString);
+            String subscriptionsJson = objectMapper.writeValueAsString(schedulePushRequest.getWebPushSubscriptions());
+            jobDataMap.put("subscriptions", subscriptionsJson);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
         jobDataMap.put("templateId", schedulePushRequest.getTemplateId());
         jobDataMap.put("userId", schedulePushRequest.getUserId());
+        jobDataMap.put("name", schedulePushRequest.getName());
+        jobDataMap.put("isAdmin", schedulePushRequest.isAdmin());
+
 
         return JobBuilder.newJob(PushJob.class)
                 .withIdentity(UUID.randomUUID().toString(), "push-jobs")
@@ -67,5 +72,6 @@ public class WebPushMessageUtil {
                 .withSchedule(SimpleScheduleBuilder.simpleSchedule().withMisfireHandlingInstructionFireNow())
                 .build();
     }
+
 
 }

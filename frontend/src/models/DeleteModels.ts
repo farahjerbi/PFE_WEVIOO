@@ -1,3 +1,4 @@
+import { NotificationType } from "./NotificationType";
 import { EmailTemplate } from "./email/EmailTemplate";
 import { SmsTemplate } from "./sms/SmsTemplate";
 import { WhatsAppTemplateResponse } from "./sms/WhatsAppTemplateResponse";
@@ -7,6 +8,12 @@ export interface DeleteTemplateModalProps {
     id: number;
     onClose: () => void;
     show:boolean;
+  }
+  export interface DeleteScheduledNotifProps {
+    id: string;
+    onClose: () => void;
+    show:boolean;
+    type:NotificationType;
   }
 
   export interface DeleteTemplateSMSModalProps {

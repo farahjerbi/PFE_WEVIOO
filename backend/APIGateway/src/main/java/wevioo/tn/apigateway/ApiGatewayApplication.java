@@ -34,6 +34,9 @@ public class ApiGatewayApplication {
                 .route("sms", r -> r.path("/apiSms/**","/apiWhatsApp/**")
                         .filters(f -> f.filter(authenticationFilter))
                         .uri("http://sms:8092/"))
+                .route("push", r -> r.path("/apiPush/**","/uploadsPush/**")
+                        .filters(f -> f.filter(authenticationFilter))
+                        .uri("http://push:8093/"))
                 .build();
     }
 

@@ -1,5 +1,6 @@
 package wevioo.tn.ms_auth.services;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,9 +16,7 @@ import wevioo.tn.ms_auth.repositories.MemberRepository;
 import wevioo.tn.ms_auth.repositories.TeamRepository;
 import wevioo.tn.ms_auth.repositories.UserRepository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -72,12 +71,16 @@ public class ProfileServiceImpl implements ProfileService {
         user.setLastName(userEntity.getLastName());
         user.setFirstName(userEntity.getFirstName());
         user.setEmailSecret(userEntity.getEmailSecret());
-        if (userEntity.getSignature() != null && !userEntity.getSignature().isEmpty()) {
-            user.setSignature(fileStorageService.storeFile(userEntity.getSignature()));
-        } else if (userEntity.getSignatureUrl() != null && !userEntity.getSignatureUrl().isEmpty()) {
-            user.setSignature(userEntity.getSignatureUrl());
-        }
+        if (userEntity.getSignature() != null) {
+            String oldIconPath = user.getSignature();
+            String newIconPath = fileStorageService.storeFile(userEntity.getSignature());
 
+            if (oldIconPath != null) {
+                fileStorageService.deleteFile(oldIconPath);
+            }
+
+            user.setSignature(newIconPath);
+        }
         userRepository.save(user);
 
         return modelMapper.map(user, UserResponse.class);
@@ -121,7 +124,7 @@ public class ProfileServiceImpl implements ProfileService {
             throw new IllegalArgumentException("User not found for the provided userId: " + userId);
         }
         teamRepository.save(team);
-        List<Member> members = new ArrayList<>();
+            Set<Member> members = new HashSet<>();
 
         for (Member memberDto : teamDto.getMembers()) {
             Member member = new Member();
@@ -141,5 +144,9 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
 
+    @Transactional
+    public UserEntity getUserByIdWithTeamsAndMembers(Long userId) {
+        return userRepository.findByIdWithTeamsAndMembers(userId);
+    }
 
 }

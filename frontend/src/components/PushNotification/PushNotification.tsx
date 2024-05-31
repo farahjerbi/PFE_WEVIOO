@@ -134,12 +134,15 @@ const PushNotification: React.FC = () => {
               placeholder="Search here..."
               onChange={(e) => setQuery(e.target.value)}
               />
-                   <button className="btn btn-primary ms-5" onClick={handleButtonClick}>
+                   {/* <button className="btn btn-primary ms-5" onClick={handleButtonClick}>
         {isSubscribed ? 'Unsubscribe from push notifications' : 'Subscribe to push notifications'}
-      </button>
-        <Button onClick={()=>setOpen(!open)} style={{width:"20%"}} size="small" className="mb-2" >
-                      <img  src="../../../assets/add.png" alt="" style={{width:"25%",marginRight:"3%"}} />Create
-                      </Button>
+      </button> */}
+      {role===Role.ADMIN && (
+      <Button onClick={()=>setOpen(!open)} style={{width:"20%"}} size="small" className="mb-2" >
+      <img  src="../../../assets/add.png" alt="" style={{width:"25%",marginRight:"3%"}} />Create
+      </Button>
+      )}
+      
       </div>
          
       </MDBContainer> 

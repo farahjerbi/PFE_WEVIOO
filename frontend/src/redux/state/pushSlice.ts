@@ -9,7 +9,7 @@ export const getTemplatesPush = createAsyncThunk<any| null, void>(
     async (_, { rejectWithValue }) => {
             try {
                 const response = await axios.get<any>(
-                    `http://localhost:8093/apiPush/getAll`
+                    `http://localhost:8099/apiPush/getAll`
                 );
                 console.log("🚀 ~ response.data:", response.data)
                 return response.data;

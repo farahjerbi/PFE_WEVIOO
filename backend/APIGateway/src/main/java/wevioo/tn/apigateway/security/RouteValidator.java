@@ -17,7 +17,9 @@ public class RouteValidator {
             "/api/users/forgotPassword",
             "/api/",
             "/apiEmail/",
+            "/apiPush/",
             "/uploads/",
+            "uploadsPush",
             "/apiSms/",
             "/apiWhatsApp/"
     );

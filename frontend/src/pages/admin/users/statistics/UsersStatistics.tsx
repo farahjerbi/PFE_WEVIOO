@@ -1,56 +1,34 @@
 import  { useEffect, useState } from 'react'
 import './UsersStatistics.css'
-import { MDBCard, MDBCardBody, MDBRow } from 'mdb-react-ui-kit'
-import { useGetAllUsersMutation } from '../../../../redux/services/usersApi';
+import { MDBCard, MDBCardBody, MDBCardTitle, MDBRow } from 'mdb-react-ui-kit'
 import { IUser } from '../../../../models/user/User';
-import { toast } from 'sonner';
-import BreadcrumSection from '../../../../components/BreadcrumSection/BreadcrumSection';
+import { useSelector } from 'react-redux';
+import { selectUsers } from '../../../../redux/state/usersSlice';
+import { BarChart } from '@mui/x-charts/BarChart';
 
 const UsersStatistics = () => {
-  const [getAllUsers] = useGetAllUsersMutation();
-  const [users, setUsers] = useState<IUser[]>([]);
-  const [numberOfUsers, setNumberOfUsers] = useState<number>(0);
-  const [numberOfEnabledUsers, setNumberOfEnabledUsers] = useState<number>(0);
-  const [numberOfMFAEnabledUsers, setNumberOfMFAEnabledUsers] = useState<number>(0);
-  const [numberOfUnEnabledUsers, setNumberOfUnEnabledUsers] = useState<number>(0);
+  const users=useSelector(selectUsers)
+  const numberOfEnabledUsers = users?.filter((user: IUser) => user.enabled === "true").length || null;
+  const numberOfUnEnabledUsers = users?.filter((user: IUser) => user.enabled === "false").length || null;
+  const numberOfMFAEnabledUsers = users?.filter((user: IUser)  => user.mfaEnabled === "true").length || null;
 
-  useEffect(() => {
-    fetchDataUser();
-  }, []);
-
-  const data = [
-    { year: 'Users Count', value: numberOfUsers },
-    { year: 'Enabled Users', value: numberOfEnabledUsers },
-    { year: 'MFA Users', value: numberOfMFAEnabledUsers },
-    { year: 'Desactivated Users', value: numberOfUnEnabledUsers },
-  ];
-
-
-
-  const fetchDataUser = async () => {
-    try {
-      const response = await getAllUsers({}).unwrap();
-      console.log("🚀 ~ fetchData ~ response:", response);
-      setUsers(response);
-      const enabledUsers = response.filter((user: IUser) => user.enabled === "true");
-      const unEnabledUsers = response.filter((user: IUser) => user.enabled === "false");
-      const mfaEnabledUsers = response.filter((user: IUser)  => user.mfaEnabled === "true");
-
-      setNumberOfUsers(response.length);
-      setNumberOfEnabledUsers(enabledUsers.length);
-      setNumberOfMFAEnabledUsers(mfaEnabledUsers.length);
-      setNumberOfUnEnabledUsers(unEnabledUsers.length);
-    } catch (error) {
-      toast.error("Error! Yikes");
-      console.error("🚀 ~ error:", error);
-    }
-  };
   return (
-    <MDBCard className="mb-3 pt-5">
-      {/* <BreadcrumSection/> */}
+    <MDBCard className="mb-5">
       <MDBCardBody>
+      <MDBCardTitle>Statistics Users</MDBCardTitle>
       <div className='d-flex '>
-      <img src="../../../../assets/statistics.png" alt="" className='img'/>
+      {/* <img src="../../../../assets/statistics.png" alt="" className='img'/> */}
+      <BarChart
+        xAxis={[{ scaleType: 'band', data: ['Enabled', 'MFA', 'Unactive'] }]}
+        series={[
+          {
+            data: [numberOfEnabledUsers, numberOfMFAEnabledUsers, numberOfUnEnabledUsers],
+            color:"rgb(184, 180, 214)"
+          }
+        ]}
+        width={300}
+        height={200}
+      />
       </div>
       </MDBCardBody>
     </MDBCard>

@@ -1,22 +1,30 @@
-import  { useState } from 'react'
+import  { useEffect, useState } from 'react'
 import "./ListSMS.css"
 import { Button } from '@mui/material'
 import BreadcrumSection from '../../../../components/BreadcrumSection/BreadcrumSection'
 import MarkUnreadChatAlt from "@mui/icons-material/MarkUnreadChatAlt";
 import { MDBCol, MDBIcon} from 'mdb-react-ui-kit';
-import { selectSMSs, selectWhatsapp } from '../../../../redux/state/smsSlice';
-import { useSelector } from 'react-redux';
+import { getTemplatesSms, getTemplatesWhatsapp, selectSMSs, selectWhatsapp } from '../../../../redux/state/smsSlice';
+import { useDispatch, useSelector } from "react-redux";
 import { selectRole, selectUser } from '../../../../redux/state/authSlice';
 import SMSCard from '../../../../components/list-sms/SMSCard';
 import WhatsAppCard from '../../../../components/list-whatsapp/WhatsAppCard';
+import { AppDispatch } from '../../../../redux/store';
 
 const ListSMS = () => {
+  const dispatchApp: AppDispatch = useDispatch(); 
+  useEffect(() => {
+    dispatchApp(getTemplatesSms())
+    dispatchApp(getTemplatesWhatsapp())
+     }, []);
     const[isSMS,setIsSMS]=useState<boolean>(true)
     const templates = useSelector(selectSMSs);
     const templatesWhatsapp = useSelector(selectWhatsapp);
     
     const role = useSelector(selectRole);
     const user=useSelector(selectUser)
+  
+  
    
   return (
     <>

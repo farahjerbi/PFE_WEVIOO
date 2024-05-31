@@ -19,6 +19,8 @@ import { selectSavedEmails } from '../../redux/state/emailSlice';
 
 import SheetContent from '../sheet/SheetContent';
 import { selectSavedSMSs } from '../../redux/state/smsSlice';
+import { selectSavedPushs } from '../../redux/state/pushSlice';
+import SheetContentPush from '../sheet/SheetContentPush';
 
 const items = [
   {
@@ -48,8 +50,8 @@ const items = [
 export default function Features() {
   const emails=useSelector(selectSavedEmails)
   const sms= useSelector(selectSavedSMSs)
+  const push=useSelector(selectSavedPushs)
   const [selectedItemIndex, setSelectedItemIndex] = React.useState(0)
-  const push:EmailTemplate[]=[]
 
   const handleItemClick = (index: number) => {
     setSelectedItemIndex(index);
@@ -208,7 +210,7 @@ export default function Features() {
           <SheetContent templates={sms} type='sms' />
       )}
          {selectedItemIndex === 2 && push && (
-          <SheetContent templates={push} type='email' />
+          <SheetContentPush templates={push}  />
       )}
         </Grid>
       </Grid>

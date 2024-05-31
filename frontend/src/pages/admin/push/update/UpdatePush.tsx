@@ -74,7 +74,7 @@ const UpdatePush :React.FC<Props> = ({onClose,show ,template}) => {
       }
 
       try {
-        const response = await axios.post(`http://localhost:8093/apiPush/updateTemplate/${template?.id}`, formData);
+        const response = await axios.post(`http://localhost:8099/apiPush/updateTemplate/${template?.id}`, formData);
         
         if (response.status === 200) {
           const updatedTemplate= response.data;
@@ -107,7 +107,7 @@ const UpdatePush :React.FC<Props> = ({onClose,show ,template}) => {
       }
 
       try {
-        const response = await axios.post(`http://localhost:8093/apiPush/addTemplate`, formData);
+        const response = await axios.post(`http://localhost:8099/apiPush/addTemplate`, formData);
         
         if (response.status === 200) {
           const addedTemplate= response.data;
@@ -147,7 +147,7 @@ const UpdatePush :React.FC<Props> = ({onClose,show ,template}) => {
      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <AspectRatio ratio="1" sx={{ width: 90 }}>
                 <img
-                    src={`http://localhost:8093/uploads/${template?.icon}`}
+                    src={`http://localhost:8099/uploadsPush/${template?.icon}`}
                     loading="lazy"
                     alt=""
                 />

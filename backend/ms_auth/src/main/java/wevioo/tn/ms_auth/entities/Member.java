@@ -18,6 +18,5 @@ public class Member {
     private String email;
     @ManyToOne
     @JoinColumn(name = "team_id")
-    @JsonIgnore
     private Team team;
 }

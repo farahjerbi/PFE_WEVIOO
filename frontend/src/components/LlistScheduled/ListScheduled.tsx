@@ -1,12 +1,13 @@
-import Visibility from '@mui/icons-material/Visibility'
 import { Button, Tooltip } from '@mui/material'
 import { MDBBadge, MDBCard, MDBCardBody, MDBCol, MDBPagination, MDBPaginationItem, MDBPaginationLink, MDBTable, MDBTableBody, MDBTableHead } from 'mdb-react-ui-kit'
 import React, { useState } from 'react'
-import { SchedularSMSProps } from '../../models/email/SchedularProps'
 import { ScheduledSMSResponse } from '../../models/sms/ScheduledSMSResponse'
+import { NotificationType } from '../../models/NotificationType'
+import Delete from '@mui/icons-material/Delete'
+import DeleteScheduledNotif from '../modals/DeleteScheduledNotif'
 interface Props{
     sms:ScheduledSMSResponse[] ,
-    type:string
+    type:NotificationType
     }
 const ListScheduled: React.FC<Props> = ({ sms ,type })=> {
         //PAGINATION
@@ -20,9 +21,11 @@ const ListScheduled: React.FC<Props> = ({ sms ,type })=> {
           };
         //END PAGINATION
         const[query,setQuery]=useState<string>('')
-
+        const[deleteModal,setDeleteModal]=useState<boolean>(false)
+        const[selectedId,setSelectedId]=useState<string>('')
   return (
-    <MDBCol
+    <>
+        <MDBCol
     className="mb-4 d-flex align-items-center"
   >
     <MDBCard style={{ background: 'hsla(0, 0%, 100%, 0.55)',
@@ -35,7 +38,7 @@ const ListScheduled: React.FC<Props> = ({ sms ,type })=> {
               <th className='tab'>Type</th>
               <th className='tab'>Recipients Numbers</th>
               <th className='tab'>Time of Sent</th>
-              <th>Delete</th>
+              <th className='tab'>unschedule</th>
             </tr>
           </MDBTableHead>
           <MDBTableBody>
@@ -52,8 +55,17 @@ const ListScheduled: React.FC<Props> = ({ sms ,type })=> {
                   <td className='tab'>{template.numbers}</td>
                   <td className='tab'>{template.nextTimeFired}</td>
                   <td>
-                    delete
-                  </td>
+                  <Tooltip title="Delete" className="color_pink" >
+                    <Button 
+                    onClick={() => { 
+                      setSelectedId(template.jobId)
+                      setDeleteModal(true)
+                    }}
+                    >
+                    <Delete style={{color:"whitesmoke"}}  />
+                    </Button>                           
+                    </Tooltip>
+                        </td>
               </tr>
             ))}
           </MDBTableBody>
@@ -98,6 +110,11 @@ const ListScheduled: React.FC<Props> = ({ sms ,type })=> {
       </nav>
     </MDBCard>
   </MDBCol> 
+  {selectedId && (
+    <DeleteScheduledNotif id={selectedId} onClose={()=>{setDeleteModal(false);setSelectedId("")}} show={deleteModal} type={type} />
+  )}
+    </>
+
   )
 }
 

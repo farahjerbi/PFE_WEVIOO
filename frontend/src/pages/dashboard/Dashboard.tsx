@@ -10,6 +10,7 @@ import { getUsers } from "../../redux/state/usersSlice"
 import { getTemplatesSms, getTemplatesWhatsapp } from "../../redux/state/smsSlice"
 import SmsStatistics from "../admin/sms/statistic/SmsStatistics"
 import { getTemplatesPush } from "../../redux/state/pushSlice"
+import UsersStatistics from "../admin/users/statistics/UsersStatistics"
 
 const Dashboard = () => {
   const dispatch: AppDispatch = useDispatch(); 
@@ -28,9 +29,10 @@ const Dashboard = () => {
     <div style={{ width:"30%" ,marginLeft:"13%"}}>
       <EmailStatistics/>
       <SmsStatistics/>
+      <UsersStatistics/>
     </div>
     <div style={{width:"55%",marginRight: '5.5%'}}>
-    <Calendar emails={[]} sms={[]} whatsapp={[]}/>
+    <Calendar emails={[]} sms={[]} whatsapp={[]} push={[]}/>
     </div>
     </div>  
       {/* <UsersStatistics/> */}

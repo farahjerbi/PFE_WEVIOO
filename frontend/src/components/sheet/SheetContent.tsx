@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Button, Tooltip } from '@mui/material';
 import Visibility from "@mui/icons-material/Visibility";
 import ViewEmailTemplateSimple from '../modals/ViewEmailTemplateSimple';
@@ -13,12 +13,11 @@ import { SEND_EMAIL, SEND_EMAIL_SCHEDULED, SEND_SMS } from '../../routes/paths';
 import { EmailTemplate, isEmailTemplate } from '../../models/email/EmailTemplate';
 import { useGetDesignTemplateMutation, useToggleFavoriteEmailMutation } from '../../redux/services/emailApi';
 import { useDispatch, useSelector } from 'react-redux';
-import { setSelectedEmail, setUpdateEmailFavList } from '../../redux/state/emailSlice';
+import {  setUpdateEmailFavList } from '../../redux/state/emailSlice';
 import { toast } from 'sonner';
 import { selectUser } from '../../redux/state/authSlice';
 import { SmsTemplate } from '../../models/sms/SmsTemplate';
 import ViewSMSTemplate from '../modals/ViewSMSTemplate';
-import DeleteSMSTemplate from '../modals/DeleteSMSTemplate';
 import { useToggleFavoriteSMSMutation } from '../../redux/services/smsApi';
 import { setUpdateSmsFavList } from '../../redux/state/smsSlice';
 interface SheetContentProps<T> {

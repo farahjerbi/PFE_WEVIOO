@@ -15,7 +15,7 @@ const SmsStatistics = () => {
 
 
   return (
-   <MDBCard className="mb-3 mt-5">
+   <MDBCard className="mb-3 mt-3">
     <MDBCardBody>
     <MDBCardTitle>Statistics SMS</MDBCardTitle>
     <div style={{height:"170px"}}>

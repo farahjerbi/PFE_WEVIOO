@@ -1,7 +1,7 @@
 import React, { Suspense, useEffect } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { Toaster } from 'sonner';
-import { ADD_ADVANCED_EMAIL_TEMPLATE, ADD_EMAIL_TEMPLATE, ADD_SIMPLE_EMAIL_TEMPLATE, AUTHENTICATION, CALENDAR, DASHBOARD, EDIT_EMAIL_TEMPLATE, EMAILS_STATISTICS, LIST_EMAIL_TEMPLATES, LIST_USERS, PROFILE, SEND_EMAIL, SEND_EMAIL_SCHEDULED, USERS_STATISTICS,SAVEDTEMPLATES, LIST_SMS_TEMPLATES, ADD_SMS_TEMPLATE, CREATE_SMS_TEMPLATE, CREATE_WHATSAPP_TEMPLATE, UPDATE_SMS_TEMPLATE, SEND_SMS, SEND_WHATSAPP } from "./routes/paths";
+import { ADD_ADVANCED_EMAIL_TEMPLATE, ADD_EMAIL_TEMPLATE, ADD_SIMPLE_EMAIL_TEMPLATE, AUTHENTICATION, CALENDAR, DASHBOARD, EDIT_EMAIL_TEMPLATE, EMAILS_STATISTICS, LIST_EMAIL_TEMPLATES, LIST_USERS, PROFILE, SEND_EMAIL, SEND_EMAIL_SCHEDULED, USERS_STATISTICS,SAVEDTEMPLATES, LIST_SMS_TEMPLATES, ADD_SMS_TEMPLATE, CREATE_SMS_TEMPLATE, CREATE_WHATSAPP_TEMPLATE, UPDATE_SMS_TEMPLATE, SEND_SMS, SEND_WHATSAPP, LIST_PUSH_TEMPLATES } from "./routes/paths";
 import { decodeToken, selectIsAuth, selectRole } from "./redux/state/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Role } from "./models/user/Role";
@@ -10,7 +10,6 @@ import Loading from "./components/loading/Loading";
 import { getTemplatesEmail } from './redux/state/emailSlice';
 import AddSMS from './pages/admin/sms/add/AddSMS';
 import CreateWhatsapp from './pages/admin/sms/createWhatsapp/CreateWhatsapp';
-import PushNotification from './components/PushNotification/PushNotification';
 // Lazy load components
 const Dashboard = React.lazy(() => import('./pages/dashboard/Dashboard'));
 const Authentication = React.lazy(() => import('./pages/authentication/Authentication'));
@@ -34,6 +33,7 @@ const NotFound = React.lazy(() => import('./components/404Error/NotFound'));
 const SavedTemplates = React.lazy(() => import('./pages/user/email/savedTemplates/SavedTemplates'));
 const SendSMS = React.lazy(() => import('./pages/user/sms/sendSMS/SendSMS'));
 const SendWhatsapp = React.lazy(() => import('./pages/user/sms/sendWhatsapp/SendWhatsapp'));
+const PushNotification = React.lazy(() => import('./components/PushNotification/PushNotification'));
 
 
 
@@ -41,7 +41,6 @@ function App() {
   const dispatch: AppDispatch = useDispatch(); 
   useEffect(() => {
     dispatch(decodeToken());
-    dispatch(getTemplatesEmail());
   }, [dispatch]);
   const isAuth = useSelector(selectIsAuth);
   const role=useSelector(selectRole)
@@ -59,6 +58,7 @@ function App() {
                     <Route path={EMAILS_STATISTICS} element={<ProtectedRoute><EmailStatistics /></ProtectedRoute>} />
                     <Route path='*' element={<NotFound />} />
                     <Route path={LIST_SMS_TEMPLATES} element={<ProtectedRoute><ListSMS /></ProtectedRoute>} />
+                    <Route path={LIST_PUSH_TEMPLATES} element={<ProtectedRoute><PushNotification /></ProtectedRoute>}/>
 
                   {role===Role.ADMIN && ( <>
                     <Route path={ADD_EMAIL_TEMPLATE} element={<ProtectedRoute><AddEmail /></ProtectedRoute>} />
@@ -73,7 +73,6 @@ function App() {
                                       <Route path={`${UPDATE_SMS_TEMPLATE}/:id`} element={<ProtectedRoute><UpdateSMS /></ProtectedRoute>} />
 
                   </>)}
-                  <Route path="/push/list" element={<PushNotification />}/>
 
                   {role===Role.USER && ( <>
                     <Route path={SAVEDTEMPLATES} element={<ProtectedRoute><SavedTemplates /></ProtectedRoute>} />

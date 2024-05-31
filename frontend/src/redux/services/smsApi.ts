@@ -76,6 +76,13 @@ export const smsApi = createApi({
                 method: "GET",
             }),
         }),
+        deleteScheduledSMS: builder.mutation({
+            query: ( id: string ) => ({
+                url: `/deleteScheduledSMS/${id}`,
+                method: "DELETE",
+            }),
+    }),
+        
 
     }),
  
@@ -83,5 +90,5 @@ export const smsApi = createApi({
 
 export const {useSendSMSMutation,useGetSavedTemplatesSMSMutation,useToggleFavoriteSMSMutation,useUpdateSMSTemplateMutation,
     useAddTemplateSMSMutation,useDeleteSMSTemplateMutation,useGetAllSMSTemplatesMutation,useGetSMSTemplateByIdMutation,
-    useGetScheduledSMSMutation
+    useGetScheduledSMSMutation,useDeleteScheduledSMSMutation
 }=smsApi;

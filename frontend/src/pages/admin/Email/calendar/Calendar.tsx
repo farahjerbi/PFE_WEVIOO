@@ -3,24 +3,23 @@ import './Calendar.css'
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from '@fullcalendar/timegrid';
-import { useDeleteScheduledEmailMutation, useGetScheduledEmailsByUserMutation, useGetScheduledEmailsMutation } from '../../../../redux/services/emailApi';
-import { toast } from 'sonner';
-import { Button, Tooltip } from '@mui/material';
+import { useDeleteScheduledEmailMutation } from '../../../../redux/services/emailApi';
+import { Button } from '@mui/material';
 import { EventClickArg, EventContentArg } from '@fullcalendar/core';
 import ForwardToInbox from "@mui/icons-material/ForwardToInbox";
 import PermPhoneMsgOutlined from "@mui/icons-material/PermPhoneMsgOutlined";
 import ChatBubbleOutline from "@mui/icons-material/ChatBubbleOutline";
 
-import Clear from "@mui/icons-material/Clear";
-import Info from "@mui/icons-material/Info"
+import NotificationsActive from "@mui/icons-material/NotificationsActive"
 import styled from '@emotion/styled';
 import { selectRole, selectUser } from '../../../../redux/state/authSlice';
 import { useSelector } from 'react-redux';
 import { Role } from '../../../../models/user/Role';
-import { MDBBadge, MDBBtn, MDBCard, MDBCardHeader, MDBModal, MDBModalBody, MDBModalContent, MDBModalDialog, MDBModalFooter, MDBModalHeader, MDBModalTitle } from 'mdb-react-ui-kit';
+import {  MDBCard } from 'mdb-react-ui-kit';
 import { useLocation } from 'react-router-dom';
 import { ScheduledSMSResponse } from '../../../../models/sms/ScheduledSMSResponse';
 import { ScheduledEmailResponse } from '../../../../models/email/ScheduledEmailRespose';
+import { ScheduledPushInfo } from '../../../../models/push/ScheduledPushInfo';
 export const StyleWrapper = styled.div`
   .fc-button.fc-prev-button, .fc-button.fc-next-button, .fc-button.fc-button-primary{
     background:white;
@@ -39,13 +38,18 @@ export const StyleWrapper = styled.div`
   background:rgb(56, 18, 226);
   color:white;
 }
+.fc-h-event{
+  background-color:transparent;
+  border:transparent;
+}
 `
 interface Props{
   emails:ScheduledEmailResponse[] | undefined,
   sms:ScheduledSMSResponse[] | undefined,
-  whatsapp:ScheduledSMSResponse[] | undefined
+  whatsapp:ScheduledSMSResponse[] | undefined,
+  push:ScheduledPushInfo[] | undefined
   }
-const Calendar  : React.FC<Props> = ({ emails ,sms,whatsapp })=> {
+const Calendar  : React.FC<Props> = ({ emails ,sms,whatsapp,push })=> {
 const role = useSelector(selectRole);
 const [data, setData] = useState<any[]>([]);
 const [eventInfoBoxes, setEventInfoBoxes] = useState<{ [key: string]: boolean }>({});
@@ -78,11 +82,11 @@ const handleEventMouseLeave = (eventId: string) => {
   const dashboardNameFromPath = pathname.split('/');
   const formattedDashboardName =dashboardNameFromPath.slice(1).join('/');
   setDashboardName(formattedDashboardName);
-  console.log("🚀 ~ useEffect ~ formattedDashboardName:", formattedDashboardName)
   
   populateDataEmail(emails);
   populateDataSMS(sms);
   populateDataWhatsapp(whatsapp);
+  populateDataPush(push);
 
     }, [update]);
     
@@ -120,13 +124,15 @@ const handleEventMouseLeave = (eventId: string) => {
         }));
         setData(prevData => [...prevData, ...newData]);       }
 
-      const handleDelete=async()=>{
-          await deleteScheduledEmail(id).unwrap()
-          setUpdate(!update)
-          toast.success("Scheduled Email deleted successfully!")
-          toggleOpen()
-
-      }
+        function populateDataPush(data:any) {
+          const newData = data.map((e:any) => ({
+            title:e.name ,
+            id:e.jobId,
+            date:e.nextTimeFired,
+            type:"push",
+          }));
+          setData(prevData => [...prevData, ...newData]);       }
+  
 
         const   handleEventClick = (clickInfo: EventClickArg) => {
           if(role===Role.USER){
@@ -163,26 +169,7 @@ const handleEventMouseLeave = (eventId: string) => {
         />
             </StyleWrapper>
             <>
-      <MDBModal open={basicModal} setOpen={setBasicModal} tabIndex='-1'>
-        <MDBModalDialog>
-          <MDBModalContent>
-            <MDBModalHeader>
-              <MDBModalTitle>Delete Your Scheduled Email</MDBModalTitle>
-              <MDBBtn className='btn-close' color='none' onClick={toggleOpen}></MDBBtn>
-            </MDBModalHeader>
-            <MDBModalBody>
-              <p>Are you sure you want to delete this scheduled email ?</p>
-            </MDBModalBody>
 
-            <MDBModalFooter>
-              <MDBBtn color='secondary' onClick={toggleOpen}>
-                Close
-              </MDBBtn>
-              <MDBBtn color='danger' onClick={handleDelete} >Yes!</MDBBtn>
-            </MDBModalFooter>
-          </MDBModalContent>
-        </MDBModalDialog>
-      </MDBModal>
   </>
     </div>
     </MDBCard>
@@ -228,6 +215,16 @@ const renderEventContent = (eventContent: EventContentArg, showInfoBox: boolean,
                   
             )}
 
+{type==="push" && (
+              <>
+              <Button className="color_pink" style={{color:"white"}} >
+                            
+                            <NotificationsActive style={{marginRight:"3px"}} />
+                                {eventContent.timeText}
+                              </Button>   
+              </>
+                  
+            )}
                           
 
       </>

@@ -17,4 +17,5 @@ public class SchedulePushRequest {
     private LocalDateTime dateTime;
     private ZoneId timeZone;
     private Long userId;
+    private boolean isAdmin;
 }

@@ -8,7 +8,7 @@ export const CREATE_PUSH_TEMPLATE="/push/add/push-template"
 export const ADD_ADVANCED_EMAIL_TEMPLATE="/email/add/advanced-email-template"
 export const LIST_EMAIL_TEMPLATES="/email/list"
 export const LIST_SMS_TEMPLATES="/sms/list"
-export const LIST_PUSH_TEMPLATES="/push"
+export const LIST_PUSH_TEMPLATES="/push/list"
 
 export const LIST_USERS="/users/list"
 export const USERS_STATISTICS="/users/statistics"

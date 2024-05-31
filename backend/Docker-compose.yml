@@ -77,6 +77,24 @@ services:
       - db-postgres
     networks:
       - mynetwork
+      
+  push:
+      container_name: push
+      image: push
+      build: ./ms_push
+      ports:
+        - "9093:9093"
+      environment:
+        - SPRING_DATASOURCE_URL=jdbc:postgresql://db-postgres:5432/Ms_PUSH_Notification?useSSL=false
+        - SPRING_DATASOURCE_USERNAME=postgres
+        - SPRING_DATASOURCE_PASSWORD=admin
+        - eureka.client.service-url.defaultZone=http://serviceregistry:8761/eureka/
+      depends_on:
+        - eureka
+        - db-postgres
+      networks:
+        - mynetwork
+
 
 
   db-postgres:

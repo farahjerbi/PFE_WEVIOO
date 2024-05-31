@@ -6,7 +6,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -20,10 +22,9 @@ public class Team {
     private String name;
     private String description;
     private String avatar;
-    @OneToMany(mappedBy = "team")
-    private List<Member> members;
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Member> members = new HashSet<>();
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonIgnore
     private UserEntity user;
 }

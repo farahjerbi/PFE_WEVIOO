@@ -22,7 +22,7 @@ const DeleteTemplateModal: React.FC<DeleteTemplateModalProps> = ({ id , onClose 
       await deleteTemplate(id);
       dispatch(setDeleteEmail(id))
       toast.success("Template Deleted Successfully !");
-      onClose();
+      toggleOpen();
     } catch (error) {
       toast.error("Error! Yikes");
       console.error("🚀 ~ error:", error);

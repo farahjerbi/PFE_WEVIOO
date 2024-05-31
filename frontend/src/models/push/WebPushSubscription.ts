@@ -3,5 +3,5 @@ export interface WebPushSubscription{
     notificationEndPoint:string;
     publicKey:string;
     auth:string
-    userId:number
+    userId?:number
 }

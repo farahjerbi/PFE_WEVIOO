@@ -1,5 +1,6 @@
 package wevioo.tn.ms_auth.controllers;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -75,8 +76,9 @@ public class ProfileController {
     }
 
     @GetMapping("getUserById/{id}")
+    @Transactional
     public UserResponse getUserById(@PathVariable Long id){
-        UserEntity user = userRepository.findByIdWithTeams(id);
+        UserEntity user = profileService.getUserByIdWithTeamsAndMembers(id);
         return  modelMapper.map(user, UserResponse.class);
     }
     @PostMapping("createTeam/{id}")

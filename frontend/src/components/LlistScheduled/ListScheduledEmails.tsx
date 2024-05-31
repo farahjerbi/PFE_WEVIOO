@@ -4,6 +4,9 @@ import { MDBBadge, MDBCard, MDBCardBody, MDBCol, MDBPagination, MDBPaginationIte
 import React, { useState } from 'react'
 import { ScheduledEmailResponse } from '../../models/email/ScheduledEmailRespose'
 import './ListScheduled.css'
+import Delete from '@mui/icons-material/Delete'
+import DeleteScheduledNotif from '../modals/DeleteScheduledNotif'
+import { NotificationType } from '../../models/NotificationType'
 interface Props{
     emails:ScheduledEmailResponse[] 
     }
@@ -19,8 +22,11 @@ const ListScheduledEmails: React.FC<Props> = ({ emails  })=> {
           };
         //END PAGINATION
         const[query,setQuery]=useState<string>('')
-
+        const[deleteModal,setDeleteModal]=useState<boolean>(false)
+        const[selectedId,setSelectedId]=useState<string>('')
+        
   return (
+    <>
     <MDBCol
     className="mb-4 d-flex align-items-center"
   >
@@ -36,6 +42,7 @@ const ListScheduledEmails: React.FC<Props> = ({ emails  })=> {
               <th className='tab'>CC</th>
               <th className='tab'>ReplyTo</th>
               <th className='tab'>Time of Sent</th>
+              <th className='tab'>unschedule</th>
             </tr>
           </MDBTableHead>
           <MDBTableBody>
@@ -53,7 +60,18 @@ const ListScheduledEmails: React.FC<Props> = ({ emails  })=> {
                   <td className='tab'>{template.cc}</td>
                   <td className='tab'>{template.replyTo}</td>
                   <td className='tab'>{template.nextTimeFired}</td>
-
+                  <td className='tab'>
+                  <Tooltip title="Delete" className="color_pink" >
+                    <Button 
+                    onClick={() => { 
+                      setSelectedId(template.jobId)
+                      setDeleteModal(true)
+                    }}
+                    >
+                    <Delete style={{color:"whitesmoke"}}  />
+                    </Button>                           
+                    </Tooltip>
+                  </td>
          
               </tr>
             ))}
@@ -98,7 +116,12 @@ const ListScheduledEmails: React.FC<Props> = ({ emails  })=> {
         </MDBPagination>
       </nav>
     </MDBCard>
-  </MDBCol>  )
+  </MDBCol>
+  {selectedId && (
+    <DeleteScheduledNotif id={selectedId} onClose={()=>{setDeleteModal(false);setSelectedId("")}} show={deleteModal} type={NotificationType.EMAIL} />
+  )}
+    </>
+      )
 }
 
 export default ListScheduledEmails

@@ -1,29 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="47b90f9d-f514-4815-89cb-02ca514b65ac" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/ms_auth/src/main/java/wevioo/tn/ms_auth/entities/Member.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ms_auth/src/main/java/wevioo/tn/ms_auth/entities/Team.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ms_auth/src/main/java/wevioo/tn/ms_auth/repositories/MemberRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ms_auth/src/main/java/wevioo/tn/ms_auth/repositories/TeamRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms_auth/src/main/java/wevioo/tn/ms_auth/controllers/ProfileController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms_auth/src/main/java/wevioo/tn/ms_auth/controllers/ProfileController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms_auth/src/main/java/wevioo/tn/ms_auth/dtos/responses/UserResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms_auth/src/main/java/wevioo/tn/ms_auth/dtos/responses/UserResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms_auth/src/main/java/wevioo/tn/ms_auth/entities/UserEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms_auth/src/main/java/wevioo/tn/ms_auth/entities/UserEntity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms_auth/src/main/java/wevioo/tn/ms_auth/repositories/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms_auth/src/main/java/wevioo/tn/ms_auth/repositories/UserRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms_auth/src/main/java/wevioo/tn/ms_auth/services/ProfileService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms_auth/src/main/java/wevioo/tn/ms_auth/services/ProfileService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms_auth/src/main/java/wevioo/tn/ms_auth/services/ProfileServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms_auth/src/main/java/wevioo/tn/ms_auth/services/ProfileServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms_auth/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/ms_auth/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms_email/src/main/java/wevioo/tn/ms_email/FeignClients/UsersClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms_email/src/main/java/wevioo/tn/ms_email/FeignClients/UsersClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms_sms/src/main/java/wevioo/tn/ms_sms/controllers/SmsController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms_sms/src/main/java/wevioo/tn/ms_sms/controllers/SmsController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms_sms/src/main/java/wevioo/tn/ms_sms/controllers/WhatsAppController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms_sms/src/main/java/wevioo/tn/ms_sms/controllers/WhatsAppController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms_sms/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/ms_sms/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/components/register/Register.css" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/register/Register.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/pages/admin/Email/list/ListEmails.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/pages/admin/Email/list/ListEmails.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/pages/scheduled/Scheduled.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/pages/scheduled/Scheduled.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/redux/services/smsApi.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/redux/services/smsApi.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/redux/services/whatsAppApi.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/redux/services/whatsAppApi.ts" afterDir="false" />
-    </list>
+    <list default="true" id="47b90f9d-f514-4815-89cb-02ca514b65ac" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -69,6 +47,7 @@
       <workItem from="1715251826181" duration="133000" />
       <workItem from="1715260373243" duration="17000" />
       <workItem from="1715595710317" duration="20000" />
+      <workItem from="1716417379922" duration="3000" />
     </task>
     <servers />
   </component>

@@ -12,7 +12,10 @@ public interface UserRepository extends JpaRepository<UserEntity,Long> {
 
     Optional<UserEntity> findByEmail(String email);
     Boolean existsByEmail(String email);
-    @Query("SELECT u FROM UserEntity u LEFT JOIN FETCH u.teams WHERE u.id = :userId")
-    UserEntity findByIdWithTeams(@Param("userId") Long userId);
 
+    @Query("SELECT u FROM UserEntity u " +
+            "LEFT JOIN FETCH u.teams t " +
+            "LEFT JOIN FETCH t.members " +
+            "WHERE u.id = :userId")
+    UserEntity findByIdWithTeamsAndMembers(@Param("userId") Long userId);
 }

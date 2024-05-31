@@ -1,5 +1,3 @@
-const { image } = require("html2canvas/dist/types/css/types/image");
-
 self.addEventListener('push', function(event) {
     if (!(self.Notification && self.Notification.permission === 'granted')) {
         return;
@@ -11,7 +9,8 @@ self.addEventListener('push', function(event) {
     }
     var title = data.title;
     var message = data.message;
-    var icon = `http://localhost:8093/uploadsPush/${data.icon}`;
+    var icon = `http://localhost:8099/uploadsPush/${data.icon}`;
+    console.log('Icon URL:', icon);
 
     self.clickTarget = data.clickTarget;
 

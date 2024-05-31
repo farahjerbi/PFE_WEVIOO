@@ -14,7 +14,7 @@ import {
   MDBTableHead,
 } from "mdb-react-ui-kit";
 import "./ListEmails.css";
-import {  useState } from "react";
+import {  useEffect, useState } from "react";
 import {
   useGetDesignTemplateMutation,
   useToggleFavoriteEmailMutation,
@@ -38,7 +38,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { ADD_EMAIL_TEMPLATE, EDIT_EMAIL_TEMPLATE, SEND_EMAIL, SEND_EMAIL_SCHEDULED } from "../../../../routes/paths";
 import DeleteTemplateModal from "../../../../components/modals/DeleteTemplateModal";
 import ViewEmailTemplateSimple from "../../../../components/modals/ViewEmailTemplateSimple";
-import { selectEmails, setSelectedEmail, setUpdateEmailFav } from "../../../../redux/state/emailSlice";
+import { getTemplatesEmail, selectEmails, setSelectedEmail, setUpdateEmailFav } from "../../../../redux/state/emailSlice";
+import { AppDispatch } from "../../../../redux/store";
 
 const ListEmails = () => {
   const [basicModal, setBasicModal] = useState(false);
@@ -50,7 +51,7 @@ const ListEmails = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const templates = useSelector(selectEmails);
-  const currentItems = templates.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = templates?.slice(indexOfFirstItem, indexOfLastItem);
   const navigate = useNavigate();
   const role = useSelector(selectRole);
   const user=useSelector(selectUser)
@@ -59,6 +60,12 @@ const ListEmails = () => {
   const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
   const[toggleFavoriteEmail]=useToggleFavoriteEmailMutation();
   const dispatch=useDispatch();
+  const dispatchApp: AppDispatch = useDispatch(); 
+  useEffect(() => {
+    dispatchApp(getTemplatesEmail());
+   }, []);
+
+
   const handlePageChange = (page: any) => {
     setCurrentPage(page);
   };
@@ -162,7 +169,7 @@ const ListEmails = () => {
                   </tr>
                 </MDBTableHead>
                 <MDBTableBody>
-                  {currentItems.filter(
+                  {currentItems?.filter(
           (template:EmailTemplate)=>template.name.toLowerCase().includes(query) ||
           template.state?.toString()===query).map((template:EmailTemplate) => (
                     <tr key={template.id}>
@@ -268,7 +275,7 @@ const ListEmails = () => {
                   </MDBPaginationLink>
                 </MDBPaginationItem>
                 {Array.from(
-                  { length: Math.ceil(templates.length / itemsPerPage) },
+                  { length: Math.ceil(templates?.length / itemsPerPage) },
                   (_, i) => (
                     <MDBPaginationItem key={i} active={i + 1 === currentPage}>
                       <MDBPaginationLink
@@ -281,7 +288,7 @@ const ListEmails = () => {
                 )}
                 <MDBPaginationItem
                   disabled={
-                    currentPage === Math.ceil(templates.length / itemsPerPage)
+                    currentPage === Math.ceil(templates?.length / itemsPerPage)
                   }
                 >
                   <MDBPaginationLink

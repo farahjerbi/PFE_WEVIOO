@@ -4,7 +4,7 @@ import { WebPushSubscription } from "../../models/push/WebPushSubscription";
 export const pushApi = createApi({
     reducerPath: 'pushApi',
     baseQuery:fetchBaseQuery({
-        baseUrl:"http://localhost:8093/apiPush"
+        baseUrl:"http://localhost:8099/apiPush"
     }),
     endpoints:(builder)=>({
         subscribe : builder.mutation({
@@ -36,11 +36,35 @@ export const pushApi = createApi({
                 method: "GET",
             }),
         }),
-
-
+        deleteScheduledPush: builder.mutation({
+            query: ( id: string ) => ({
+                url: `/deleteScheduledWhatsapp/${id}`,
+                method: "DELETE",
+            }),
+    }),
+    getScheduledPushsByUser: builder.mutation({
+        query:  (id:number) => ({
+            url: `/getScheduledPushesByUser/${id}`,
+            method: "GET",
+        }),
+    }),
+    toggleFavoritePush: builder.mutation({
+        query: ( {idTemplate,idUser}) => ({
+            url: `/toggleFavoritePush/${idTemplate}/${idUser}`,
+            method: "PUT",
+        }),
+    }),
+    getSavedTemplatesPush: builder.mutation({
+        query: ( id ) => ({
+            url: `/likedByUser/${id}`,
+            method: "GET",
+        }),
+    }),
     }),
     
  
 })
 
-export const {useGetPushByIdMutation,useSubscribeMutation,useDeletePushTemplateMutation}=pushApi;
+export const {useGetPushByIdMutation,useSubscribeMutation,useDeletePushTemplateMutation, useDeleteScheduledPushMutation
+    ,useGetScheduledPushsByUserMutation,useToggleFavoritePushMutation,useGetSavedTemplatesPushMutation
+}=pushApi;

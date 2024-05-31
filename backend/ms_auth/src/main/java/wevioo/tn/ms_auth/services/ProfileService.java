@@ -17,4 +17,5 @@ public interface ProfileService {
     UserResponse UpdateProfile(UpdateUser userEntity , Long id );
     List<UserResponse> getAllUsers();
     Team createTeamWithMembers(Team teamDto, Long userId);
+    UserEntity getUserByIdWithTeamsAndMembers(Long userId);
 }

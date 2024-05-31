@@ -3,8 +3,7 @@ import './Scheduled.css'
 import Calendar from '../admin/Email/calendar/Calendar'
 import { useSelector } from 'react-redux'
 import { selectRole, selectUser } from '../../redux/state/authSlice'
-import { useDeleteScheduledEmailMutation, useGetScheduledEmailsByUserMutation } from '../../redux/services/emailApi'
-import { toast } from 'sonner'
+import {  useGetScheduledEmailsByUserMutation } from '../../redux/services/emailApi'
 import BreadcrumSection from '../../components/BreadcrumSection/BreadcrumSection'
 import { useGetScheduledWhatsappMutation } from '../../redux/services/whatsAppApi'
 import { useGetScheduledSMSMutation } from '../../redux/services/smsApi'
@@ -15,28 +14,31 @@ import { MDBContainer } from 'mdb-react-ui-kit'
 import { Button } from '@mui/material'
 import { ScheduledSMSResponse } from '../../models/sms/ScheduledSMSResponse'
 import { Role } from '../../models/user/Role'
+import { useGetScheduledPushsByUserMutation } from '../../redux/services/pushApi'
+import { NotificationType } from '../../models/NotificationType'
+import ListScheduledPush from '../../components/LlistScheduled/ListScheduledPush'
+import { ScheduledPushInfo } from '../../models/push/ScheduledPushInfo'
 const Scheduled = () => {
     //PAGINATION
     const[emails,setEmails]=useState<ScheduledEmailResponse[]>();
     const[sms,setSMS]=useState<ScheduledSMSResponse[]>();
     const[whatsapp,setWhatsapp]=useState<ScheduledSMSResponse[]>();
+    const[push,setPush]=useState<ScheduledPushInfo[]>();
     const[query,setQuery]=useState<string>("email")
 
     //END PAGINATION
     const role = useSelector(selectRole);
     const user = useSelector(selectUser);
-    const [basicModal, setBasicModal] = useState<boolean>(false);
-    const toggleOpen = () => setBasicModal(!basicModal);
-    const[deleteScheduledEmail]=useDeleteScheduledEmailMutation()
     const[getScheduledEmailsByUser]=useGetScheduledEmailsByUserMutation()
     const[getScheduledSMS]=useGetScheduledSMSMutation()
     const[getScheduledWhatsapp]=useGetScheduledWhatsappMutation()
-    const [idDelete, setIdDelete] = useState<number>();
+    const[getScheduledPushsByUser]=useGetScheduledPushsByUserMutation()
 
     useEffect(() => {
       fetchDataUserEmail();
       fetchDataUserSMS();
       fetchDataUserWhatsapp();
+      fetchDataUserPush();
      }, []);
     
     const fetchDataUserEmail = async () => {
@@ -45,7 +47,6 @@ const Scheduled = () => {
             const response = await getScheduledEmailsByUser(user.id).unwrap();
             setEmails(response)
           } catch (error) {
-            toast.error("Error! Yikes");
             console.error("🚀 ~ error:", error);
           }
         }
@@ -58,7 +59,6 @@ const Scheduled = () => {
             setSMS(response)
             console.log("🚀 ~ fetchData ~ response SMS:", response);
           } catch (error) {
-            toast.error("Error! Yikes");
             console.error("🚀 ~ error:", error);
           }
         }
@@ -69,7 +69,17 @@ const Scheduled = () => {
             const response = await getScheduledWhatsapp(user.id).unwrap();
             setWhatsapp(response)
           } catch (error) {
-            toast.error("Error! Yikes");
+            console.error("🚀 ~ error:", error);
+          }
+        }
+      };
+
+      const fetchDataUserPush= async () => {
+        if(user){
+          try {
+            const response = await getScheduledPushsByUser(user.id).unwrap();
+            setPush(response)
+          } catch (error) {
             console.error("🚀 ~ error:", error);
           }
         }
@@ -80,7 +90,7 @@ const Scheduled = () => {
   <BreadcrumSection/>
     <div style={{width:"80%" , marginTop:"7%",marginLeft:"10%"}}>
     {emails && sms && whatsapp && (
-        <Calendar  emails={emails} sms={sms} whatsapp={whatsapp}/>
+        <Calendar  emails={emails} sms={sms} whatsapp={whatsapp} push={push}/>
     )}
     </div>
     {role===Role.USER && (
@@ -96,6 +106,9 @@ const Scheduled = () => {
                    <Button onClick={()=>setQuery("whatsapp")} size="small"  >
                    <img  src="../../../assets/unfollow.png" alt="" style={{width:"5%"}} /> Scheduled Whatsapp
                    </Button>
+                   <Button onClick={()=>setQuery("push")} size="small"  >
+                   <img  src="../../../assets/unfollow.png" alt="" style={{width:"5%"}} /> Scheduled Push
+                   </Button>
                   
      
                </MDBContainer>
@@ -104,13 +117,16 @@ const Scheduled = () => {
                      <ListScheduledEmails emails={emails}/>
      
                  )}
-                 {sms && query==="sms" &&(
-                   <ListScheduled type={"sms"} sms={sms}/>
+                 {sms && query===NotificationType.SMS &&(
+                   <ListScheduled type={NotificationType.SMS} sms={sms}/>
                  )}
-               {whatsapp && query==="whatsapp" &&(
-                       <ListScheduled type={"whatsapp"} sms={whatsapp}/>
+               {whatsapp && query===NotificationType.WHATSAPP &&(
+                       <ListScheduled type={NotificationType.WHATSAPP} sms={whatsapp}/>
                      )}
         
+        {push && query===NotificationType.PUSH &&(
+                       <ListScheduledPush push={push} />
+                     )}
                </div>
          
          </div>
