@@ -21,7 +21,10 @@ public class RouteValidator {
             "/uploads/",
             "uploadsPush",
             "/apiSms/",
-            "/apiWhatsApp/"
+            "/apiWhatsApp/",
+            "/api/auth/",
+            "/api/users/"
+
     );
 
     public Predicate<ServerHttpRequest> isSecured =

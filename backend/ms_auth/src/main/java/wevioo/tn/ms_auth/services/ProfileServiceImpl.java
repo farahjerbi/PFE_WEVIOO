@@ -1,5 +1,6 @@
 package wevioo.tn.ms_auth.services;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -7,7 +8,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import wevioo.tn.ms_auth.dtos.requests.ChangePasswordRequest;
 import wevioo.tn.ms_auth.dtos.requests.ForgotPassword;
+import wevioo.tn.ms_auth.dtos.requests.TeamRequest;
 import wevioo.tn.ms_auth.dtos.requests.UpdateUser;
+import wevioo.tn.ms_auth.dtos.responses.MemberResponse;
 import wevioo.tn.ms_auth.dtos.responses.UserResponse;
 import wevioo.tn.ms_auth.entities.Member;
 import wevioo.tn.ms_auth.entities.Team;
@@ -111,42 +114,59 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
 
-    public Team createTeamWithMembers(Team teamDto, Long userId) {
+    @Transactional
+    public Team createTeamWithMembers(TeamRequest teamDto, Long userId) {
         Team team = new Team();
         team.setName(teamDto.getName());
         team.setDescription(teamDto.getDescription());
+        team.setAvatar(teamDto.getAvatar());
+        team = teamRepository.save(team);
 
-        Optional<UserEntity> userOptional = userRepository.findById(userId);
-        if (userOptional.isPresent()) {
-            UserEntity user = userOptional.get();
-            team.setUser(user);
-        } else {
-            throw new IllegalArgumentException("User not found for the provided userId: " + userId);
-        }
-        teamRepository.save(team);
-            Set<Member> members = new HashSet<>();
+        Set<Member> members = new HashSet<>(memberRepository.findAllById(teamDto.getMembers()));
 
-        for (Member memberDto : teamDto.getMembers()) {
-            Member member = new Member();
-            member.setFullName(memberDto.getFullName());
-            member.setPhone(memberDto.getPhone());
-            member.setWhatsapp(memberDto.getWhatsapp());
-            member.setEmail(memberDto.getEmail());
+        for (Member member : members) {
             member.setTeam(team);
-            members.add(member);
         }
-
-        team.setMembers(members);
 
         memberRepository.saveAll(members);
 
         return team;
     }
+    @Transactional
+    public MemberResponse addMember(Member member, Long userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("User not found"));
 
+        Set<Member> members = user.getMembers();
+        members.size();
+
+        members.add(member);
+
+        user.setMembers(members);
+
+        member.setUser(user);
+
+        memberRepository.save(member);
+        userRepository.save(user);
+
+
+        return new MemberResponse(member);
+    }
 
     @Transactional
-    public UserEntity getUserByIdWithTeamsAndMembers(Long userId) {
-        return userRepository.findByIdWithTeamsAndMembers(userId);
+    public Member updateMember( Member updatedMember) {
+        Member existingMember = memberRepository.findById(updatedMember.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Member not found with id: " + updatedMember.getId()));
+
+        modelMapper.map(updatedMember, existingMember);
+
+        return memberRepository.save(existingMember);
+    }
+
+    public String deleteMember(Long id){
+         memberRepository.deleteById(id);
+        return "Contact deleted successfully";
+
     }
 
 }

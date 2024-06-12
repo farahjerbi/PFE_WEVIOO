@@ -10,7 +10,7 @@ import { useGetScheduledSMSMutation } from '../../redux/services/smsApi'
 import { ScheduledEmailResponse } from '../../models/email/ScheduledEmailRespose'
 import ListScheduledEmails from '../../components/LlistScheduled/ListScheduledEmails'
 import ListScheduled from '../../components/LlistScheduled/ListScheduled'
-import { MDBContainer } from 'mdb-react-ui-kit'
+import { MDBContainer, MDBIcon } from 'mdb-react-ui-kit'
 import { Button } from '@mui/material'
 import { ScheduledSMSResponse } from '../../models/sms/ScheduledSMSResponse'
 import { Role } from '../../models/user/Role'
@@ -18,6 +18,9 @@ import { useGetScheduledPushsByUserMutation } from '../../redux/services/pushApi
 import { NotificationType } from '../../models/NotificationType'
 import ListScheduledPush from '../../components/LlistScheduled/ListScheduledPush'
 import { ScheduledPushInfo } from '../../models/push/ScheduledPushInfo'
+import CalendarMonth from '@mui/icons-material/CalendarMonth'
+import SettingsSuggest from '@mui/icons-material/SettingsSuggest'
+
 const Scheduled = () => {
     //PAGINATION
     const[emails,setEmails]=useState<ScheduledEmailResponse[]>();
@@ -25,6 +28,7 @@ const Scheduled = () => {
     const[whatsapp,setWhatsapp]=useState<ScheduledSMSResponse[]>();
     const[push,setPush]=useState<ScheduledPushInfo[]>();
     const[query,setQuery]=useState<string>("email")
+    const[queryT,setQueryT]=useState<boolean>(true)
 
     //END PAGINATION
     const role = useSelector(selectRole);
@@ -88,46 +92,72 @@ const Scheduled = () => {
   return (
   <>
   <BreadcrumSection/>
-    <div style={{width:"80%" , marginTop:"7%",marginLeft:"10%"}}>
-    {emails && sms && whatsapp && (
+  {
+    role===Role.USER && (
+      <div className='container-s'>
+      <div className="buttons d-flex mt-5 me-5 ">
+          <Button onClick={()=>setQueryT(true)} fullWidth className={queryT ? 'me-3 baby-bluee':'me-3'} >
+              <CalendarMonth className='me-2'/>Calendar</Button>
+          <Button onClick={()=>setQueryT(false)} fullWidth className={!queryT ? 'me-3 baby-bluee':'me-3'}> 
+          <SettingsSuggest className='me-2'  /> More Details</Button>
+      </div>
+  </div>
+    )
+  }
+
+
+  <div style={{ width: "80%", marginTop: role === Role.USER ? "2%" : "10%", marginLeft: "10%" }}>
+    {emails && sms && whatsapp && queryT &&(
         <Calendar  emails={emails} sms={sms} whatsapp={whatsapp} push={push}/>
     )}
     </div>
-    {role===Role.USER && (
+    {role===Role.USER && !queryT && (
          <div>
          <MDBContainer className="mt-5 ms-5 mb-4 d-flex"   >              
                    <Button  onClick={()=>setQuery("email")} size="small"  >
-                   <img src="../../../assets/users-search.png" alt="" style={{width:"5%",borderRadius:"9px",marginRight:"2%"}}/>
+                   <img src="../../../assets/mail-calendar.png" alt="" style={{width:"10%",borderRadius:"9px",marginRight:"2%"}}/>
                        Scheduled Emails
                    </Button>      
                    <Button  onClick={()=>setQuery("sms")} size="small"  >
-                   <img  src="../../../assets/add-friend.png" alt="" style={{width:"5%",marginRight:"2%"}}  /> Scheduled SMS
+                   <img  src="../../../assets/sms-calendar.png" alt="" style={{width:"10%",marginRight:"2%"}}  /> Scheduled SMS
                    </Button>
                    <Button onClick={()=>setQuery("whatsapp")} size="small"  >
-                   <img  src="../../../assets/unfollow.png" alt="" style={{width:"5%"}} /> Scheduled Whatsapp
+                   <img  src="../../../assets/whatsapp-calendar.png" alt="" style={{width:"10%",marginRight:"2%"}} /> Scheduled Whatsapp
                    </Button>
                    <Button onClick={()=>setQuery("push")} size="small"  >
-                   <img  src="../../../assets/unfollow.png" alt="" style={{width:"5%"}} /> Scheduled Push
+                   <img  src="../../../assets/push-calendar.png" alt="" style={{width:"10%",marginRight:"2%"}} /> Scheduled Push
                    </Button>
                   
      
                </MDBContainer>
-               <div style={{marginLeft:"14%"}}>
+                <div style={{marginLeft:"24%"}} >
                      {emails && query==="email" &&(
-                     <ListScheduledEmails emails={emails}/>
+                      <>
+                           <ListScheduledEmails emails={emails}/>
+                      </>
      
                  )}
                  {sms && query===NotificationType.SMS &&(
-                   <ListScheduled type={NotificationType.SMS} sms={sms}/>
+                  <>
+                       <ListScheduled type={NotificationType.SMS} sms={sms}/>
+
+                  </>
                  )}
                {whatsapp && query===NotificationType.WHATSAPP &&(
-                       <ListScheduled type={NotificationType.WHATSAPP} sms={whatsapp}/>
+                <>
+                     <ListScheduled type={NotificationType.WHATSAPP} sms={whatsapp}/>
+
+                </>
                      )}
         
         {push && query===NotificationType.PUSH &&(
-                       <ListScheduledPush push={push} />
+          <>
+             <ListScheduledPush push={push} />
+          </>
                      )}
                </div>
+               
+               
          
          </div>
 

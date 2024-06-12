@@ -1,0 +1,25 @@
+.contact-container{
+    margin-left: 13%;
+    margin-top: 9%;
+    display: flex;
+
+}
+.contact-container-open{
+    margin-left: 13%;
+    margin-top: 7%;
+}
+
+.contact-card{
+    width: 500px;
+    max-height: 200px;
+    min-height: 200px;
+    overflow-y: auto; 
+}
+
+.contact-card-details{
+    margin-top: 5%;
+    min-width: 600px;
+    max-width:600px ;
+    min-height: 510px;
+
+}

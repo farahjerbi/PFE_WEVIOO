@@ -5,7 +5,7 @@ import {  useLocation, useNavigate } from 'react-router-dom';
 import { Role } from '../../models/user/Role';
 import { selectRole } from '../../redux/state/authSlice';
 import { useSelector } from 'react-redux';
-import {  CALENDAR, DASHBOARD, LIST_EMAIL_TEMPLATES, LIST_PUSH_TEMPLATES, LIST_SMS_TEMPLATES, LIST_USERS, PROFILE, SAVEDTEMPLATES } from '../../routes/paths';
+import {  CALENDAR, CONTACT, DASHBOARD, LIST_EMAIL_TEMPLATES, LIST_PUSH_TEMPLATES, LIST_SMS_TEMPLATES, LIST_USERS, PROFILE, SAVEDTEMPLATES } from '../../routes/paths';
 import { Tooltip } from '@mui/material';
 import { selectIsOpen } from '../../redux/state/styleSlice';
 const Sidebar = () => {
@@ -56,6 +56,13 @@ const Sidebar = () => {
                     </Tooltip>
                     {isOpen && ( <span>Profile</span> )}
 
+                    </MDBListGroupItem>
+
+                    <MDBListGroupItem  className={dashboardName === "contact" ? 'sidebar-item-active' : 'sidebar-item'}  onClick={()=>navigate(CONTACT)}>
+                         <Tooltip  title="Contact"  >
+                         <img src="../../../assets/phone-book.png" alt="sidebar-icon" className={isOpen?"sidebar-icon-open":"sidebar-icon"} />
+                        </Tooltip>
+                        {isOpen && ( <span>Contact</span> )}
                     </MDBListGroupItem>
 
                     <MDBListGroupItem  className={dashboardName === "calendar" ? 'sidebar-item-active' : 'sidebar-item'}  onClick={()=>navigate(CALENDAR)}>

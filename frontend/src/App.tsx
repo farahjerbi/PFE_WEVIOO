@@ -1,13 +1,12 @@
 import React, { Suspense, useEffect } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { Toaster } from 'sonner';
-import { ADD_ADVANCED_EMAIL_TEMPLATE, ADD_EMAIL_TEMPLATE, ADD_SIMPLE_EMAIL_TEMPLATE, AUTHENTICATION, CALENDAR, DASHBOARD, EDIT_EMAIL_TEMPLATE, EMAILS_STATISTICS, LIST_EMAIL_TEMPLATES, LIST_USERS, PROFILE, SEND_EMAIL, SEND_EMAIL_SCHEDULED, USERS_STATISTICS,SAVEDTEMPLATES, LIST_SMS_TEMPLATES, ADD_SMS_TEMPLATE, CREATE_SMS_TEMPLATE, CREATE_WHATSAPP_TEMPLATE, UPDATE_SMS_TEMPLATE, SEND_SMS, SEND_WHATSAPP, LIST_PUSH_TEMPLATES } from "./routes/paths";
+import { ADD_ADVANCED_EMAIL_TEMPLATE, ADD_EMAIL_TEMPLATE, ADD_SIMPLE_EMAIL_TEMPLATE, AUTHENTICATION, CALENDAR, DASHBOARD, EDIT_EMAIL_TEMPLATE, EMAILS_STATISTICS, LIST_EMAIL_TEMPLATES, LIST_USERS, PROFILE, SEND_EMAIL, SEND_EMAIL_SCHEDULED, USERS_STATISTICS,SAVEDTEMPLATES, LIST_SMS_TEMPLATES, ADD_SMS_TEMPLATE, CREATE_SMS_TEMPLATE, CREATE_WHATSAPP_TEMPLATE, UPDATE_SMS_TEMPLATE, SEND_SMS, SEND_WHATSAPP, LIST_PUSH_TEMPLATES, CONTACT } from "./routes/paths";
 import { decodeToken, selectIsAuth, selectRole } from "./redux/state/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Role } from "./models/user/Role";
 import { AppDispatch } from "./redux/store";
 import Loading from "./components/loading/Loading"; 
-import { getTemplatesEmail } from './redux/state/emailSlice';
 import AddSMS from './pages/admin/sms/add/AddSMS';
 import CreateWhatsapp from './pages/admin/sms/createWhatsapp/CreateWhatsapp';
 // Lazy load components
@@ -34,6 +33,7 @@ const SavedTemplates = React.lazy(() => import('./pages/user/email/savedTemplate
 const SendSMS = React.lazy(() => import('./pages/user/sms/sendSMS/SendSMS'));
 const SendWhatsapp = React.lazy(() => import('./pages/user/sms/sendWhatsapp/SendWhatsapp'));
 const PushNotification = React.lazy(() => import('./components/PushNotification/PushNotification'));
+const Contact=React.lazy(() => import('./pages/user/contact/Contact'));
 
 
 
@@ -76,6 +76,7 @@ function App() {
 
                   {role===Role.USER && ( <>
                     <Route path={SAVEDTEMPLATES} element={<ProtectedRoute><SavedTemplates /></ProtectedRoute>} />
+                    <Route path={CONTACT} element={<ProtectedRoute><Contact /></ProtectedRoute>} />
                     <Route path={`${SEND_WHATSAPP}/:id`} element={<ProtectedRoute><SendWhatsapp /></ProtectedRoute>} />
                     <Route path={`${SEND_EMAIL_SCHEDULED}/:id`}
                     element={<ProtectedRoute><SendSimpleEmail isScheduled={true} /></ProtectedRoute>} />

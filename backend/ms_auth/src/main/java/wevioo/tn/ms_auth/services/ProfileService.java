@@ -2,8 +2,11 @@ package wevioo.tn.ms_auth.services;
 
 import wevioo.tn.ms_auth.dtos.requests.ChangePasswordRequest;
 import wevioo.tn.ms_auth.dtos.requests.ForgotPassword;
+import wevioo.tn.ms_auth.dtos.requests.TeamRequest;
 import wevioo.tn.ms_auth.dtos.requests.UpdateUser;
+import wevioo.tn.ms_auth.dtos.responses.MemberResponse;
 import wevioo.tn.ms_auth.dtos.responses.UserResponse;
+import wevioo.tn.ms_auth.entities.Member;
 import wevioo.tn.ms_auth.entities.Team;
 import wevioo.tn.ms_auth.entities.UserEntity;
 
@@ -16,6 +19,8 @@ public interface ProfileService {
 
     UserResponse UpdateProfile(UpdateUser userEntity , Long id );
     List<UserResponse> getAllUsers();
-    Team createTeamWithMembers(Team teamDto, Long userId);
-    UserEntity getUserByIdWithTeamsAndMembers(Long userId);
+    Team createTeamWithMembers(TeamRequest teamDto, Long userId);
+    MemberResponse addMember(Member member, Long userId);
+    Member updateMember( Member updatedMember);
+    String deleteMember(Long id);
 }

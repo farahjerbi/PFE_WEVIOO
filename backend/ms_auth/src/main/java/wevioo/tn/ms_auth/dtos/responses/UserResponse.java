@@ -2,9 +2,9 @@ package wevioo.tn.ms_auth.dtos.responses;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
-import wevioo.tn.ms_auth.entities.Team;
+import wevioo.tn.ms_auth.entities.Member;
 
-import java.util.List;
+import java.util.Set;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -18,6 +18,6 @@ public class UserResponse {
     private String mfaEnabled;
     private String emailSecret;
     private String signature;
-    private List<Team> team;
+    private Set<MemberResponse> members;
 }
 

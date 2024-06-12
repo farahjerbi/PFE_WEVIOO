@@ -5,6 +5,7 @@ import { Role } from "../../models/user/Role";
 import { jwtDecode } from "jwt-decode";
 import axios from 'axios';
 import { DecodedToken } from "../../models/authentication/DecodedToken";
+import { Contact } from "../../models/user/Contact";
 
 
   export const decodeToken = createAsyncThunk<IUser | null, void>(
@@ -51,13 +52,15 @@ export interface AuthState{
     isAuthorized: boolean;
     token: string | null;
     role: Role | null;
+    contact: Contact[] | null;
 }
 
 const initialState: AuthState={
     user:null,
     token: localStorage.getItem("token"),
     isAuthorized: false,
-    role:null
+    role:null,
+    contact:null
 }
 
 
@@ -74,6 +77,7 @@ export const authSlice = createSlice({
             state.token=action.payload.token;
             state.role=action.payload.user.role;
             state.isAuthorized=true;
+            state.contact=action.payload.user.members
         },
         setUpdatedUser:(
           state, 
@@ -114,6 +118,7 @@ export const selectIsAuth = (state: RootState) => state.auth.isAuthorized;
 export const selectUser = (state: RootState) => state.auth.user;
 export const selectToken = (state: RootState) => state.auth.token;
 export const selectRole = (state: RootState) => state.auth.role;
+export const selectContact = (state: RootState) => state.auth.contact;
 export const {setUpdatedUser,setUser,logout,setIsAuthorized} = authSlice.actions
 
 export default authSlice.reducer;

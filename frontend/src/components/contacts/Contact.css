@@ -1,0 +1,8 @@
+.custom-phone-input-wrapper {
+    display: flex;
+    justify-content: center; /* Center align the input if desired */
+  }
+  
+  .custom-phone-input {
+    width: 100%; /* Adjust the width as needed */
+  }

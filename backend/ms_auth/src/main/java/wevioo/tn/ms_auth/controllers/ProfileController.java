@@ -9,8 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import wevioo.tn.ms_auth.dtos.requests.ChangePasswordRequest;
 import wevioo.tn.ms_auth.dtos.requests.ForgotPassword;
+import wevioo.tn.ms_auth.dtos.requests.TeamRequest;
 import wevioo.tn.ms_auth.dtos.requests.UpdateUser;
+import wevioo.tn.ms_auth.dtos.responses.MemberResponse;
 import wevioo.tn.ms_auth.dtos.responses.UserResponse;
+import wevioo.tn.ms_auth.entities.Member;
 import wevioo.tn.ms_auth.entities.Team;
 import wevioo.tn.ms_auth.entities.UserEntity;
 import wevioo.tn.ms_auth.repositories.UserRepository;
@@ -18,6 +21,7 @@ import wevioo.tn.ms_auth.services.AuthenticationService;
 import wevioo.tn.ms_auth.services.ProfileService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users/")
@@ -78,16 +82,41 @@ public class ProfileController {
     @GetMapping("getUserById/{id}")
     @Transactional
     public UserResponse getUserById(@PathVariable Long id){
-        UserEntity user = profileService.getUserByIdWithTeamsAndMembers(id);
+        Optional<UserEntity> user = userRepository.findById(id);
         return  modelMapper.map(user, UserResponse.class);
     }
     @PostMapping("createTeam/{id}")
-    public ResponseEntity<Team> createTeamWithMembers(@RequestBody Team teamDto,@PathVariable Long id) {
+    public ResponseEntity<Team> createTeamWithMembers(@RequestBody TeamRequest teamDto, @PathVariable Long id) {
         try {
             Team team = profileService.createTeamWithMembers(teamDto,id);
             return ResponseEntity.status(HttpStatus.CREATED).body(team);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
+    }
+
+    @PostMapping("createMember/{id}")
+    public ResponseEntity<MemberResponse> createMember(@RequestBody Member member, @PathVariable Long id) {
+        try {
+            MemberResponse m = profileService.addMember(member,id);
+            return ResponseEntity.status(HttpStatus.CREATED).body(m);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
+    @PostMapping("updateMember")
+    public ResponseEntity<Member> updateMember(@RequestBody Member member) {
+        try {
+            Member m = profileService.updateMember(member);
+            return ResponseEntity.status(HttpStatus.CREATED).body(m);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
+    @DeleteMapping("deleteMember/{id}")
+    public String deleteMember(@PathVariable Long id){
+        return profileService.deleteMember(id);
     }
 }

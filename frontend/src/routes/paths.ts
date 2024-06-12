@@ -1,4 +1,5 @@
 export const DASHBOARD = "/dashboard";
+export const CONTACT = "/contact";
 export const ADD_EMAIL_TEMPLATE="/email/add"
 export const ADD_SMS_TEMPLATE="/sms/add"
 export const ADD_SIMPLE_EMAIL_TEMPLATE="/email/add/simple-email-template"

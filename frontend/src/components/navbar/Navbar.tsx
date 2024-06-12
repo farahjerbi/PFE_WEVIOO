@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../redux/state/authSlice';
 import { Link, useNavigate } from 'react-router-dom';
 import { IconButton, Tooltip } from '@mui/material';
-import { DASHBOARD, LIST_EMAIL_TEMPLATES, LIST_PUSH_TEMPLATES, LIST_SMS_TEMPLATES } from '../../routes/paths';
+import { CONTACT, DASHBOARD, LIST_EMAIL_TEMPLATES, LIST_PUSH_TEMPLATES, LIST_SMS_TEMPLATES } from '../../routes/paths';
 import { selectIsOpen, setIsOpen } from '../../redux/state/styleSlice';
 import { useState } from 'react';
 
@@ -55,9 +55,12 @@ const Navbar = () => {
                         <li>
                              <Link className="menu-items" to={LIST_PUSH_TEMPLATES}>Push</Link>
                         </li>
+                        <li>
+                            <Link className="menu-items" to={CONTACT}>Contact</Link>
+                        </li>
                     </ul>
                 </div>
-                    <MDBNavbarNav  className='justify-content-end' style={{marginLeft:"60%"}} >
+                    <MDBNavbarNav  className='justify-content-end' style={{marginLeft:"50%"}} >
                         <MDBNavbarItem >
                         <Tooltip title="Logout"  >
                         <IconButton onClick={()=>handleLogout()}>

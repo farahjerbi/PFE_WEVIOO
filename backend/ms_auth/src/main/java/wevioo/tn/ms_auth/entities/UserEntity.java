@@ -27,8 +27,8 @@ public class UserEntity implements UserDetails {
     private String secret;
     private String signature;
     private String emailSecret;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Team> teams = new HashSet<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<Member> members = new HashSet<>();
 
     @Enumerated(EnumType.STRING)
     private Role role= Role.valueOf("USER");
@@ -36,6 +36,19 @@ public class UserEntity implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        UserEntity that = (UserEntity) obj;
+        return Objects.equals(id, that.id);
     }
 
     @Override
