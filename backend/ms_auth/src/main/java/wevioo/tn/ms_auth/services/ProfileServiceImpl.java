@@ -120,6 +120,10 @@ public class ProfileServiceImpl implements ProfileService {
         team.setName(teamDto.getName());
         team.setDescription(teamDto.getDescription());
         team.setAvatar(teamDto.getAvatar());
+        UserEntity user= userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("User not found"));
+        team.setUserTeam(user);
+
         team = teamRepository.save(team);
 
         Set<Member> members = new HashSet<>(memberRepository.findAllById(teamDto.getMembers()));
@@ -138,20 +142,21 @@ public class ProfileServiceImpl implements ProfileService {
                 .orElseThrow(() -> new IllegalStateException("User not found"));
 
         Set<Member> members = user.getMembers();
-        members.size();
+        if (members == null) {
+            members = new HashSet<>();
+        }
 
         members.add(member);
-
         user.setMembers(members);
-
         member.setUser(user);
 
         memberRepository.save(member);
         userRepository.save(user);
+        MemberResponse memberResponse = modelMapper.map(member, MemberResponse.class);
 
-
-        return new MemberResponse(member);
+        return memberResponse;
     }
+
 
     @Transactional
     public Member updateMember( Member updatedMember) {

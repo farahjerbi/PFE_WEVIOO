@@ -1,0 +1,50 @@
+.team-avatar {
+    width: 17%;
+    cursor: pointer;
+    border: 4px solid transparent; 
+    border-radius: 50%; 
+    transition: border-color 0.3s; 
+  }
+  
+  .team-avatar:hover {
+    border-color: #f7e3e3; 
+  }
+  
+  .team-avatar.selected {
+    border-color: #ff6347; 
+  }
+  /* Fade-in effect */
+.fade-in {
+    opacity: 0;
+    animation: fadeIn 2s forwards;
+  }
+  
+  @keyframes fadeIn {
+    to {
+      opacity: 1;
+    }
+  }
+  
+  /* Text shadow */
+  .text-shadow {
+    text-shadow: 2px 2px 5px rgba(169, 169, 169, 0.3);
+  }
+  
+  /* Underline on hover */
+  .hover-underline:hover {
+    text-decoration: underline;
+  }
+  
+  /* Text animation */
+  .text-animation {
+    animation: colorChange 1.6s infinite alternate;
+  }
+  
+  @keyframes colorChange {
+    from {
+      color: rgb(222, 201, 201);
+    }
+    to {
+      color: #ff6347;
+    }
+  }

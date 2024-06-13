@@ -33,7 +33,7 @@ const SavedTemplates = React.lazy(() => import('./pages/user/email/savedTemplate
 const SendSMS = React.lazy(() => import('./pages/user/sms/sendSMS/SendSMS'));
 const SendWhatsapp = React.lazy(() => import('./pages/user/sms/sendWhatsapp/SendWhatsapp'));
 const PushNotification = React.lazy(() => import('./components/PushNotification/PushNotification'));
-const Contact=React.lazy(() => import('./pages/user/contact/Contact'));
+const Contact=React.lazy(() => import('./pages/user/contact/Contacts'));
 
 
 

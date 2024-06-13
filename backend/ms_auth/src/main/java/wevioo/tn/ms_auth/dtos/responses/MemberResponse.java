@@ -1,11 +1,15 @@
 package wevioo.tn.ms_auth.dtos.responses;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import wevioo.tn.ms_auth.entities.Member;
 
 @Data
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
+@AllArgsConstructor
 public class MemberResponse {
     private Long id;
     private String fullName;
@@ -17,18 +21,5 @@ public class MemberResponse {
     private String publicKey;
     private Long userId;
     private Long teamId;
-
-    public MemberResponse(Member member) {
-        this.id = member.getId();
-        this.fullName = member.getFullName();
-        this.phone = member.getPhone();
-        this.whatsapp = member.getWhatsapp();
-        this.email = member.getEmail();
-        this.auth = member.getAuth();
-        this.endpoint = member.getEndpoint();
-        this.publicKey = member.getPublicKey();
-        this.userId = member.getUser().getId();
-        this.teamId=member.getTeam().getId();
-    }
 
 }

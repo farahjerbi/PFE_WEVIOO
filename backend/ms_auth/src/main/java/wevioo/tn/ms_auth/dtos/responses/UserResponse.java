@@ -19,5 +19,7 @@ public class UserResponse {
     private String emailSecret;
     private String signature;
     private Set<MemberResponse> members;
+    private Set<TeamResponse> teams;
+
 }
 

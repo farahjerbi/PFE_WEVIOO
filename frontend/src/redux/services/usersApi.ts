@@ -1,5 +1,6 @@
 import {createApi , fetchBaseQuery} from "@reduxjs/toolkit/query/react"
-import { UpdatedUser } from "../../models/user/UpdatedUser";
+import { IAddContact } from "../../models/user/Contact";
+import { Team } from "../../models/user/Team";
 
 export const usersApi = createApi({
     reducerPath: 'usersApi',
@@ -60,9 +61,27 @@ export const usersApi = createApi({
                 };
             }
         }),
+        createMember : builder.mutation({
+            query:(body:{contact:IAddContact,id:number|undefined})=>{
+                return{
+                    url:`/createMember/${body.id}`,
+                    method:"POST",
+                    body:body.contact
+                };
+            }
+        }),
+        createTeam : builder.mutation({
+            query:(body:{team:Team,id:number|undefined})=>{
+                return{
+                    url:`/createTeam/${body.id}`,
+                    method:"POST",
+                    body:body.team
+                };
+            }
+        }),
 
     })
 })
 
-export const {useGetAllUsersMutation ,useResetPasswordMutation,
+export const {useGetAllUsersMutation ,useResetPasswordMutation,useCreateMemberMutation,useCreateTeamMutation,
     useActivateUserMutation,useDesActivateUserMutation,useDeleteUserMutation,useChangePasswordMutation}=usersApi;

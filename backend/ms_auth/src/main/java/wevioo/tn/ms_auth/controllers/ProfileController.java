@@ -85,6 +85,12 @@ public class ProfileController {
         Optional<UserEntity> user = userRepository.findById(id);
         return  modelMapper.map(user, UserResponse.class);
     }
+    @GetMapping("getUserBy/{id}")
+    @Transactional
+    public UserResponse getUserBy(@PathVariable Long id){
+        UserEntity user = userRepository.findByIdWithTeams(id);
+        return  modelMapper.map(user, UserResponse.class);
+    }
     @PostMapping("createTeam/{id}")
     public ResponseEntity<Team> createTeamWithMembers(@RequestBody TeamRequest teamDto, @PathVariable Long id) {
         try {

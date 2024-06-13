@@ -5,7 +5,8 @@ import { Role } from "../../models/user/Role";
 import { jwtDecode } from "jwt-decode";
 import axios from 'axios';
 import { DecodedToken } from "../../models/authentication/DecodedToken";
-import { Contact } from "../../models/user/Contact";
+import { IContact } from "../../models/user/Contact";
+import { ITeam } from "../../models/user/Team";
 
 
   export const decodeToken = createAsyncThunk<IUser | null, void>(
@@ -52,7 +53,9 @@ export interface AuthState{
     isAuthorized: boolean;
     token: string | null;
     role: Role | null;
-    contact: Contact[] | null;
+    contact: IContact[] | null;
+    team: ITeam[] | null;
+
 }
 
 const initialState: AuthState={
@@ -60,7 +63,8 @@ const initialState: AuthState={
     token: localStorage.getItem("token"),
     isAuthorized: false,
     role:null,
-    contact:null
+    contact:null,
+    team:null
 }
 
 
@@ -68,6 +72,26 @@ export const authSlice = createSlice({
     name:"auth",
     initialState,
     reducers:{
+      addContact(state, action: PayloadAction<IContact>) {
+        if (state.contact) {
+          state.contact.push(action.payload);
+        }
+      },
+      addTeam(state, action: PayloadAction<ITeam>) {
+        if (state.team) {
+          state.team.push(action.payload);
+        }
+      },
+      addTeamIdToContacts(state, action: PayloadAction<{ contactIds: number[], teamId: number }>) {
+        const { contactIds, teamId } = action.payload;
+        if(state.contact){
+          state.contact.forEach(contact => {
+            if (contactIds.includes(contact.id)) {
+              contact.teamId = teamId;
+            }
+          });
+        }
+      },
         setUser:(
             state, 
             action : PayloadAction<UserPayload>
@@ -78,6 +102,8 @@ export const authSlice = createSlice({
             state.role=action.payload.user.role;
             state.isAuthorized=true;
             state.contact=action.payload.user.members
+            state.team=action.payload.user.teams
+
         },
         setUpdatedUser:(
           state, 
@@ -91,6 +117,7 @@ export const authSlice = createSlice({
             state.role=null;
             state.isAuthorized=false;
             state.token=null;
+            state.contact=null
         },
         setIsAuthorized: (state, action: PayloadAction<boolean>) => {
           state.isAuthorized = action.payload;
@@ -99,6 +126,8 @@ export const authSlice = createSlice({
     extraReducers: (builder) => {
         builder.addCase(decodeToken.fulfilled, (state, action) => {
           state.user = action.payload;
+          state.contact = action.payload?.members ?? null; 
+          state.team = action.payload?.teams ?? null; 
           state.isAuthorized = !isTokenExpired(state.token);
         if (action.payload !== null) {
             state.role = action.payload.role; 
@@ -108,6 +137,8 @@ export const authSlice = createSlice({
           state.user = null;
           state.role = null;
           state.isAuthorized = false;
+          state.contact=null;
+          state.team=null;
         });
       },
 })
@@ -119,6 +150,7 @@ export const selectUser = (state: RootState) => state.auth.user;
 export const selectToken = (state: RootState) => state.auth.token;
 export const selectRole = (state: RootState) => state.auth.role;
 export const selectContact = (state: RootState) => state.auth.contact;
-export const {setUpdatedUser,setUser,logout,setIsAuthorized} = authSlice.actions
+export const selectTeam = (state: RootState) => state.auth.team;
+export const {setUpdatedUser,setUser,logout,setIsAuthorized,addContact,addTeamIdToContacts,addTeam} = authSlice.actions
 
 export default authSlice.reducer;

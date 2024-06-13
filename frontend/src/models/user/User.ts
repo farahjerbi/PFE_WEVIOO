@@ -1,5 +1,6 @@
-import { Contact } from "./Contact";
+import { IContact } from "./Contact";
 import { Role } from "./Role";
+import { ITeam } from "./Team";
 
 export interface IUser {
     id:number,
@@ -11,7 +12,8 @@ export interface IUser {
     mfaEnabled:string
     signature:string
     emailSecret:string,
-    members:Contact[]
+    members:IContact[],
+    teams:ITeam[]
 }
 
 export type UserPayload = {
