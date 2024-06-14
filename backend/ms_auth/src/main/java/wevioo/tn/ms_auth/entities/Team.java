@@ -22,7 +22,12 @@ public class Team {
     private String name;
     private String description;
     private String avatar;
-    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "Team_Member",
+            joinColumns = @JoinColumn(name = "team_id"),
+            inverseJoinColumns = @JoinColumn(name = "member_id")
+    )
     private Set<Member> members = new HashSet<>();
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)

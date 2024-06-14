@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "Members")
@@ -21,10 +23,8 @@ public class Member {
     private String auth;
     private String Endpoint;
     private String publicKey;
-
-    @ManyToOne
-    @JoinColumn(name = "team_id")
-    private Team team;
+    @ManyToMany(mappedBy = "members")
+    private Set<Team> teams = new HashSet<>();
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity user;

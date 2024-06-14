@@ -71,7 +71,7 @@ const Team : React.FC<Props> = ({ onClose }) => {
             name:name,
             description:description,
             avatar:selectedAvatar,
-            members:left.map(contact => contact.id)
+            members:right.map(contact => contact.id)
           }
       try {
         if(user && user.id){
@@ -83,11 +83,10 @@ const Team : React.FC<Props> = ({ onClose }) => {
           toast.success("Team added Successfully !");
           onClose();
       } catch (err) {
-        toast.error('Error!')
         console.error("Error updating user:", err);
       }
     }
-  //TRANSFER LIST ///
+  /// TRANSFER LIST ///
   const [checked, setChecked] = useState<readonly IContact[]>([]);
   const [left, setLeft] = useState<readonly IContact[]>(contactsUser);
   const [right, setRight] = useState<readonly IContact[]>([]);

@@ -1,0 +1,46 @@
+.gradient-custom {
+  /* fallback for old browsers */
+  background: #6582f6;
+
+  /* Chrome 10-25, Safari 5.1-6 */
+  background: -webkit-linear-gradient(to right bottom, rgb(77, 95, 199), rgb(48, 57, 228));
+
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: linear-gradient(to right bottom, rgb(177, 217, 255), rgb(67, 197, 226))
+}
+
+  /* Fade-in effect */
+  .fade-in {
+    opacity: 0;
+    animation: fadeIn 2s forwards;
+  }
+  
+  @keyframes fadeIn {
+    to {
+      opacity: 1;
+    }
+  }
+  
+  /* Text shadow */
+  .text-shadow {
+    text-shadow: 2px 2px 5px rgba(169, 169, 169, 0.3);
+  }
+  
+  /* Underline on hover */
+  .hover-underline:hover {
+    text-decoration: underline;
+  }
+  
+  /* Text animation */
+  .text-animation {
+    animation: colorChange 1.6s infinite alternate;
+  }
+  
+  @keyframes colorChange {
+    from {
+      color: rgb(201, 216, 222);
+    }
+    to {
+      color: #273bd8;
+    }
+  }

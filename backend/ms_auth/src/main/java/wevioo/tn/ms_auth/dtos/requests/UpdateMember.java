@@ -1,18 +1,15 @@
-package wevioo.tn.ms_auth.dtos.responses;
+package wevioo.tn.ms_auth.dtos.requests;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import wevioo.tn.ms_auth.entities.Member;
 
 import java.util.Set;
 
 @Data
 @NoArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
 @AllArgsConstructor
-public class MemberResponse {
+public class UpdateMember {
     private Long id;
     private String fullName;
     private String phone;
@@ -23,5 +20,4 @@ public class MemberResponse {
     private String publicKey;
     private Long userId;
     private Set<Long> teamId;
-
 }

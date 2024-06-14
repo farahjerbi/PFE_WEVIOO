@@ -1,29 +1,31 @@
-import { MDBBtn, MDBBtnGroup, MDBCol, MDBInput, MDBRow } from 'mdb-react-ui-kit'
+import { MDBBtn, MDBCol, MDBInput, MDBRow } from 'mdb-react-ui-kit'
 import React, { FormEvent, useState } from 'react'
 import PhoneInput from 'react-phone-input-2'
 import "react-phone-input-2/lib/style.css";
 import './Contact.css'
-import { useCreateMemberMutation } from '../../redux/services/usersApi';
-import { aU } from '@fullcalendar/core/internal-common';
+import { useCreateMemberMutation, useUpdateMemberMutation } from '../../redux/services/usersApi';
 import { toast } from 'sonner';
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact, selectUser } from '../../redux/state/authSlice';
-import { IContact, IAddContact } from '../../models/user/Contact';
+import { addContact, selectContactDetails, selectUser, setContactDetails, updateContact } from '../../redux/state/authSlice';
+import { IAddContact, IContact } from '../../models/user/Contact';
+
 interface Props{
   onClose: () => void;
 }
 const Contact : React.FC<Props> = ({ onClose  }) => {
   const[createMember]=useCreateMemberMutation()
+  const[updateMember]=useUpdateMemberMutation()
   const user=useSelector(selectUser)
+  const contact=useSelector(selectContactDetails)
   const dispatch=useDispatch()
   const initialState={
-    fullName:"",
-    email:"" ,
-    phone:"" ,
-    whatsapp:"" ,
-    auth:"",
-    endPoint:"",
-    publicKey:"" ,
+    fullName:"" || contact?.fullName,
+    email:"" || contact?.email ,
+    phone:""  || contact?.phone ,
+    whatsapp:""  || contact?.whatsapp,
+    auth:"" || contact?.auth,
+    endPoint:"" || contact?.Endpoint,
+    publicKey:"" || contact?.publicKey,
   }
 
   const [formData, setFormData] = useState(initialState);
@@ -35,43 +37,71 @@ const Contact : React.FC<Props> = ({ onClose  }) => {
     setFormData({...formData,[name]:value})
   };
 
-  const handleAdd: (evt: FormEvent<HTMLFormElement>) => void = async (
-    e: FormEvent<HTMLFormElement>
-  ) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   
-    if (!fullName || !email  ) {
-      toast.warning("Please fill in at least name and email ");
+    if (!fullName || !email) {
+      toast.warning("Please fill in at least name and email");
       return;
     }
-      const contactRes:IAddContact={
-        fullName:fullName,
-        email:email ,
-        phone:phone ,
-        whatsapp:whatsapp ,
-        auth:auth,
-        Endpoint:endPoint,
-        publicKey:publicKey ,
-        }
-      console.log("🚀 ~ contactRes:", contactRes)
+  
+    const contactRes: IContact | IAddContact = {
+      fullName,
+      email,
+      phone: phone || "",
+      whatsapp: whatsapp || "",
+      auth: auth || "",
+      Endpoint: endPoint || "",
+      publicKey: publicKey || ""
+    };
+  
+    if (contact && user) {
+      const updatedContact: IContact = {
+        ...contactRes,
+        id: contact.id,
+        teamId: contact.teamId,
+        userId: user.id
+      };
+      await handleUpdateContact(updatedContact);
+    } else {
+      await handleAddContact(contactRes as IAddContact);
+    }
+  
+    setFormData(initialState);
+    onClose();
+  };
+  
+
+  const handleAddContact = async (contactRes: IAddContact) => {
     try {
-      const response = await createMember({contact:contactRes,id:user?.id}).unwrap()
-        dispatch(addContact(response))
-        setFormData(initialState)
-        toast.success("Contact added Successfully !");
-        onClose();
+      const response = await createMember({ contact: contactRes, id: user?.id }).unwrap();
+      dispatch(addContact(response));
+      toast.success("Contact added successfully!");
     } catch (err) {
-      toast.error('Error!')
+      toast.error('Error adding contact!');
+      console.error("Error adding user:", err);
+    }
+  };
+  
+  const handleUpdateContact = async (contactRes: IContact) => {
+    try {
+      await updateMember({ contact: contactRes }).unwrap();
+      dispatch(updateContact(contactRes));
+      dispatch(setContactDetails(null));
+      toast.success("Contact updated successfully!");
+    } catch (err) {
+      toast.error('Error updating contact!');
       console.error("Error updating user:", err);
     }
-  }
-
-
+  };
+  
   return (
+    
     <div className='add-contact'>
-            <form onSubmit={handleAdd}>
+          <h4 className=''>Create a contact</h4>
+            <form onSubmit={handleSubmit}>
 
-        <div className='mt-5'>
+        <div className='mt-3'>
         <div className='d-flex align-items-center mb-4'>
                 <img className='me-2' src="../../../assets/who.png" style={{width:"6.3%"}} alt="" />
               <MDBInput label='FullName' name='fullName' value={fullName} onChange={(e) => handleChange(e)}/>
@@ -84,14 +114,14 @@ const Contact : React.FC<Props> = ({ onClose  }) => {
                 <MDBCol md='6'>
                 <div className='d-flex align-items-center mb-3'>
                 <img className='me-2' src="../../../assets/sms-calendar.png" style={{width:"15%"}} alt="" />
-                    <PhoneInput  country={'us'}  onChange={(e) => handleNumberChange("phone", e)} containerClass='custom-phone-input' inputStyle={{ width: '100%' }} />
+                    <PhoneInput  country={'us'} value={phone}  onChange={(e) => handleNumberChange("phone", e)} containerClass='custom-phone-input' inputStyle={{ width: '100%' }} />
                 </div>
                 </MDBCol>
 
                 <MDBCol md='6'>
                 <div className='d-flex align-items-center'>
                 <img className='me-2' src="../../../assets/whatsapp-calendar.png" style={{width:"15%"}} alt="" />
-                    <PhoneInput country={'us'} onChange={(e) => handleNumberChange("whatsapp", e)} containerClass='custom-phone-input' inputStyle={{ width: '100%' }} />
+                    <PhoneInput country={'us'} value={whatsapp} onChange={(e) => handleNumberChange("whatsapp", e)} containerClass='custom-phone-input' inputStyle={{ width: '100%' }} />
                 </div>
                 </MDBCol>
             </MDBRow>

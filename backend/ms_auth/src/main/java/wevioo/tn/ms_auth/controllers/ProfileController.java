@@ -7,11 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import wevioo.tn.ms_auth.dtos.requests.ChangePasswordRequest;
-import wevioo.tn.ms_auth.dtos.requests.ForgotPassword;
-import wevioo.tn.ms_auth.dtos.requests.TeamRequest;
-import wevioo.tn.ms_auth.dtos.requests.UpdateUser;
+import wevioo.tn.ms_auth.dtos.requests.*;
 import wevioo.tn.ms_auth.dtos.responses.MemberResponse;
+import wevioo.tn.ms_auth.dtos.responses.TeamResponse;
 import wevioo.tn.ms_auth.dtos.responses.UserResponse;
 import wevioo.tn.ms_auth.entities.Member;
 import wevioo.tn.ms_auth.entities.Team;
@@ -92,9 +90,9 @@ public class ProfileController {
         return  modelMapper.map(user, UserResponse.class);
     }
     @PostMapping("createTeam/{id}")
-    public ResponseEntity<Team> createTeamWithMembers(@RequestBody TeamRequest teamDto, @PathVariable Long id) {
+    public ResponseEntity<TeamResponse> createTeamWithMembers(@RequestBody TeamRequest teamDto, @PathVariable Long id) {
         try {
-            Team team = profileService.createTeamWithMembers(teamDto,id);
+            TeamResponse team = profileService.createTeamWithMembers(teamDto,id);
             return ResponseEntity.status(HttpStatus.CREATED).body(team);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
@@ -112,9 +110,9 @@ public class ProfileController {
     }
 
     @PostMapping("updateMember")
-    public ResponseEntity<Member> updateMember(@RequestBody Member member) {
+    public ResponseEntity<MemberResponse> updateMember(@RequestBody UpdateMember member) {
         try {
-            Member m = profileService.updateMember(member);
+            MemberResponse m = profileService.updateMember(member);
             return ResponseEntity.status(HttpStatus.CREATED).body(m);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);

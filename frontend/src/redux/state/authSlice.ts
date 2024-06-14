@@ -55,7 +55,8 @@ export interface AuthState{
     role: Role | null;
     contact: IContact[] | null;
     team: ITeam[] | null;
-
+    contactDetails:IContact | null;
+    teamDetails:ITeam| null;
 }
 
 const initialState: AuthState={
@@ -64,7 +65,9 @@ const initialState: AuthState={
     isAuthorized: false,
     role:null,
     contact:null,
-    team:null
+    team:null,
+    contactDetails:null,
+    teamDetails:null
 }
 
 
@@ -76,6 +79,14 @@ export const authSlice = createSlice({
         if (state.contact) {
           state.contact.push(action.payload);
         }
+      },
+      updateContact(state, action: PayloadAction<IContact>) {
+        if (state.contact) {
+            const index = state.contact.findIndex((c: IContact) => c.id === action.payload.id);
+            if (index !== -1) {
+               state.contact[index]=action.payload
+            }
+          }        
       },
       addTeam(state, action: PayloadAction<ITeam>) {
         if (state.team) {
@@ -110,6 +121,18 @@ export const authSlice = createSlice({
           action : PayloadAction<IUser>
           )=>{
           state.user=action.payload;
+      },
+      setContactDetails:(
+        state, 
+        action : PayloadAction<IContact|null>
+        )=>{
+        state.contactDetails=action.payload;
+        },
+        setTeamDetails:(
+          state, 
+          action : PayloadAction<ITeam|null>
+          )=>{
+          state.teamDetails=action.payload;
       },
         logout:(state)=>{
             localStorage.clear();
@@ -151,6 +174,11 @@ export const selectToken = (state: RootState) => state.auth.token;
 export const selectRole = (state: RootState) => state.auth.role;
 export const selectContact = (state: RootState) => state.auth.contact;
 export const selectTeam = (state: RootState) => state.auth.team;
-export const {setUpdatedUser,setUser,logout,setIsAuthorized,addContact,addTeamIdToContacts,addTeam} = authSlice.actions
+export const selectContactDetails = (state: RootState) => state.auth.contactDetails;
+export const selectTeamDetails = (state: RootState) => state.auth.teamDetails;
+
+export const {setUpdatedUser,setUser,logout,setIsAuthorized,addContact,addTeamIdToContacts,addTeam,
+  setContactDetails,setTeamDetails,updateContact,
+} = authSlice.actions
 
 export default authSlice.reducer;

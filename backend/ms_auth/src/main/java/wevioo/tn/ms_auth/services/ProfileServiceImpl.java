@@ -6,11 +6,9 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import wevioo.tn.ms_auth.dtos.requests.ChangePasswordRequest;
-import wevioo.tn.ms_auth.dtos.requests.ForgotPassword;
-import wevioo.tn.ms_auth.dtos.requests.TeamRequest;
-import wevioo.tn.ms_auth.dtos.requests.UpdateUser;
+import wevioo.tn.ms_auth.dtos.requests.*;
 import wevioo.tn.ms_auth.dtos.responses.MemberResponse;
+import wevioo.tn.ms_auth.dtos.responses.TeamResponse;
 import wevioo.tn.ms_auth.dtos.responses.UserResponse;
 import wevioo.tn.ms_auth.entities.Member;
 import wevioo.tn.ms_auth.entities.Team;
@@ -115,26 +113,27 @@ public class ProfileServiceImpl implements ProfileService {
 
 
     @Transactional
-    public Team createTeamWithMembers(TeamRequest teamDto, Long userId) {
+    public TeamResponse createTeamWithMembers(TeamRequest teamDto, Long userId) {
         Team team = new Team();
         team.setName(teamDto.getName());
         team.setDescription(teamDto.getDescription());
         team.setAvatar(teamDto.getAvatar());
-        UserEntity user= userRepository.findById(userId)
+        UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalStateException("User not found"));
         team.setUserTeam(user);
 
-        team = teamRepository.save(team);
-
         Set<Member> members = new HashSet<>(memberRepository.findAllById(teamDto.getMembers()));
+        team.setMembers(members);
 
         for (Member member : members) {
-            member.setTeam(team);
+            member.getTeams().add(team);
         }
 
+        team = teamRepository.save(team);
         memberRepository.saveAll(members);
+        TeamResponse teamResponse = modelMapper.map(team, TeamResponse.class);
 
-        return team;
+        return teamResponse;
     }
     @Transactional
     public MemberResponse addMember(Member member, Long userId) {
@@ -158,20 +157,38 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
 
-    @Transactional
-    public Member updateMember( Member updatedMember) {
-        Member existingMember = memberRepository.findById(updatedMember.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Member not found with id: " + updatedMember.getId()));
-
-        modelMapper.map(updatedMember, existingMember);
-
-        return memberRepository.save(existingMember);
-    }
-
     public String deleteMember(Long id){
          memberRepository.deleteById(id);
         return "Contact deleted successfully";
 
     }
+
+    @Transactional
+    public MemberResponse updateMember(UpdateMember updatedMember) {
+        Member existingMember = memberRepository.findById(updatedMember.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Member not found with id: " + updatedMember.getId()));
+
+        UserEntity user = userRepository.findById(updatedMember.getUserId())
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + updatedMember.getUserId()));
+        existingMember.setUser(user);
+
+        existingMember.getTeams().clear();
+        if (updatedMember.getTeamId() != null && !updatedMember.getTeamId().isEmpty()) {
+            for (Long teamId : updatedMember.getTeamId()) {
+                Team team = teamRepository.findById(teamId)
+                        .orElseThrow(() -> new EntityNotFoundException("Team not found with id: " + teamId));
+                existingMember.getTeams().add(team);
+            }
+        }
+
+        modelMapper.map(updatedMember, existingMember);
+
+        memberRepository.save(existingMember);
+
+        MemberResponse memberResponse = modelMapper.map(existingMember, MemberResponse.class);
+        memberResponse.setTeamId(updatedMember.getTeamId());
+        return memberResponse;
+    }
+
 
 }

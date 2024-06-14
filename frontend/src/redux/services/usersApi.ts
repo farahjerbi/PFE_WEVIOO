@@ -1,5 +1,5 @@
 import {createApi , fetchBaseQuery} from "@reduxjs/toolkit/query/react"
-import { IAddContact } from "../../models/user/Contact";
+import { IAddContact, IContact } from "../../models/user/Contact";
 import { Team } from "../../models/user/Team";
 
 export const usersApi = createApi({
@@ -79,9 +79,20 @@ export const usersApi = createApi({
                 };
             }
         }),
+        updateMember : builder.mutation({
+            query:(body:{contact:IContact})=>{
+                return{
+                    url:`/updateMember`,
+                    method:"POST",
+                    body:body.contact
+                };
+            }
+        }),
 
     })
 })
 
 export const {useGetAllUsersMutation ,useResetPasswordMutation,useCreateMemberMutation,useCreateTeamMutation,
-    useActivateUserMutation,useDesActivateUserMutation,useDeleteUserMutation,useChangePasswordMutation}=usersApi;
+    useActivateUserMutation,useDesActivateUserMutation,useDeleteUserMutation,useChangePasswordMutation,
+    useUpdateMemberMutation
+}=usersApi;
