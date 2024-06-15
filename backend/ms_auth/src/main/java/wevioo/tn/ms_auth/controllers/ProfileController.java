@@ -118,6 +118,22 @@ public class ProfileController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
+    @PutMapping("updateTeam/{userId}/{teamId}")
+    public ResponseEntity<TeamResponse> updateTeam(@RequestBody TeamRequest teamRequest
+            ,@PathVariable Long userId,@PathVariable Long teamId) {
+        try {
+            TeamResponse m = profileService.updateTeamWithMembers(teamId,teamRequest,userId);
+            return ResponseEntity.status(HttpStatus.CREATED).body(m);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+    @DeleteMapping("deleteTeam/{id}")
+    public ResponseEntity<String> deleteTeam(@PathVariable Long id){
+         profileService.deleteTeam(id);
+        return ResponseEntity.status(HttpStatus.OK).body("Deleted succesffully");
+    }
+
 
     @DeleteMapping("deleteMember/{id}")
     public String deleteMember(@PathVariable Long id){

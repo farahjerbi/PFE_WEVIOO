@@ -22,7 +22,7 @@ public class Team {
     private String name;
     private String description;
     private String avatar;
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(
             name = "Team_Member",
             joinColumns = @JoinColumn(name = "team_id"),

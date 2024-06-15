@@ -112,7 +112,17 @@ export const authSlice = createSlice({
             state.token=action.payload.token;
             state.role=action.payload.user.role;
             state.isAuthorized=true;
-            state.contact=action.payload.user.members
+            const allMembers: IContact[] = [];
+            action.payload.user.teams.forEach((team) => {
+              if (team?.members) {
+                team.members.forEach((member) => {
+                  if (!allMembers.some((m) => m.id === member.id)) {
+                    allMembers.push(member);
+                  }
+                });
+              }
+            });
+            state.contact = allMembers;            
             state.team=action.payload.user.teams
 
         },
@@ -149,7 +159,20 @@ export const authSlice = createSlice({
     extraReducers: (builder) => {
         builder.addCase(decodeToken.fulfilled, (state, action) => {
           state.user = action.payload;
-          state.contact = action.payload?.members ?? null; 
+          if (action.payload) {
+            state.user = action.payload;
+            const allMembers: IContact[] = [];
+            action.payload.teams.forEach((team) => {
+              if (team?.members) {
+                team.members.forEach((member) => {
+                  if (!allMembers.some((m) => m.id === member.id)) {
+                    allMembers.push(member);
+                  }
+                });
+              }
+            });
+            state.contact = allMembers;
+          }
           state.team = action.payload?.teams ?? null; 
           state.isAuthorized = !isTokenExpired(state.token);
         if (action.payload !== null) {

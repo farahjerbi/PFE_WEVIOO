@@ -157,10 +157,19 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
 
-    public String deleteMember(Long id){
-         memberRepository.deleteById(id);
-        return "Contact deleted successfully";
+    @Transactional
+    public String deleteMember(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("Member not found with id: " + memberId));
 
+        for (Team team : member.getTeams()) {
+            team.getMembers().remove(member);
+        }
+
+        member.getTeams().clear();
+
+        memberRepository.deleteById(memberId);
+        return "deleted successfully";
     }
 
     @Transactional
@@ -190,5 +199,58 @@ public class ProfileServiceImpl implements ProfileService {
         return memberResponse;
     }
 
+    @Transactional
+    public TeamResponse updateTeamWithMembers(Long teamId, TeamRequest teamDto, Long userId) {
+        Team existingTeam = teamRepository.findById(teamId)
+                .orElseThrow(() -> new EntityNotFoundException("Team not found with id: " + teamId));
+
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+
+        updateTeamFields(existingTeam, teamDto, user);
+
+        Set<Member> newMembers = new HashSet<>(memberRepository.findAllById(teamDto.getMembers()));
+        updateMemberTeams(existingTeam, newMembers);
+
+        teamRepository.save(existingTeam);
+
+        return modelMapper.map(existingTeam, TeamResponse.class);
+    }
+
+    private void updateTeamFields(Team team, TeamRequest teamDto, UserEntity user) {
+        team.setName(teamDto.getName());
+        team.setDescription(teamDto.getDescription());
+        team.setAvatar(teamDto.getAvatar());
+        team.setUserTeam(user);
+    }
+
+    private void updateMemberTeams(Team team, Set<Member> newMembers) {
+        Set<Member> currentMembers = team.getMembers();
+
+        currentMembers.stream()
+                .filter(member -> !newMembers.contains(member))
+                .forEach(member -> member.getTeams().remove(team));
+
+        newMembers.forEach(member -> member.getTeams().add(team));
+
+        team.setMembers(newMembers);
+
+        memberRepository.saveAll(currentMembers);
+        memberRepository.saveAll(newMembers);
+    }
+
+    @Transactional
+    public void deleteTeam(Long teamId) {
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(() -> new EntityNotFoundException("Team not found with id: " + teamId));
+
+        for (Member member : team.getMembers()) {
+            member.getTeams().remove(team);
+            memberRepository.save(member);
+        }
+
+        team.getMembers().clear();
+        teamRepository.delete(team);
+    }
 
 }

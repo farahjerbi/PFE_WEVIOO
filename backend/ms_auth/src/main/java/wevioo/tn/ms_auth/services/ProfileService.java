@@ -20,4 +20,6 @@ public interface ProfileService {
     MemberResponse addMember(Member member, Long userId);
     MemberResponse updateMember(UpdateMember updatedMember) ;
     String deleteMember(Long id);
+    TeamResponse updateTeamWithMembers(Long teamId, TeamRequest teamDto, Long userId);
+    void deleteTeam(Long teamId);
 }

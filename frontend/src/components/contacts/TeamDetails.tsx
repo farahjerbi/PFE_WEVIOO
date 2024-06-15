@@ -52,17 +52,34 @@ const TeamDetails : React.FC<TeamDetailsProps> = ({ onClose }) => {
               />
             )}
           </div>
-          <MDBTypography tag="h4">{team?.name}</MDBTypography>
+          <MDBTypography tag="h5">{team?.name}</MDBTypography>
           <MDBCardText className="text-muted mb-4 mt-3">
             {team?.description}
           </MDBCardText>
-          <div className="d-flex justify-content-center mb-4">
-            <AvatarGroup max={4}>
-              {team?.members?.map((m, index) => (
-                <Avatar key={index} {...stringAvatar(m.fullName)} />
-              ))}
-            </AvatarGroup>
-          </div>
+          <AvatarGroup max={4}>
+                        {team?.members?.map((m, index) => (
+                          <Avatar key={index} {...stringAvatar(m.fullName)} />
+                        ))}
+                      </AvatarGroup>
+            <MDBCard className="mb-4">
+              <MDBCardBody>
+                <MDBRow>
+                  <MDBCol sm="3">
+                    <MDBCardText>
+                    <AvatarGroup max={4}>
+                        {team?.members?.map((m, index) => (
+                          <Avatar key={index} {...stringAvatar(m.fullName)} />
+                        ))}
+                      </AvatarGroup>
+                    </MDBCardText>
+                  </MDBCol>
+                  <MDBCol sm="9">
+                    <MDBCardText className="text-muted">Johnatan Smith</MDBCardText>
+                  </MDBCol>
+                </MDBRow>
+                <hr />
+              </MDBCardBody>
+            </MDBCard>
           <div className="d-flex justify-content-center">
             <Tooltip title="Update" className="color_baby_bluee mt-3 me-4">
             <Button onClick={()=>onClose()} >
