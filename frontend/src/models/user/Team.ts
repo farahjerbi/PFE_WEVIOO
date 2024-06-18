@@ -1,17 +1,23 @@
-import { IContact } from "./Contact"
+import { IAddContact } from "./Contact"
 
 export interface Team {
     id?:number,
     name: string,
     description:string,
     avatar:string|null,
-    members?:number[]
 }
 
 export interface ITeam {
     id?:number,
     name: string,
     description:string,
-    avatar:string|null,
-    members?:IContact[]
+    avatar:string|null|undefined,
 }
+
+export interface IUpdateTeam extends ITeam{
+    members:number[]
+} 
+
+export interface ITeamWithContact extends ITeam{
+    members:IAddContact[]
+} 

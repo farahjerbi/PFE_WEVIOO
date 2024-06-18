@@ -10,6 +10,7 @@ import wevioo.tn.ms_auth.dtos.requests.*;
 import wevioo.tn.ms_auth.dtos.responses.MemberResponse;
 import wevioo.tn.ms_auth.dtos.responses.TeamResponse;
 import wevioo.tn.ms_auth.dtos.responses.UserResponse;
+import wevioo.tn.ms_auth.dtos.responses.UsersResponse;
 import wevioo.tn.ms_auth.entities.Member;
 import wevioo.tn.ms_auth.entities.Team;
 import wevioo.tn.ms_auth.entities.UserEntity;
@@ -18,6 +19,7 @@ import wevioo.tn.ms_auth.repositories.TeamRepository;
 import wevioo.tn.ms_auth.repositories.UserRepository;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -99,16 +101,16 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
 
-    public List<UserResponse> getAllUsers() {
-        List<UserEntity> users = userRepository.findAll();
-        List<UserResponse> userResponses = new ArrayList<>();
+    public List<UsersResponse> getAllUsers() {
+        List<UserEntity> users = userRepository.findAllWithMembers();
+        List<UsersResponse> userResponsess = new ArrayList<>();
 
         for (UserEntity user : users) {
-            UserResponse userResponse = modelMapper.map(user, UserResponse.class);
-            userResponses.add(userResponse);
+            UsersResponse userResponse = modelMapper.map(user, UsersResponse.class);
+            userResponsess.add(userResponse);
         }
 
-        return userResponses;
+        return userResponsess;
     }
 
 
@@ -120,7 +122,6 @@ public class ProfileServiceImpl implements ProfileService {
         team.setAvatar(teamDto.getAvatar());
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalStateException("User not found"));
-        team.setUserTeam(user);
 
         Set<Member> members = new HashSet<>(memberRepository.findAllById(teamDto.getMembers()));
         team.setMembers(members);
@@ -176,38 +177,44 @@ public class ProfileServiceImpl implements ProfileService {
     public MemberResponse updateMember(UpdateMember updatedMember) {
         Member existingMember = memberRepository.findById(updatedMember.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Member not found with id: " + updatedMember.getId()));
-
         UserEntity user = userRepository.findById(updatedMember.getUserId())
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + updatedMember.getUserId()));
-        existingMember.setUser(user);
-
-        existingMember.getTeams().clear();
-        if (updatedMember.getTeamId() != null && !updatedMember.getTeamId().isEmpty()) {
-            for (Long teamId : updatedMember.getTeamId()) {
-                Team team = teamRepository.findById(teamId)
-                        .orElseThrow(() -> new EntityNotFoundException("Team not found with id: " + teamId));
-                existingMember.getTeams().add(team);
-            }
-        }
+                .orElseThrow(() -> new IllegalStateException("User not found"));
 
         modelMapper.map(updatedMember, existingMember);
+        existingMember.setUser(user);
+
+        Set<Team> newTeams = new HashSet<>(teamRepository.findAllById(updatedMember.getTeamId()));
+
+        if (newTeams.size() != updatedMember.getTeamId().size()) {
+            throw new EntityNotFoundException("Some teams not found");
+        }
+
+        updateMemberTeams(existingMember, newTeams);
 
         memberRepository.save(existingMember);
 
-        MemberResponse memberResponse = modelMapper.map(existingMember, MemberResponse.class);
-        memberResponse.setTeamId(updatedMember.getTeamId());
-        return memberResponse;
+        return modelMapper.map(existingMember, MemberResponse.class);
     }
 
-    @Transactional
-    public TeamResponse updateTeamWithMembers(Long teamId, TeamRequest teamDto, Long userId) {
+    private void updateMemberTeams(Member member, Set<Team> newTeams) {
+        Set<Team> currentTeams = member.getTeams();
+
+        currentTeams.removeIf(team -> !newTeams.contains(team));
+
+        newTeams.forEach(team -> team.getMembers().add(member));
+
+        member.getTeams().clear();
+        member.getTeams().addAll(newTeams);
+
+        teamRepository.saveAll(newTeams);
+    }
+
+        @Transactional
+    public TeamResponse updateTeamWithMembers(Long teamId, TeamRequest teamDto) {
         Team existingTeam = teamRepository.findById(teamId)
                 .orElseThrow(() -> new EntityNotFoundException("Team not found with id: " + teamId));
 
-        UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
-
-        updateTeamFields(existingTeam, teamDto, user);
+        updateTeamFields(existingTeam, teamDto);
 
         Set<Member> newMembers = new HashSet<>(memberRepository.findAllById(teamDto.getMembers()));
         updateMemberTeams(existingTeam, newMembers);
@@ -217,11 +224,10 @@ public class ProfileServiceImpl implements ProfileService {
         return modelMapper.map(existingTeam, TeamResponse.class);
     }
 
-    private void updateTeamFields(Team team, TeamRequest teamDto, UserEntity user) {
+    private void updateTeamFields(Team team, TeamRequest teamDto) {
         team.setName(teamDto.getName());
         team.setDescription(teamDto.getDescription());
         team.setAvatar(teamDto.getAvatar());
-        team.setUserTeam(user);
     }
 
     private void updateMemberTeams(Team team, Set<Member> newMembers) {
@@ -238,19 +244,22 @@ public class ProfileServiceImpl implements ProfileService {
         memberRepository.saveAll(currentMembers);
         memberRepository.saveAll(newMembers);
     }
-
     @Transactional
     public void deleteTeam(Long teamId) {
-        Team team = teamRepository.findById(teamId)
-                .orElseThrow(() -> new EntityNotFoundException("Team not found with id: " + teamId));
+            Team team = teamRepository.findById(teamId)
+                    .orElseThrow(() -> new EntityNotFoundException("Team not found with id: " + teamId));
 
-        for (Member member : team.getMembers()) {
-            member.getTeams().remove(team);
-            memberRepository.save(member);
-        }
 
-        team.getMembers().clear();
-        teamRepository.delete(team);
+            for (Member member : new ArrayList<>(team.getMembers())) {
+                member.getTeams().remove(team);
+                memberRepository.save(member);
+            }
+
+            team.getMembers().clear();
+            teamRepository.saveAndFlush(team);
+
+
+            teamRepository.deleteById(teamId);
+
     }
-
 }

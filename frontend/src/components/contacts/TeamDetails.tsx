@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { MDBCol, MDBContainer, MDBRow, MDBCard, MDBCardText, MDBCardBody, MDBCardImage, MDBBtn, MDBTypography, MDBIcon, MDBBadge } from 'mdb-react-ui-kit';
 import { useSelector } from 'react-redux';
-import { selectTeamDetails, selectUser } from '../../redux/state/authSlice';
-import { Avatar, AvatarGroup, Button, Tooltip } from '@mui/material';
+import { selectContactsByTeamId, selectTeamDetails, selectUser } from '../../redux/state/authSlice';
+import { Avatar, AvatarGroup, Button, Pagination, Tooltip } from '@mui/material';
 import Update from '@mui/icons-material/Update';
 import Delete from '@mui/icons-material/Delete';
+import DeleteContact from '../modals/DeleteContact';
 function stringToPastelColor(string: string) {
     let hash = 0;
     let i;
@@ -35,8 +36,22 @@ function stringAvatar(name: string) {
   }
 const TeamDetails : React.FC<TeamDetailsProps> = ({ onClose }) => {
     const team=useSelector(selectTeamDetails)
-    const user=useSelector(selectUser)
-    console.log("🚀 ~ TeamDetails ~ user:", user)
+    console.log("🚀 ~ team:", team)
+    const [openDelete,setOpenDelete]=useState<boolean>(false);
+    const [page, setPage] = useState(1);
+    const itemsPerPage = 1;
+    const contacts = useSelector(selectContactsByTeamId(team?.id));
+
+    const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+      setPage(value);
+    };
+  
+    const totalPages = Math.ceil((contacts.length || 0) / itemsPerPage);
+    const startIndex = (page - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const currentMembers = contacts.slice(startIndex, endIndex) || [];
+  
+  
   return (
     <MDBRow className="justify-content-center align-items-center">
     <MDBCol>
@@ -52,34 +67,34 @@ const TeamDetails : React.FC<TeamDetailsProps> = ({ onClose }) => {
               />
             )}
           </div>
-          <MDBTypography tag="h5">{team?.name}</MDBTypography>
-          <MDBCardText className="text-muted mb-4 mt-3">
+            <MDBBadge color="info" tag="h6">{team?.name}</MDBBadge>
+          <MDBCardText className="text-muted mb-2 mt-2">
             {team?.description}
           </MDBCardText>
-          <AvatarGroup max={4}>
+          
+             {/* <AvatarGroup max={4}>
                         {team?.members?.map((m, index) => (
                           <Avatar key={index} {...stringAvatar(m.fullName)} />
                         ))}
-                      </AvatarGroup>
-            <MDBCard className="mb-4">
-              <MDBCardBody>
-                <MDBRow>
-                  <MDBCol sm="3">
-                    <MDBCardText>
-                    <AvatarGroup max={4}>
-                        {team?.members?.map((m, index) => (
-                          <Avatar key={index} {...stringAvatar(m.fullName)} />
-                        ))}
-                      </AvatarGroup>
-                    </MDBCardText>
-                  </MDBCol>
-                  <MDBCol sm="9">
-                    <MDBCardText className="text-muted">Johnatan Smith</MDBCardText>
-                  </MDBCol>
-                </MDBRow>
-                <hr />
-              </MDBCardBody>
-            </MDBCard>
+                      </AvatarGroup> */}
+          {currentMembers.map((m, index) => (
+              <MDBCard className="mb-4" key={index} style={{backgroundColor:"beige"}} >
+                <MDBCardBody>
+                  <MDBRow className="align-items-center">
+                    <MDBCol sm="3" className="text-center">
+                      <Avatar {...stringAvatar(m.fullName)} style={{ width: '30px', height: '30px' }} />
+                    </MDBCol>
+                    <MDBCol sm="9">
+                      <MDBCardText className="text-muted">{m.fullName}</MDBCardText>
+                    </MDBCol>
+                  </MDBRow>
+                </MDBCardBody>
+              </MDBCard>
+            ))}
+      <div className="d-flex justify-content-center mt-3">
+              <Pagination count={totalPages} variant="outlined" color="primary" page={page} onChange={handleChange} />
+            </div>
+
           <div className="d-flex justify-content-center">
             <Tooltip title="Update" className="color_baby_bluee mt-3 me-4">
             <Button onClick={()=>onClose()} >
@@ -87,7 +102,7 @@ const TeamDetails : React.FC<TeamDetailsProps> = ({ onClose }) => {
               </Button>
             </Tooltip>
             <Tooltip title="Delete" className="color_blue mt-3 ms-5">
-              <Button>
+              <Button onClick={()=>setOpenDelete(true)} >
                 <Delete style={{ color: 'whitesmoke' }} />
               </Button>
             </Tooltip>
@@ -95,7 +110,9 @@ const TeamDetails : React.FC<TeamDetailsProps> = ({ onClose }) => {
         </MDBCardBody>
       </MDBCard>
     </MDBCol>
+    <DeleteContact isMember={false} onClose={()=>setOpenDelete(false)} show={openDelete} />
   </MDBRow>
+
 );
 }
 

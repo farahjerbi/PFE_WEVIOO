@@ -4,6 +4,7 @@ import wevioo.tn.ms_auth.dtos.requests.*;
 import wevioo.tn.ms_auth.dtos.responses.MemberResponse;
 import wevioo.tn.ms_auth.dtos.responses.TeamResponse;
 import wevioo.tn.ms_auth.dtos.responses.UserResponse;
+import wevioo.tn.ms_auth.dtos.responses.UsersResponse;
 import wevioo.tn.ms_auth.entities.Member;
 import wevioo.tn.ms_auth.entities.Team;
 
@@ -15,11 +16,11 @@ public interface ProfileService {
     String deleteProfile(long id);
 
     UserResponse UpdateProfile(UpdateUser userEntity , Long id );
-    List<UserResponse> getAllUsers();
+    List<UsersResponse> getAllUsers();
     TeamResponse createTeamWithMembers(TeamRequest teamDto, Long userId);
     MemberResponse addMember(Member member, Long userId);
     MemberResponse updateMember(UpdateMember updatedMember) ;
     String deleteMember(Long id);
-    TeamResponse updateTeamWithMembers(Long teamId, TeamRequest teamDto, Long userId);
+    TeamResponse updateTeamWithMembers(Long teamId, TeamRequest teamDto);
     void deleteTeam(Long teamId);
 }

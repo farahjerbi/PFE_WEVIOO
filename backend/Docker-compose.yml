@@ -110,4 +110,5 @@ services:
       - mynetwork
 
 networks:
-  mynetwork:
+  mynetwork:    
+    driver: bridge

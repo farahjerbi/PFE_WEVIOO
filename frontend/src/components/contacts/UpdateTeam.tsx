@@ -2,7 +2,7 @@ import { MDBBtn, MDBInput } from 'mdb-react-ui-kit'
 import React, { FormEvent, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'sonner'
-import { addTeam, selectContact, selectUser } from '../../redux/state/authSlice';
+import { selectContact, selectContactsByTeamId, selectTeamDetails, selectUser, updateTeamAndContacts } from '../../redux/state/authSlice';
 import './Team.css'
 import Grid from '@mui/material/Grid';
 import List from '@mui/material/List';
@@ -13,7 +13,7 @@ import Checkbox from '@mui/material/Checkbox';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import { IContact } from '../../models/user/Contact';
-import { useCreateTeamMutation } from '../../redux/services/usersApi';
+import {  useUpdateTeamMutation } from '../../redux/services/usersApi';
 function not(a: readonly IContact[], b: readonly IContact[]) {
     return a.filter((value) => b.indexOf(value) === -1);
   }
@@ -36,20 +36,21 @@ interface Props{
     "https://img.icons8.com/?size=100&id=hQvLWSMeYXa4&format=png&color=000000",
     "https://img.icons8.com/?size=100&id=ksEiuzzBUfiP&format=png&color=000000",
   ];
-const Team : React.FC<Props> = ({ onClose }) => {
+const UpdateTeam : React.FC<Props> = ({ onClose }) => {
     const user=useSelector(selectUser)
     const contactsUser = useSelector(selectContact) ?? [];    
     const dispatch=useDispatch()
-    const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
     const [previous, setPrevious] = useState<boolean>(false);
-    const [createTeam]=useCreateTeamMutation();
+    const [updateTeam]=useUpdateTeamMutation();
+    const team=useSelector(selectTeamDetails)
+    const [selectedAvatar, setSelectedAvatar] = useState<string | null | undefined>(team?.avatar);
     const handleAvatarClick = (src: string) => {
         setSelectedAvatar(src);
       };
     
     const initialState={
-        name:"",
-      description:"" ,
+        name:team?.name||"",
+      description:team?.description||"" ,
     }
   
     const [formData, setFormData] = useState(initialState);
@@ -68,6 +69,7 @@ const Team : React.FC<Props> = ({ onClose }) => {
         return;
       }
         const contactRes={
+            id:team?.id,
             name:name,
             description:description,
             avatar:selectedAvatar,
@@ -75,21 +77,24 @@ const Team : React.FC<Props> = ({ onClose }) => {
           }
       try {
         if(user && user.id){
-            const response = await createTeam({team:contactRes,id:user.id}).unwrap()
-            dispatch(addTeam(response))
+            const response = await updateTeam({team:contactRes}).unwrap()
+            dispatch(updateTeamAndContacts(response))
         }
           setFormData(initialState)
-          toast.success("Team added Successfully !");
+          toast.success("Team Updated Successfully !");
           onClose();
       } catch (err) {
         console.error("Error updating user:", err);
       }
     }
   /// TRANSFER LIST ///
+  const teamContacts=useSelector(selectContactsByTeamId(team?.id))??[]
   const [checked, setChecked] = useState<readonly IContact[]>([]);
-  const [left, setLeft] = useState<readonly IContact[]>(contactsUser);
-  const [right, setRight] = useState<readonly IContact[]>([]);
-  console.log("🚀 ~ right:", right)
+  const filteredTeamsUser = contactsUser.filter(
+    (team) => !teamContacts.some((c) => c.id === team.id)
+  );
+  const [left, setLeft] = useState<readonly IContact[]>(filteredTeamsUser);
+  const [right, setRight] = useState<readonly IContact[]>(teamContacts);
 
   const leftChecked = intersection(checked, left);
   const rightChecked = intersection(checked, right);
@@ -158,107 +163,106 @@ const Team : React.FC<Props> = ({ onClose }) => {
       </List>
     </Paper>
   );
-    return (
-      <div className='add-contact'>
-              <form onSubmit={handleAdd}>
-       {
-        !previous && (
+  return (
+    <div className='add-contact'>
+    <form onSubmit={handleAdd}>
+{
+!previous && (
 <div className='mt-2'>
-    <h4 className='mb-3'>Create a group</h4>
-            <div className=' me-1 ms-5' >
-            {avatars.map((avatar, index) => (
-          <img
-            key={index}
-            className={`team-avatar ${selectedAvatar === avatar ? 'selected' : ''}`}
-            src={avatar}
-            alt={`Avatar ${index + 1}`}
-            onClick={() => handleAvatarClick(avatar)}
-          />
-        ))}
-        <p className='text-center mt-1 animated-text text-shadow hover-underline text-animation'> <b>Select an avatar</b> </p>
-        </div>
-          <div className='d-flex align-items-center mb-4'>
-                  <img className='me-2' src="../../../assets/who.png" style={{width:"6.3%"}} alt="" />
-                <MDBInput label='Name' name='name' value={name} onChange={(e) => handleChange(e)}/>
-                </div>
-                <div className='d-flex align-items-center mb-4'>
-                  <img className='me-2' src="../../../assets/gmail.png" style={{width:"6.3%"}} alt="" />
-                <MDBInput name="description" label='Description' value={description} onChange={(e) => handleChange(e)} />
-                </div>
-                <MDBBtn color='secondary' type='button' onClick={()=>setPrevious(true)} className='mt-4' >
-                    Next
-                </MDBBtn>
-                           
+<h4 className='mb-3'>Update a group</h4>
+  <div className=' me-1 ms-5' >
+  {avatars.map((avatar, index) => (
+<img
+  key={index}
+  className={`team-avatar ${selectedAvatar === avatar ? 'selected' : ''}`}
+  src={avatar}
+  alt={`Avatar ${index + 1}`}
+  onClick={() => handleAvatarClick(avatar)}
+/>
+))}
+<p className='text-center mt-1 animated-text text-shadow hover-underline text-animation'> <b>Select an avatar</b> </p>
+</div>
+<div className='d-flex align-items-center mb-4'>
+        <img className='me-2' src="../../../assets/who.png" style={{width:"6.3%"}} alt="" />
+      <MDBInput label='Name' name='name' value={name} onChange={(e) => handleChange(e)}/>
       </div>
-        )
-       }   
-    {
-        previous && (
-            <>
-             <Grid container spacing={2} justifyContent="center" alignItems="center">
-      <Grid item>{customList(left)}</Grid>
-      <Grid item>
-        <Grid container direction="column" alignItems="center">
-          <Button
-            sx={{ my: 0.5 }}
-            variant="outlined"
-            size="small"
-            onClick={handleAllRight}
-            disabled={left.length === 0}
-            aria-label="move all right"
-          >
-            ≫
-          </Button>
-          <Button
-            sx={{ my: 0.5 }}
-            variant="outlined"
-            size="small"
-            onClick={handleCheckedRight}
-            disabled={leftChecked.length === 0}
-            aria-label="move selected right"
-          >
-            &gt;
-          </Button>
-          <Button
-            sx={{ my: 0.5 }}
-            variant="outlined"
-            size="small"
-            onClick={handleCheckedLeft}
-            disabled={rightChecked.length === 0}
-            aria-label="move selected left"
-          >
-            &lt;
-          </Button>
-          <Button
-            sx={{ my: 0.5 }}
-            variant="outlined"
-            size="small"
-            onClick={handleAllLeft}
-            disabled={right.length === 0}
-            aria-label="move all left"
-          >
-            ≪
-          </Button>
-        </Grid>
-      </Grid>
-      <Grid item>{customList(right)}</Grid>
-    </Grid>
-    <div className='d-flex justify-content-between'>
-    <MDBBtn type='button' onClick={()=>setPrevious(false)} color='secondary' className='mt-4' >
-                previous
-            </MDBBtn>
-             <MDBBtn type='submit' className='mt-4 ' >
-                Create
-            </MDBBtn>
-    </div>
-            
-            </>
-           
-        )
-    }  
-      </form>
+      <div className='d-flex align-items-center mb-4'>
+        <img className='me-2' src="../../../assets/gmail.png" style={{width:"6.3%"}} alt="" />
+      <MDBInput name="description" label='Description' value={description} onChange={(e) => handleChange(e)} />
       </div>
-      )
+      <MDBBtn color='secondary' type='button' onClick={()=>setPrevious(true)} className='mt-4' >
+          Next
+      </MDBBtn>
+                 
+</div>
+)
+}   
+{
+previous && (
+  <>
+   <Grid container spacing={2} justifyContent="center" alignItems="center">
+<Grid item>{customList(left)}</Grid>
+<Grid item>
+<Grid container direction="column" alignItems="center">
+<Button
+  sx={{ my: 0.5 }}
+  variant="outlined"
+  size="small"
+  onClick={handleAllRight}
+  disabled={left.length === 0}
+  aria-label="move all right"
+>
+  ≫
+</Button>
+<Button
+  sx={{ my: 0.5 }}
+  variant="outlined"
+  size="small"
+  onClick={handleCheckedRight}
+  disabled={leftChecked.length === 0}
+  aria-label="move selected right"
+>
+  &gt;
+</Button>
+<Button
+  sx={{ my: 0.5 }}
+  variant="outlined"
+  size="small"
+  onClick={handleCheckedLeft}
+  disabled={rightChecked.length === 0}
+  aria-label="move selected left"
+>
+  &lt;
+</Button>
+<Button
+  sx={{ my: 0.5 }}
+  variant="outlined"
+  size="small"
+  onClick={handleAllLeft}
+  disabled={right.length === 0}
+  aria-label="move all left"
+>
+  ≪
+</Button>
+</Grid>
+</Grid>
+<Grid item>{customList(right)}</Grid>
+</Grid>
+<div className='d-flex justify-content-between'>
+<MDBBtn type='button' onClick={()=>setPrevious(false)} color='secondary' className='mt-4' >
+      previous
+  </MDBBtn>
+   <MDBBtn type='submit' className='mt-4 ' >
+      Update
+  </MDBBtn>
+</div>
+  
+  </>
+ 
+)
+}  
+</form>
+</div>  )
 }
 
-export default Team
+export default UpdateTeam

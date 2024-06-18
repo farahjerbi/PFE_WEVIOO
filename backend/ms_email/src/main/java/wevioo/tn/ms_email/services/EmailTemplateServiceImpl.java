@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,6 +30,7 @@ import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import static wevioo.tn.ms_email.services.TemplateUtils.DIRECTORYPATH;
 
@@ -75,6 +77,7 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
         try {
 
             UserResponse user = usersClient.getUserById(id);
+            System.out.println("user: " + user);
             JavaMailSender mailSender =templateUtils.personalJavaMailSender(user.getEmail(), user.getEmailSecret());
 
             MimeMessage message = mailSender.createMimeMessage();
@@ -102,13 +105,11 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
 
             MimeMultipart mimeMultipart = new MimeMultipart("related");
 
-            //Add HTML Body content
             templateUtils.addHtmlContentToEmail(mimeMultipart,result, addSignature);
 
 
-            // Add signature to the email body
             if(addSignature.equals("true")){
-                String signatureUrl = "http://localhost:8099/uploads/" + user.getSignature();
+                String signatureUrl = "http://auth:8090/uploads/" + user.getSignature();
                 templateUtils.addImagesToEmailBody(signatureUrl,mimeMultipart);}
 
             //AddAttachment
@@ -193,4 +194,31 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
          emailTemplateRepository.save(emailTemplate);
     }
 
+
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

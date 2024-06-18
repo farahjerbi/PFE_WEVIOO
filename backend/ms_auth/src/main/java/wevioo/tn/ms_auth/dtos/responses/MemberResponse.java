@@ -21,7 +21,6 @@ public class MemberResponse {
     private String auth;
     private String endpoint;
     private String publicKey;
-    private Long userId;
-    private Set<Long> teamId;
+    private Set<TeamResponse> teams;
 
 }

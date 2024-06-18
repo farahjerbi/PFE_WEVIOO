@@ -13,6 +13,7 @@ import { ReactTyped } from 'react-typed'
 import ScheduleSMS from '../../../../components/modals/ScheduleSMS'
 import ViewSMSTemplate from '../../../../components/modals/ViewSMSTemplate'
 import NumberInput from '../../../../components/numberInput/NumberInput'
+import { NotificationType } from '../../../../models/NotificationType'
 const SendSMS = () => {
   const[numbers,setNumbers]=useState<string[]>([]);
   const[getSMSTemplateById]=useGetSMSTemplateByIdMutation();
@@ -106,9 +107,10 @@ const SendSMS = () => {
    <MDBCardBody className='p-5'>
    <MDBCard className='my-5'>
    <MDBCardBody className='p-5'>
-     <NumberInput label="Numbers:" onChange={setNumbers}  />
+     <NumberInput type={NotificationType.SMS} label="Numbers:" onChange={setNumbers}  />
      </MDBCardBody>
      </MDBCard>
+     
 
      <MDBBtn className='w-100 mb-4' onClick={()=>setNext(true)} >Next</MDBBtn>
 

@@ -11,6 +11,7 @@ import wevioo.tn.ms_auth.dtos.requests.*;
 import wevioo.tn.ms_auth.dtos.responses.MemberResponse;
 import wevioo.tn.ms_auth.dtos.responses.TeamResponse;
 import wevioo.tn.ms_auth.dtos.responses.UserResponse;
+import wevioo.tn.ms_auth.dtos.responses.UsersResponse;
 import wevioo.tn.ms_auth.entities.Member;
 import wevioo.tn.ms_auth.entities.Team;
 import wevioo.tn.ms_auth.entities.UserEntity;
@@ -56,7 +57,7 @@ public class ProfileController {
     }
 
     @GetMapping("getAllUsers")
-    public List<UserResponse> getUsers( ) {
+    public List<UsersResponse> getUsers( ) {
         return profileService.getAllUsers();
     }
 
@@ -81,12 +82,6 @@ public class ProfileController {
     @Transactional
     public UserResponse getUserById(@PathVariable Long id){
         Optional<UserEntity> user = userRepository.findById(id);
-        return  modelMapper.map(user, UserResponse.class);
-    }
-    @GetMapping("getUserBy/{id}")
-    @Transactional
-    public UserResponse getUserBy(@PathVariable Long id){
-        UserEntity user = userRepository.findByIdWithTeams(id);
         return  modelMapper.map(user, UserResponse.class);
     }
     @PostMapping("createTeam/{id}")
@@ -118,11 +113,11 @@ public class ProfileController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
-    @PutMapping("updateTeam/{userId}/{teamId}")
+    @PutMapping("updateTeam/{teamId}")
     public ResponseEntity<TeamResponse> updateTeam(@RequestBody TeamRequest teamRequest
-            ,@PathVariable Long userId,@PathVariable Long teamId) {
+            ,@PathVariable Long teamId) {
         try {
-            TeamResponse m = profileService.updateTeamWithMembers(teamId,teamRequest,userId);
+            TeamResponse m = profileService.updateTeamWithMembers(teamId,teamRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(m);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);

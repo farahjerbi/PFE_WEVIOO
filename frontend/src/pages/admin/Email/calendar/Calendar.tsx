@@ -92,7 +92,7 @@ const handleEventMouseLeave = (eventId: string) => {
     
 
       function populateDataEmail(data:any) {
-        const newData = data.map((e:any) => ({
+        const newData = data?.map((e:any) => ({
           title:e.templateName ,
           sentTo:e.recipients,
           id:e.jobId,
@@ -105,7 +105,7 @@ const handleEventMouseLeave = (eventId: string) => {
       }
 
       function populateDataSMS(data:any) {
-        const newData = data.map((e:any) => ({
+        const newData = data?.map((e:any) => ({
           title:e.templateName ,
           numbers:e.numbers,
           id:e.jobId,
@@ -115,7 +115,7 @@ const handleEventMouseLeave = (eventId: string) => {
         setData(prevData => [...prevData, ...newData]);       }
 
       function populateDataWhatsapp(data:any) {
-        const newData = data.map((e:any) => ({
+        const newData = data?.map((e:any) => ({
           title:e.templateName ,
           numbers:e.numbers,
           id:e.jobId,
@@ -125,7 +125,7 @@ const handleEventMouseLeave = (eventId: string) => {
         setData(prevData => [...prevData, ...newData]);       }
 
         function populateDataPush(data:any) {
-          const newData = data.map((e:any) => ({
+          const newData = data?.map((e:any) => ({
             title:e.name ,
             id:e.jobId,
             date:e.nextTimeFired,

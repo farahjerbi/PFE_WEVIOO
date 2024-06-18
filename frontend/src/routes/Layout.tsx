@@ -18,3 +18,6 @@ const Layout = () => {
 }
 
 export default Layout
+
+//docker exec -it db-postgres psql -U postgres
+//\c Ms_Auth_Notification

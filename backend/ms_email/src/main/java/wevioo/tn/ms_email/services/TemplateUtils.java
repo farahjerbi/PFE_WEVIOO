@@ -18,14 +18,12 @@ import lombok.AllArgsConstructor;
 import org.quartz.*;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import wevioo.tn.ms_email.config.EmailJob;
 import wevioo.tn.ms_email.dtos.request.ScheduleEmailRequest;
-import wevioo.tn.ms_email.entities.TemplateBody;
 
 import java.io.File;
 import java.io.FileWriter;

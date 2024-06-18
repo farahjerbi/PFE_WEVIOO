@@ -29,8 +29,7 @@ public class UserEntity implements UserDetails {
     private String emailSecret;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Member> members = new HashSet<>();
-    @OneToMany(mappedBy = "userTeam", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Set<Team> teams = new HashSet<>();
+
 
     @Enumerated(EnumType.STRING)
     private Role role= Role.valueOf("USER");

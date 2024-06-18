@@ -1,3 +1,5 @@
+import { ITeam } from "./Team"
+
 export interface IAddContact {
     fullName: string,
     phone:string,
@@ -11,6 +13,10 @@ export interface IAddContact {
 export interface IContact extends IAddContact {
     id:number,
     userId:number,
-    teamId:number
-
+    teams:ITeam[]
+}
+export interface UpdateContact extends IAddContact {
+    id:number,
+    userId:number,
+    teamId?:number[]
 }

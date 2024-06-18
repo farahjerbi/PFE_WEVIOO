@@ -4,14 +4,18 @@ import *as xlsx from 'xlsx';
 import PhoneInput from 'react-phone-input-2'
 import "react-phone-input-2/lib/style.css";
 import ExcelButton from '../button/ExcelButton';
+import { NotificationType } from '../../models/NotificationType';
+import ContactNumbersModal from '../modals/ContactNumbersModal';
 
 interface NumberInputProps {
     label: string;
     onChange: (numbers: string[]) => void;
+    type:NotificationType
   
   }
-const NumberInput : React.FC<NumberInputProps> = ({ label,onChange }) => {
-    const [numbers, setNumbers] = useState<string[]>(['']);  
+const NumberInput : React.FC<NumberInputProps> = ({ label,onChange,type }) => {
+    const [numbers, setNumbers] = useState<string[]>(['']); 
+    const [open, setOpen] = useState<boolean>(false);   
     console.log("🚀 ~ numbers:", numbers)
 
     
@@ -38,22 +42,26 @@ const NumberInput : React.FC<NumberInputProps> = ({ label,onChange }) => {
     };
   
 
-    const handleExcelUpload = (uploadedEmails: string[]) => {
-      setNumbers(uploadedEmails); 
+    const handleExcelUpload = (uploadedEmails: string[],uploadedPhones:string[],uploadedWhatsapp: string[]) => {
+      if(type===NotificationType.SMS){
+        setNumbers(uploadedPhones); 
+      }else{
+        setNumbers(uploadedWhatsapp); 
+      }
     };
     
   return (
-    <div className='container-input'>
+    <div className='container'>
 
-      <label className='ms-5'>{label}</label>
+      <label>{label}</label>
       {numbers.map((number, index) => (
         <>
                <div key={index} className='d-flex mb-2'>
         
               <PhoneInput
               country={'us'}
-              value={number}
-              onChange={(e) => handleSMSChange(index, e)}
+              value={number.toString()} 
+              onChange={(value) => handleSMSChange(index, value)}
               />
    
           {index > 0 && (
@@ -64,19 +72,22 @@ const NumberInput : React.FC<NumberInputProps> = ({ label,onChange }) => {
         </div>
         <div>
            {numbers.length- 1 === index && numbers.length < 4 && (
-            <>
-               <MDBBtn type="button" onClick={addSMSField} className="add-btn me-5" >
-                <MDBIcon icon="add" style={{marginRight:"3px"}}/>
-                  Add 
-              </MDBBtn>
-
-              <ExcelButton onExcelUpload={handleExcelUpload} />
-
-            </>
-     
-        
+            <div className="button-container d-flex" style={{ marginTop: '10px' }}>
+            <MDBBtn type="button" onClick={addSMSField} className="add-btn me-3" style={{ padding: '8px 16px' }}>
+              <MDBIcon icon="add" style={{ marginRight: "3px" }} />
+            </MDBBtn>
+      
+            <ExcelButton onExcelUpload={handleExcelUpload} />
+      
+            <MDBBtn onClick={() => setOpen(true)} type="button" className="add-btn ms-3 baby-bluee" style={{ padding: '8px 16px' }}>
+              <MDBIcon icon="address-book" style={{ marginRight: "3px" }} />
+            </MDBBtn>
+          </div>
       )}
         </div>
+        {open && (
+          <ContactNumbersModal onClose={()=>setOpen(false)} onSubmit={setNumbers} type={type} show={open} />
+        )}
         </>
       ))}
     </div>  )

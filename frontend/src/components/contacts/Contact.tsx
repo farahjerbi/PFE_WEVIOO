@@ -3,10 +3,10 @@ import React, { FormEvent, useState } from 'react'
 import PhoneInput from 'react-phone-input-2'
 import "react-phone-input-2/lib/style.css";
 import './Contact.css'
-import { useCreateMemberMutation, useUpdateMemberMutation } from '../../redux/services/usersApi';
+import { useCreateMemberMutation } from '../../redux/services/usersApi';
 import { toast } from 'sonner';
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact, selectContactDetails, selectUser, setContactDetails, updateContact } from '../../redux/state/authSlice';
+import { addContact, selectContactDetails, selectUser } from '../../redux/state/authSlice';
 import { IAddContact, IContact } from '../../models/user/Contact';
 
 interface Props{
@@ -14,7 +14,6 @@ interface Props{
 }
 const Contact : React.FC<Props> = ({ onClose  }) => {
   const[createMember]=useCreateMemberMutation()
-  const[updateMember]=useUpdateMemberMutation()
   const user=useSelector(selectUser)
   const contact=useSelector(selectContactDetails)
   const dispatch=useDispatch()
@@ -55,17 +54,7 @@ const Contact : React.FC<Props> = ({ onClose  }) => {
       publicKey: publicKey || ""
     };
   
-    if (contact && user) {
-      const updatedContact: IContact = {
-        ...contactRes,
-        id: contact.id,
-        teamId: contact.teamId,
-        userId: user.id
-      };
-      await handleUpdateContact(updatedContact);
-    } else {
       await handleAddContact(contactRes as IAddContact);
-    }
   
     setFormData(initialState);
     onClose();
@@ -83,17 +72,7 @@ const Contact : React.FC<Props> = ({ onClose  }) => {
     }
   };
   
-  const handleUpdateContact = async (contactRes: IContact) => {
-    try {
-      await updateMember({ contact: contactRes }).unwrap();
-      dispatch(updateContact(contactRes));
-      dispatch(setContactDetails(null));
-      toast.success("Contact updated successfully!");
-    } catch (err) {
-      toast.error('Error updating contact!');
-      console.error("Error updating user:", err);
-    }
-  };
+
   
   return (
     

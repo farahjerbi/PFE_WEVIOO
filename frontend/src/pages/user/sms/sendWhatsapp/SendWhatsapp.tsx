@@ -13,6 +13,7 @@ import { SendWhatsAppMsg } from '../../../../models/sms/SendWhatsAppMsg'
 import { LIST_SMS_TEMPLATES } from '../../../../routes/paths'
 import ScheduleWhatsapp from '../../../../components/modals/ScheduleWhatsapp'
 import NumberInput from '../../../../components/numberInput/NumberInput'
+import { NotificationType } from '../../../../models/NotificationType'
 const SendWhatsapp = () => {
     const template=useSelector(selectCurrentWhatsappTemplate)
     const dispatch=useDispatch()
@@ -108,7 +109,7 @@ const SendWhatsapp = () => {
    <MDBCardBody className='p-5'>
    <MDBCard className='my-5'>
    <MDBCardBody className='p-5'>
-     <NumberInput label="Numbers:" onChange={setNumbers}  />
+     <NumberInput type={NotificationType.WHATSAPP}  label="Numbers:" onChange={setNumbers}  />
      </MDBCardBody>
      </MDBCard>
 

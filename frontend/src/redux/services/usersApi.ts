@@ -1,6 +1,6 @@
 import {createApi , fetchBaseQuery} from "@reduxjs/toolkit/query/react"
-import { IAddContact, IContact } from "../../models/user/Contact";
-import { Team } from "../../models/user/Team";
+import { IAddContact, IContact, UpdateContact } from "../../models/user/Contact";
+import { IUpdateTeam, Team } from "../../models/user/Team";
 
 export const usersApi = createApi({
     reducerPath: 'usersApi',
@@ -80,11 +80,36 @@ export const usersApi = createApi({
             }
         }),
         updateMember : builder.mutation({
-            query:(body:{contact:IContact})=>{
+            query:(body:{contact:UpdateContact})=>{
                 return{
                     url:`/updateMember`,
                     method:"POST",
                     body:body.contact
+                };
+            }
+        }),
+        deleteMember : builder.mutation({
+            query:(id:number)=>{
+                return{
+                    url:`/deleteMember/${id}`,
+                    method:"DELETE",
+                };
+            }
+        }),
+        deleteTeam : builder.mutation({
+            query:(id:number)=>{
+                return{
+                    url:`/deleteTeam/${id}`,
+                    method:"DELETE",
+                };
+            }
+        }),
+        updateTeam : builder.mutation({
+            query:(body:{team:IUpdateTeam})=>{
+                return{
+                    url:`/updateTeam/${body.team?.id}`,
+                    method:"PUT",
+                    body:body.team
                 };
             }
         }),
@@ -94,5 +119,5 @@ export const usersApi = createApi({
 
 export const {useGetAllUsersMutation ,useResetPasswordMutation,useCreateMemberMutation,useCreateTeamMutation,
     useActivateUserMutation,useDesActivateUserMutation,useDeleteUserMutation,useChangePasswordMutation,
-    useUpdateMemberMutation
+    useUpdateMemberMutation,useDeleteTeamMutation,useDeleteMemberMutation,useUpdateTeamMutation
 }=usersApi;

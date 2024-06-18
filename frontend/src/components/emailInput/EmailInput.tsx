@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { MDBBtn, MDBIcon, MDBInput } from 'mdb-react-ui-kit';
 import './EmailInput.css';
 import ExcelButton from '../button/ExcelButton';
+import ContactEmailModal from '../modals/ContactEmailModal';
 interface EmailInputProps {
   label: string;
   onChange: (emails: string[]) => void;
@@ -10,6 +11,8 @@ interface EmailInputProps {
 
 const EmailInput: React.FC<EmailInputProps> = ({ label,onChange }) => {
   const [emails, setEmails] = useState<string[]>(['']);  
+  const [open, setOpen] = useState<boolean>(false);  
+
   console.log("🚀 ~ emails:", emails)
   
   useEffect(() => {
@@ -69,11 +72,19 @@ const EmailInput: React.FC<EmailInputProps> = ({ label,onChange }) => {
 
               <ExcelButton onExcelUpload={handleExcelUpload} />
 
+              <MDBBtn onClick={()=>setOpen(true)}  type="button" className="add-btn ms-2 me-5 baby-bluee" >
+                <MDBIcon icon="address-book" style={{marginRight:"3px"}}/>
+                  Contacts 
+              </MDBBtn>
+
             </>
      
         
       )}
         </div>
+        {open && (
+          <ContactEmailModal onSubmit={setEmails} onClose={()=>setOpen(false)} show={open} />
+        )}
         </>
       ))}
     </div>
