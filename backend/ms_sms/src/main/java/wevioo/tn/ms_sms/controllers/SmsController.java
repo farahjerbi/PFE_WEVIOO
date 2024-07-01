@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import wevioo.tn.ms_sms.dtos.request.ScheduleSMSRequest;
+import wevioo.tn.ms_sms.dtos.request.SendIndiv;
 import wevioo.tn.ms_sms.dtos.request.SendsSms;
 import wevioo.tn.ms_sms.dtos.request.UpdateSmsTemplate;
 import wevioo.tn.ms_sms.dtos.response.ScheduleSMSResponse;
@@ -61,6 +62,12 @@ public class SmsController {
     public String sendSMS(@RequestBody SendsSms sendsSms) {
         return smsService.sendSms(sendsSms);
     }
+    @PostMapping(value = "/sendSMSSeparately")
+    public String sendSMSSeparately(@RequestBody SendIndiv sendsSms) {
+
+        return smsService.sendSmsSeparately(sendsSms);
+    }
+
 
     @GetMapping(value = "/getAllTemplates")
     public ResponseEntity<List<SmsTemplate>> getAllTemplates(){return ResponseEntity.ok(smsRepository.findAll());}

@@ -10,9 +10,8 @@ import { Button, Tooltip } from '@mui/material';
 import Delete from '@mui/icons-material/Delete';
 import Update from '@mui/icons-material/Update';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { WebPushTemplate } from '../../../../models/push/WebPushTemplate';
-import { getTemplatesPush, selectPush, selectPushs, setSelectedPush, setUpdatePushFav } from '../../../../redux/state/pushSlice';
+import { getTemplatesPush, selectPushs, setSelectedPush, setUpdatePushFav } from '../../../../redux/state/pushSlice';
 import { AppDispatch } from '../../../../redux/store';
 import UpdatePush from '../update/UpdatePush';
 import DeletePushTemplate from '../../../../components/modals/DeletePushTemplate';
@@ -32,7 +31,6 @@ const ListPush  : React.FC<Props> = ({query }) => {
     const templates=useSelector(selectPushs)
     const dispatch=useDispatch()
     const dispatchAction: AppDispatch = useDispatch(); 
-    const navigate=useNavigate()
     const [idDelete,setIdDelete]=useState<number>()
     const [deleteModalOpen,setDeleteModalOpen]=useState<boolean>(false)
     const [sendModalOpen,setSendModalOpen]=useState<boolean>(false)
@@ -142,7 +140,7 @@ const ListPush  : React.FC<Props> = ({query }) => {
                                     </Button>                           
                                     </Tooltip>
 
-                             <Tooltip style={{marginRight:"5px"}} title="Send" className="color_blue" >
+                             <Tooltip style={{marginRight:"5px"}} title="Send separately " className="color_blue" >
                           <Button     onClick={() =>
                           {
                             setSelectedTemplate(template);
@@ -151,6 +149,18 @@ const ListPush  : React.FC<Props> = ({query }) => {
                                               }
                           }>
                           <Send style={{color:"whitesmoke"}}  />
+                          </Button>                           
+                          </Tooltip>
+
+                          <Tooltip style={{marginRight:"5px"}} title="Send Bulk" className="color_baby_bluee" >
+                          <Button     onClick={() =>
+                          {
+                            setSelectedTemplate(template);
+                            dispatch(setSelectedPush(template));
+                            setSendModalOpen(true) 
+                                              }
+                          }>
+                            <i style={{color:"whitesmoke",fontSize:"1.2rem"}} className="fas fa-envelopes-bulk"></i>
                           </Button>                           
                           </Tooltip>
                           </div>

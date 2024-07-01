@@ -7,10 +7,7 @@ import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import wevioo.tn.ms_sms.dtos.request.ScheduleSMSRequest;
-import wevioo.tn.ms_sms.dtos.request.ScheduleWhatsappRequest;
-import wevioo.tn.ms_sms.dtos.request.SendWhatsAppMsg;
-import wevioo.tn.ms_sms.dtos.request.WhatsAppTemplatePayload;
+import wevioo.tn.ms_sms.dtos.request.*;
 import wevioo.tn.ms_sms.dtos.response.ScheduleSMSResponse;
 import wevioo.tn.ms_sms.dtos.response.ScheduledSMSInfo;
 import wevioo.tn.ms_sms.dtos.response.UserResponse;
@@ -80,6 +77,10 @@ public class WhatsAppController {
     @PostMapping(value = "/sendWhatsAppSms")
     public String sendSMSWhatsApp(@RequestBody SendWhatsAppMsg sendsSms) {
         return whatsAppService.sendSmsWhatsApp(sendsSms);
+    }
+    @PostMapping(value = "/sendSMSWhatsAppSeparately")
+    public String sendSMSWhatsAppSeparately(@RequestBody SendIndivWhatsapp sendsSms) {
+        return whatsAppService.sendSmsWhatsAppSeparately(sendsSms);
     }
 
     @GetMapping("/{id}")

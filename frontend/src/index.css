@@ -173,7 +173,7 @@ main {
 
 
 .color_green{
-  background: linear-gradient(90deg, rgba(88, 173, 91, 1) 0%, rgb(48, 141, 49) 50%, rgba(95, 165, 105, 1) 100%);
+  background: linear-gradient(90deg, rgb(141, 224, 198) 0%, rgb(82, 170, 147) 50%, rgb(141, 224, 198)  100%);
 }
 
 

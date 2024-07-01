@@ -88,7 +88,6 @@ const formValidation = () => {
 
   const [formData, setFormData] = useState(initialState);
   const {name,language,subject,content}=formData;
-  console.log("🚀 ~ CreateSimpleEmail ~ content:", content)
   const[addTemplateEmail]=useAddTemplateEmailMutation();
   const[addTemplateSMS]=useAddTemplateSMSMutation();
   const navigate = useNavigate();
@@ -145,6 +144,18 @@ const formValidation = () => {
       navigate(LIST_EMAIL_TEMPLATES)
     }
   }
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && file.type === 'text/html') {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setFormData({ ...formData, content: e.target?.result as string });
+      };
+      reader.readAsText(file);
+    } else {
+      alert('Please upload a valid HTML file.');
+    }
+  };
 
   return (
     <div>
@@ -257,6 +268,13 @@ const formValidation = () => {
                   
                     ) : (
                         <>
+                        <div>
+                          <input 
+                            type="file" 
+                            accept=".html" 
+                            onChange={handleFileChange} 
+                          />
+                          </div>
                             <Typography sx={{ ml: 'auto' }}>
                                 {content.length} character(s)
                             </Typography>

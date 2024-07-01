@@ -98,6 +98,7 @@ public class EmailController {
         }
     }
 
+
     @PostMapping("test")
     public String testReplacePlaceholders(@RequestBody Map<String, Object> requestBody) {
         String template = (String) requestBody.get("template");

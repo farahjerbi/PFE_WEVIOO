@@ -7,9 +7,7 @@ import nl.martijndwars.webpush.PushService;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jose4j.lang.JoseException;
 import org.springframework.stereotype.Service;
-import wevioo.tn.ms_push.dtos.request.SendPushNotif;
-import wevioo.tn.ms_push.dtos.request.WebPushMessageAdd;
-import wevioo.tn.ms_push.dtos.request.WebPushMessageUpdate;
+import wevioo.tn.ms_push.dtos.request.*;
 import wevioo.tn.ms_push.entities.WebPushMessage;
 import wevioo.tn.ms_push.entities.WebPushSubscription;
 import wevioo.tn.ms_push.repositories.SubscriptionRepository;
@@ -130,6 +128,26 @@ public class WebPushMessageTemplateImpl implements WebPushMessageTemplate{
                     subscription.getNotificationEndPoint(),
                     subscription.getPublicKey(),
                     subscription.getAuth(),
+                    objectMapper.writeValueAsBytes(message.getWebPushMessageTemplate()));
+
+            pushService.send(notification);
+        }
+
+        return "yEEEEEEy sent :)";
+    }
+
+    public String notifySeparately( SendIndiv message) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException {
+        Security.addProvider(new BouncyCastleProvider());
+        PushService pushService = new PushService(PUBLIC_KEY, PRIVATE_KEY, SUBJECT);
+        for (SendSeparately sendSeparately: message.getSendSeparatelyList()) {
+            if(message.getWebPushMessageTemplate()!=null){
+                message.getWebPushMessageTemplate().setMessage(
+                        webPushMessageUtil.replacePlaceholders(message.getWebPushMessageTemplate().getMessage(), sendSeparately.getPlaceholderValues()));
+            }
+            Notification notification = new Notification(
+                    sendSeparately.getWebPushSubscriptions().getNotificationEndPoint(),
+                    sendSeparately.getWebPushSubscriptions().getPublicKey(),
+                    sendSeparately.getWebPushSubscriptions().getAuth(),
                     objectMapper.writeValueAsBytes(message.getWebPushMessageTemplate()));
 
             pushService.send(notification);

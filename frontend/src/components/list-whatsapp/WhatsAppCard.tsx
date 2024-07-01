@@ -62,7 +62,8 @@ const WhatsAppCard : React.FC<PropsWhatsapp> = ({ role ,templates ,user }) => {
         <th> View </th>
         {role===Role.USER && 
         (<>
-        <th> Send </th>
+        <th> Send Bulk </th>
+        <th> Send Seperately </th>
         </>)}
 
       </tr>
@@ -109,7 +110,21 @@ const WhatsAppCard : React.FC<PropsWhatsapp> = ({ role ,templates ,user }) => {
             <>
           
              <td>
-            <Tooltip style={{marginRight:"5px"}} title="Send" className="color_blue" >
+            <Tooltip style={{marginRight:"5px"}} title="Send Bulk" className="color_blue" >
+              <Button  
+                 onClick={() =>
+              {
+                navigate(`${SEND_WHATSAPP}/${template.id}`)
+              }
+              }
+              >
+              <Send style={{color:"whitesmoke"}}  />
+              </Button>                           
+              </Tooltip>
+          </td>
+
+          <td>
+            <Tooltip style={{marginRight:"5px"}} title="Send Separately" className="color_baby_bluee" >
               <Button  
                  onClick={() =>
               {

@@ -10,10 +10,7 @@ import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import wevioo.tn.ms_push.dtos.request.SchedulePushRequest;
-import wevioo.tn.ms_push.dtos.request.SendPushNotif;
-import wevioo.tn.ms_push.dtos.request.WebPushMessageAdd;
-import wevioo.tn.ms_push.dtos.request.WebPushMessageUpdate;
+import wevioo.tn.ms_push.dtos.request.*;
 import wevioo.tn.ms_push.dtos.response.SchedulePushResponse;
 import wevioo.tn.ms_push.dtos.response.ScheduledPushInfo;
 import wevioo.tn.ms_push.entities.WebPushMessage;
@@ -91,6 +88,12 @@ public class WebPushController {
     public String notify(@RequestBody SendPushNotif message) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException {
         return  webPushMessageTemplate.notify(message);
     }
+
+    @PostMapping("/notifySeparately")
+    public String notifySeparately(@RequestBody SendIndiv message) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException {
+        return  webPushMessageTemplate.notifySeparately(message);
+    }
+
 
     @PostMapping("/schedulePush")
     public ResponseEntity<SchedulePushResponse> scheduleEmail(@RequestBody SchedulePushRequest schedulePushRequest) {

@@ -1,10 +1,9 @@
 package wevioo.tn.ms_sms.services;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+
 import okhttp3.Response;
+import wevioo.tn.ms_sms.dtos.request.SendIndivWhatsapp;
 import wevioo.tn.ms_sms.dtos.request.SendWhatsAppMsg;
-import wevioo.tn.ms_sms.dtos.request.SendsSms;
 import wevioo.tn.ms_sms.dtos.request.WhatsAppTemplatePayload;
 import wevioo.tn.ms_sms.dtos.response.WhatsAppTemplateResponse;
 
@@ -16,4 +15,5 @@ public interface WhatsAppService {
     Response deleteWhatsAppTemplate(String templateName) throws IOException;
     WhatsAppTemplateResponse getWhatsAppTemplateById(Long id) throws IOException ;
     String sendSmsWhatsApp(SendWhatsAppMsg sendWhatsAppMsg);
+    String sendSmsWhatsAppSeparately(SendIndivWhatsapp sendWhatsAppMsg);
 }

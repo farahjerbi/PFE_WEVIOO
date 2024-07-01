@@ -16,7 +16,7 @@ import './SMSCard.css'
 import ViewSMSTemplate from '../modals/ViewSMSTemplate';
 import DeleteSMSTemplate from '../modals/DeleteSMSTemplate';
 import {  setSelectedSms, setUpdateSMSFav } from '../../redux/state/smsSlice';
-import { CREATE_SMS_TEMPLATE, SEND_SMS, UPDATE_SMS_TEMPLATE } from '../../routes/paths';
+import { CREATE_SMS_TEMPLATE, SEND_SMS, SEND_SMS_SEPARATELY, UPDATE_SMS_TEMPLATE } from '../../routes/paths';
 import { useDispatch } from 'react-redux';
 import { useToggleFavoriteSMSMutation } from '../../redux/services/smsApi';
 import { toast } from 'sonner';
@@ -97,7 +97,9 @@ const SMSCard : React.FC<PropsSMS> = ({ role ,templates ,user }) => {
         {role===Role.USER && 
         (<>
         <th>Save</th>
-        <th> Send </th>
+        <th> Send Bulk</th>
+        <th> Send Seperately</th>
+
         </>)}
 
       </tr>
@@ -163,9 +165,19 @@ const SMSCard : React.FC<PropsSMS> = ({ role ,templates ,user }) => {
           
          
              <td>
-            <Tooltip style={{marginRight:"5px"}} title="Send" className="color_blue" >
+            <Tooltip style={{marginRight:"5px"}} title="Send Bulk" className="color_blue" >
               <Button  
                  onClick={() =>{navigate(`${SEND_SMS}/${template.id}`)}}
+              >
+              <Send style={{color:"whitesmoke"}}  />
+              </Button>                           
+              </Tooltip>
+          </td>
+
+          <td>
+            <Tooltip style={{marginRight:"5px"}} title="Send Seperately" className="color_baby_bluee" >
+              <Button  
+                 onClick={() =>{navigate(`${SEND_SMS_SEPARATELY}/${template.id}`)}}
               >
               <Send style={{color:"whitesmoke"}}  />
               </Button>                           

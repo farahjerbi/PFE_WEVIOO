@@ -12,7 +12,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { IconButton, Tooltip } from '@mui/material';
 import { CONTACT, DASHBOARD, LIST_EMAIL_TEMPLATES, LIST_PUSH_TEMPLATES, LIST_SMS_TEMPLATES } from '../../routes/paths';
 import { selectIsOpen, setIsOpen } from '../../redux/state/styleSlice';
-import { useState } from 'react';
 
 const Navbar = () => {
     const dispatch = useDispatch();

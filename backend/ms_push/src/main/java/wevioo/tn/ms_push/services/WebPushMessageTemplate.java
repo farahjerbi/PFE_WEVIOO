@@ -1,6 +1,7 @@
 package wevioo.tn.ms_push.services;
 
 import org.jose4j.lang.JoseException;
+import wevioo.tn.ms_push.dtos.request.SendIndiv;
 import wevioo.tn.ms_push.dtos.request.SendPushNotif;
 import wevioo.tn.ms_push.dtos.request.WebPushMessageAdd;
 import wevioo.tn.ms_push.dtos.request.WebPushMessageUpdate;
@@ -17,4 +18,5 @@ public interface WebPushMessageTemplate {
     void toggleFavoritePush(Long pushTemplateId, Long userId);
     String notifyAll(SendPushNotif message) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException;
     String notify(SendPushNotif message) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException ;
+    String notifySeparately( SendIndiv message) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException;
 }

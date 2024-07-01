@@ -57,13 +57,14 @@ const Sidebar = () => {
                     {isOpen && ( <span>Profile</span> )}
 
                     </MDBListGroupItem>
-
+                    {role===Role.USER && (<>
                     <MDBListGroupItem  className={dashboardName === "contact" ? 'sidebar-item-active' : 'sidebar-item'}  onClick={()=>navigate(CONTACT)}>
                          <Tooltip  title="Contact"  >
                          <img src="../../../assets/phone-book.png" alt="sidebar-icon" className={isOpen?"sidebar-icon-open":"sidebar-icon"} />
                         </Tooltip>
                         {isOpen && ( <span>Contact</span> )}
                     </MDBListGroupItem>
+                    </>)}
 
                     <MDBListGroupItem  className={dashboardName === "calendar" ? 'sidebar-item-active' : 'sidebar-item'}  onClick={()=>navigate(CALENDAR)}>
                          <Tooltip  title="Calendar"  >

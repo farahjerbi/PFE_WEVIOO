@@ -2,7 +2,6 @@ package wevioo.tn.ms_sms.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import java.util.Random;
 import com.infobip.ApiClient;
 import com.infobip.api.WhatsAppApi;
 import com.infobip.model.*;
@@ -12,13 +11,12 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import wevioo.tn.ms_sms.dtos.request.SendIndivWhatsapp;
 import wevioo.tn.ms_sms.dtos.request.SendWhatsAppMsg;
-import wevioo.tn.ms_sms.dtos.request.SendsSms;
+import wevioo.tn.ms_sms.dtos.request.SendWhatsappSeparately;
 import wevioo.tn.ms_sms.dtos.request.WhatsAppTemplatePayload;
 import wevioo.tn.ms_sms.dtos.response.WhatsAppTemplateResponse;
-import wevioo.tn.ms_sms.entities.SmsTemplate;
 
 import java.io.IOException;
 
@@ -125,4 +123,39 @@ public class WhatsAppTemplateService implements WhatsAppService {
             return "Failed to send WhatsApp messages: " + e.getMessage();
         }
     }
+
+    public String sendSmsWhatsAppSeparately(SendIndivWhatsapp sendWhatsAppMsg) {
+        WhatsAppApi whatsAppApi = new WhatsAppApi(infobipApiClient);
+
+        try {
+            WhatsAppTemplateBodyContent bodyContent = new WhatsAppTemplateBodyContent();
+            for (SendWhatsappSeparately number : sendWhatsAppMsg.getSendSeparatelyList()) {
+                for (String placeholder : number.getPlaceholders()) {
+                    bodyContent.addPlaceholdersItem(placeholder);
+                }
+                WhatsAppMessage message = new WhatsAppMessage()
+                        .from("447860099299")
+                        .to(number.getNumber())
+                        .content(new WhatsAppTemplateContent()
+                                .language(sendWhatsAppMsg.getWhatsAppTemplateResponse().getLanguage())
+                                .templateName(sendWhatsAppMsg.getWhatsAppTemplateResponse().getName())
+                                .templateData(new WhatsAppTemplateDataContent()
+                                        .body(bodyContent)
+                                )
+                        );
+
+                WhatsAppBulkMessage bulkMessage = new WhatsAppBulkMessage()
+                        .addMessagesItem(message);
+                WhatsAppBulkMessageInfo messageInfo = whatsAppApi
+                        .sendWhatsAppTemplateMessage(bulkMessage)
+                        .execute();
+                System.out.println(messageInfo.getMessages().get(0).getStatus().getDescription());
+            }
+            return "WhatsApp messages sent successfully";
+        } catch (Exception e) {
+            return "Failed to send WhatsApp messages: " + e.getMessage();
+        }
+    }
+
+
 }

@@ -9,16 +9,15 @@ import com.infobip.model.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import wevioo.tn.ms_sms.dtos.request.SendIndiv;
+import wevioo.tn.ms_sms.dtos.request.SendSeparately;
 import wevioo.tn.ms_sms.dtos.request.SendsSms;
 import wevioo.tn.ms_sms.dtos.request.UpdateSmsTemplate;
 import wevioo.tn.ms_sms.entities.SmsTemplate;
 import wevioo.tn.ms_sms.openFeign.UsersClient;
 import wevioo.tn.ms_sms.repositories.SmsRepository;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -102,7 +101,38 @@ public class SmsServiceImpl implements SmsService{
         smsRepository.save(smsTemplate);
     }
 
+    public String sendSmsSeparately(SendIndiv sendsSms) {
+        SmsTemplate smsTemplate = smsRepository.findById(sendsSms.getIdTemplate())
+                .orElseThrow(() -> new RuntimeException("SmsTemplate not found with id: " + sendsSms.getIdTemplate()));
 
+        SmsApi smsApi = new SmsApi(infobipApiClient);
+        List<SmsTextualMessage> smsMessages = new ArrayList<>();
+
+        for (SendSeparately number : sendsSms.getSendSeparatelyList()) {
+            if (!smsUtils.isValidPhoneNumber(number.getNumber())) {
+                return "Invalid phone number: " + number.getNumber();
+            }
+            String content = smsUtils.replacePlaceholders(smsTemplate.getContent(), number.getPlaceholderValues());
+            SmsTextualMessage smsTextualMessage = new SmsTextualMessage()
+                    .from(smsTemplate.getSubject())
+                    .addDestinationsItem(new SmsDestination().to(number.getNumber()))
+                    .text(content);
+            smsMessages.add(smsTextualMessage);
+        }
+
+        SmsAdvancedTextualRequest smsMessageRequest = new SmsAdvancedTextualRequest()
+                .messages(smsMessages);
+
+        try {
+            SmsResponse smsResponse = smsApi.sendSmsMessage(smsMessageRequest).execute();
+            return "Message sent successfully";
+        } catch (ApiException apiException) {
+            return "Failed to send message: " + apiException.getMessage();
+        }
     }
+
+
+
+}
 
 
