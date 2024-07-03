@@ -11,24 +11,25 @@ import timezone from 'dayjs/plugin/timezone';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
-import { LIST_EMAIL_TEMPLATES, LIST_SMS_TEMPLATES } from '../../routes/paths';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import DialogTitle from '@mui/joy/DialogTitle';
 import DialogContent from '@mui/joy/DialogContent';
 import Stack from '@mui/joy/Stack';
-import { SchedularSMSProps } from '../../models/email/SchedularProps';
-import { ScheduleSMSRequest } from '../../models/sms/ScheduleSMSRequest';
+
 import { useDispatch, useSelector } from 'react-redux';
-import { selectUser } from '../../redux/state/authSlice';
+import { SchedularWhatsappProps } from '../../../models/email/SchedularProps';
+import { ScheduleWhatsappRequest } from '../../../models/sms/ScheduleWhatsappRequest';
+import { selectUser } from '../../../redux/state/authSlice';
+import { LIST_SMS_TEMPLATES } from '../../../routes/paths';
+
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.tz.setDefault('America/New_York');
 
   const TIMEZONES: PickersTimezone[] = ['default', 'UTC',  'Europe/London','Africa/Tunis'];
-
-const ScheduleSMS: React.FC<SchedularSMSProps> = ({numbers,placeholdersValues, onClose ,show ,templateId}) => {
+const ScheduleWhatsapp: React.FC<SchedularWhatsappProps> = ({numbers,placeholders, onClose ,show ,templateId,name,language}) => {
     const [value, setValue] = React.useState<any | null>(dayjs());
     const[valueTime,setValueTime]=useState<string>('');
     const[open,setOpen]=useState<boolean>(show);
@@ -47,28 +48,24 @@ const ScheduleSMS: React.FC<SchedularSMSProps> = ({numbers,placeholdersValues, o
     
     const handleSubmitSchedule: () => void = async (
     ) => {
-      const convertedPlaceholders: { [key: string]: string } = {};
 
-      for (const key in placeholdersValues) {
-          if (Object.prototype.hasOwnProperty.call(placeholdersValues, key)) {
-              convertedPlaceholders[key] = placeholdersValues[key];
-          }
-      }
+ 
       if(user && user.id){
-        const sendSms:ScheduleSMSRequest={
+        const whatsappSend:ScheduleWhatsappRequest={
             templateId:Number(templateId),
             numbers:numbers,
-            placeHolders:placeholdersValues,
+            placeholders:placeholders,
             dateTime: value.format("YYYY-MM-DDTHH:mm:ss"),
             timeZone: currentTimezone,
-            userId:user.id
+            userId:user.id,
+            name:name,
+            language:language
           }
       
       try {
-        const response = await axios.post(`http://localhost:8099/apiSms/scheduleSMS`,sendSms);
+        const response = await axios.post(`http://localhost:8099/apiWhatsApp/scheduleWhatsapp`,whatsappSend);
         if (response.status === 200) {
-          console.log("🚀 ~ Profile ~ response:", response);
-          toast.success("SMS scheduled successfully !");
+          toast.success("Whatsapp message scheduled successfully !");
           navigate(LIST_SMS_TEMPLATES)
         }
       } catch (err) {
@@ -81,13 +78,11 @@ const ScheduleSMS: React.FC<SchedularSMSProps> = ({numbers,placeholdersValues, o
 
     }
     }
-   
-
   return (
     <>
     <Modal open={show} onClose={() => setOpen(false)}>
           <ModalDialog>
-            <DialogTitle>Schedule Your SMS</DialogTitle>
+            <DialogTitle>Schedule Your Whatsapp Message</DialogTitle>
             <DialogContent>
                  <LocalizationProvider dateAdapter={AdapterDayjs}>
           <ToggleButtonGroup
@@ -121,7 +116,7 @@ const ScheduleSMS: React.FC<SchedularSMSProps> = ({numbers,placeholdersValues, o
             {!loading && (
             <MDBBtn onClick={(e) => { e.preventDefault();handleSubmitSchedule()}}
               style={{ background: 'linear-gradient(90deg, rgba(106, 15, 255, 1) 0%, rgba(131, 89, 255, 1) 15%, rgba(168, 118, 230, 1) 35%, rgba(186, 155, 227, 1) 67%, rgba(234, 219, 247, 1) 100%)'}} className='w-100 mb-4' >
-                Schedule SMS
+                Schedule Message
                 </MDBBtn>)}
                 {loading && (
                   <div className='d-flex justify-content-center mt-4'>
@@ -135,7 +130,8 @@ const ScheduleSMS: React.FC<SchedularSMSProps> = ({numbers,placeholdersValues, o
           </ModalDialog>
         </Modal>
   
-     </>  )
+     </>
+       )
 }
 
-export default ScheduleSMS
+export default ScheduleWhatsapp

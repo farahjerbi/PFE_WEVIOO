@@ -11,7 +11,7 @@ import { Box, Button, FormControl, InputAdornment, InputLabel, MenuItem, Select,
 import Textarea from '@mui/joy/Textarea';
 import { useDispatch } from 'react-redux'
 import { setEmail } from '../../../../redux/state/emailSlice'
-import InstructionsModal from '../../../../components/modals/InstructionsModal'
+import InstructionsModal from '../../../../components/modals/instructions/InstructionsModal'
 import { useAddTemplateSMSMutation } from '../../../../redux/services/smsApi'
 import { SmsTemplate } from '../../../../models/sms/SmsTemplate'
 import { setAddSMS, setSMSs } from '../../../../redux/state/smsSlice'

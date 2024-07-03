@@ -5,7 +5,7 @@ import { selectContactsByTeamId, selectTeamDetails, selectUser } from '../../red
 import { Avatar, AvatarGroup, Button, Pagination, Tooltip } from '@mui/material';
 import Update from '@mui/icons-material/Update';
 import Delete from '@mui/icons-material/Delete';
-import DeleteContact from '../modals/DeleteContact';
+import DeleteContact from '../modals/delete/DeleteContact';
 function stringToPastelColor(string: string) {
     let hash = 0;
     let i;

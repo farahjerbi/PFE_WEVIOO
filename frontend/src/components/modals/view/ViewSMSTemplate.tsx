@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { ViewTemplateSMSModalProps } from '../../models/DeleteModels'
+import { ViewTemplateSMSModalProps } from '../../../models/DeleteModels'
 import { Modal } from '@mui/material';
 import Button from '@mui/joy/Button';
 import ModalDialog from '@mui/joy/ModalDialog';
 import './ViewTemplate.css'
-import { WhatsAppTemplateResponse } from '../../models/sms/WhatsAppTemplateResponse';
-import { SmsTemplate } from '../../models/sms/SmsTemplate';
+import { WhatsAppTemplateResponse } from '../../../models/sms/WhatsAppTemplateResponse';
+import { SmsTemplate } from '../../../models/sms/SmsTemplate';
 const ViewSMSTemplate: React.FC<ViewTemplateSMSModalProps> = ({template , onClose ,show }) => {
     const [open,setOpen]=useState<boolean>(show);
     useEffect(() => {

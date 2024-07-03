@@ -11,13 +11,13 @@ import timezone from 'dayjs/plugin/timezone';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
-import { LIST_EMAIL_TEMPLATES } from '../../routes/paths';
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import DialogTitle from '@mui/joy/DialogTitle';
 import DialogContent from '@mui/joy/DialogContent';
 import Stack from '@mui/joy/Stack';
-import { SchedularProps } from '../../models/email/SchedularProps';
+import { SchedularProps } from '../../../models/email/SchedularProps';
+import { LIST_EMAIL_TEMPLATES } from '../../../routes/paths';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);

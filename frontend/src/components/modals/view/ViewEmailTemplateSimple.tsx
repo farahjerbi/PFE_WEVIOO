@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { ViewTemplateModalProps } from '../../models/DeleteModels'
 import { Button, DialogContent, Modal } from '@mui/material';
 import ModalDialog from '@mui/joy/ModalDialog';
 import Subject from "@mui/icons-material/Subject";
 import AlternateEmail from "@mui/icons-material/AlternateEmail";
 import Image from "@mui/icons-material/Image";
 import EmailEditor, { EditorRef, EmailEditorProps } from 'react-email-editor';
+import { ViewTemplateModalProps } from '../../../models/DeleteModels';
 const ViewEmailTemplateSimple: React.FC<ViewTemplateModalProps> = ({templateDesign, template , onClose ,show }) => {
   const [open,setOpen]=useState<boolean>(show);
   const emailEditorRef = useRef<EditorRef | null>(null);

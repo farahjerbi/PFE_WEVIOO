@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { useDeleteMemberMutation, useDeleteTeamMutation } from '../../redux/services/usersApi';
-import { selectContactDetails, selectTeamDetails, setDeleteContact, setDeleteTeam } from '../../redux/state/authSlice';
+
 import { toast } from 'sonner';
 import { Button, DialogContent, DialogTitle, Modal } from '@mui/material';
 import ModalDialog from '@mui/joy/ModalDialog';
 import { MDBBtn } from 'mdb-react-ui-kit';
+import { selectContactDetails, selectTeamDetails, setDeleteContact, setDeleteTeam } from '../../../redux/state/authSlice';
+import { useDeleteMemberMutation, useDeleteTeamMutation } from '../../../redux/services/usersApi';
 export interface ModalContactProps {
     onClose: () => void;
     show:boolean;

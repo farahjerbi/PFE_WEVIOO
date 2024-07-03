@@ -3,8 +3,8 @@ import { ScheduledPushInfo } from '../../models/push/ScheduledPushInfo'
 import { MDBBadge, MDBCard, MDBCardBody, MDBCol, MDBPagination, MDBPaginationItem, MDBPaginationLink, MDBTable, MDBTableBody, MDBTableHead } from 'mdb-react-ui-kit';
 import { Button, Tooltip } from '@mui/material';
 import Delete from '@mui/icons-material/Delete';
-import DeleteScheduledNotif from '../modals/DeleteScheduledNotif';
 import { NotificationType } from '../../models/NotificationType';
+import DeleteScheduledNotif from '../modals/delete/DeleteScheduledNotif';
 interface Props{
     push:ScheduledPushInfo[] ,
     }

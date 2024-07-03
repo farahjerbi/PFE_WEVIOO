@@ -12,6 +12,6 @@ export interface SendWhatsappSeparately{
 }
 
 export interface SendIndivWhatsapp{
-    whatsAppTemplateResponse:WhatsAppTemplateResponse;
+    whatsAppTemplateResponse:WhatsAppTemplateResponse|null;
     sendSeparatelyList:SendWhatsappSeparately[];
 }

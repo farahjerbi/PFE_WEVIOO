@@ -3,10 +3,11 @@ import { toast } from 'sonner';
 import { Button, DialogContent, DialogTitle, Modal } from '@mui/material';
 import ModalDialog from '@mui/joy/ModalDialog';
 import { MDBBtn } from 'mdb-react-ui-kit';
-import { DeleteTemplateModalProps } from '../../models/DeleteModels';
 import { useDispatch } from 'react-redux';
-import { useDeletePushTemplateMutation } from '../../redux/services/pushApi';
-import { setDeletePush } from '../../redux/state/pushSlice';
+import { DeleteTemplateModalProps } from '../../../models/DeleteModels';
+import { useDeletePushTemplateMutation } from '../../../redux/services/pushApi';
+import { setDeletePush } from '../../../redux/state/pushSlice';
+
 const DeletePushTemplate :React.FC<DeleteTemplateModalProps> = ({ id , onClose ,show }) => {
     const [deleteTemplate] = useDeletePushTemplateMutation();
     const [open,setOpen]=useState<boolean>(show);

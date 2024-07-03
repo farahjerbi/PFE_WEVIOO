@@ -1,15 +1,15 @@
 import { MDBBtn} from 'mdb-react-ui-kit'
 import React, { useEffect, useState } from 'react'
-import { useDeleteUserMutation } from '../../redux/services/usersApi';
+import { useDeleteUserMutation } from '../../../redux/services/usersApi';
 import { toast } from 'sonner';
-import { Role } from '../../models/user/Role';
+import { Role } from '../../../models/user/Role';
 import { useDispatch } from 'react-redux';
-import { logout } from '../../redux/state/authSlice';
+import { logout } from '../../../redux/state/authSlice';
 import { useNavigate } from 'react-router-dom';
 import { Button, DialogContent, DialogTitle, Modal } from '@mui/material';
 import ModalDialog from '@mui/joy/ModalDialog';
-import { DeleteUserModalProps } from '../../models/DeleteModels';
-import { setDeleteUser } from '../../redux/state/usersSlice';
+import { DeleteUserModalProps } from '../../../models/DeleteModels';
+import { setDeleteUser } from '../../../redux/state/usersSlice';
 
   const DeleteUserModal: React.FC<DeleteUserModalProps> = ({ id , onClose ,show ,typeUser}) => {
     const[deleteUser]=useDeleteUserMutation();

@@ -19,7 +19,7 @@ import DialogContent from '@mui/joy/DialogContent';
 import Stack from '@mui/joy/Stack';
 import { useDispatch } from "react-redux";
 import { setEmail } from "../../../../redux/state/emailSlice";
-import InstructionsModal from "../../../../components/modals/InstructionsModal";
+import InstructionsModal from "../../../../components/modals/instructions/InstructionsModal";
 
 
 const EmailDragAndDrop: React.FC = () => {

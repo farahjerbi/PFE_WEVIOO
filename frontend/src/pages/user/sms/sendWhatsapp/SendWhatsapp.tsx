@@ -8,12 +8,12 @@ import { toast } from 'sonner'
 import BreadcrumSection from '../../../../components/BreadcrumSection/BreadcrumSection'
 import { MDBBtn, MDBCard, MDBCardBody, MDBCol, MDBContainer, MDBInput, MDBRow, MDBSpinner } from 'mdb-react-ui-kit'
 import { ReactTyped } from 'react-typed'
-import ViewSMSTemplate from '../../../../components/modals/ViewSMSTemplate'
+import ViewSMSTemplate from '../../../../components/modals/view/ViewSMSTemplate'
 import { SendWhatsAppMsg } from '../../../../models/sms/SendWhatsAppMsg'
 import { LIST_SMS_TEMPLATES } from '../../../../routes/paths'
-import ScheduleWhatsapp from '../../../../components/modals/ScheduleWhatsapp'
 import NumberInput from '../../../../components/numberInput/NumberInput'
 import { NotificationType } from '../../../../models/NotificationType'
+import ScheduleWhatsapp from '../../../../components/modals/schedule/ScheduleWhatsapp'
 const SendWhatsapp = () => {
     const template=useSelector(selectCurrentWhatsappTemplate)
     const dispatch=useDispatch()

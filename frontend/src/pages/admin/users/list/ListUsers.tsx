@@ -4,7 +4,7 @@ import { useActivateUserMutation, useDesActivateUserMutation } from '../../../..
 import { toast } from 'sonner';
 import BreadcrumSection from '../../../../components/BreadcrumSection/BreadcrumSection';
 import './ListUsers.css'
-import DeleteUserModal from '../../../../components/modals/DeleteUserModal';
+import DeleteUserModal from '../../../../components/modals/delete/DeleteUserModal';
 import { Role } from '../../../../models/user/Role';
 import Delete from '@mui/icons-material/Delete';
 import PersonOff from '@mui/icons-material/PersonOff';

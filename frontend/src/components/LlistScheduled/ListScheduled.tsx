@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { ScheduledSMSResponse } from '../../models/sms/ScheduledSMSResponse'
 import { NotificationType } from '../../models/NotificationType'
 import Delete from '@mui/icons-material/Delete'
-import DeleteScheduledNotif from '../modals/DeleteScheduledNotif'
+import DeleteScheduledNotif from '../modals/delete/DeleteScheduledNotif'
 interface Props{
     sms:ScheduledSMSResponse[] ,
     type:NotificationType

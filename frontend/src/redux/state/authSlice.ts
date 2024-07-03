@@ -82,6 +82,11 @@ export const authSlice = createSlice({
           state.contact.push(action.payload);
         }
       },
+      addContacts(state, action: PayloadAction<IContact[]>) {
+        if (state.contact) {
+        state.contact.push(...action.payload);
+      }
+    },
       updateContact(state, action: PayloadAction<IContact>) {
         if (state.contact) {
             const index = state.contact.findIndex((c: IContact) => c.id === action.payload.id);
@@ -274,7 +279,7 @@ export const selectContactsByTeamId = (teamId: number | undefined) => (state: Ro
   );
 
 
-export const {setUpdatedUser,setUser,logout,setIsAuthorized,addContact,addTeam,
+export const {setUpdatedUser,setUser,logout,setIsAuthorized,addContact,addTeam,addContacts,
   setContactDetails,setTeamDetails,updateContact,setDeleteContact,setDeleteTeam,updateTeamAndContacts,
 } = authSlice.actions
 

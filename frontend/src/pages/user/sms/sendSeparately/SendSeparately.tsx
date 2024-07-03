@@ -10,10 +10,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import ExcelSendButton from '../../../../components/button/ExcelSendButton'
 import { SendIndiv, SendSeperately } from '../../../../models/sms/SendsSms'
 import { LIST_SMS_TEMPLATES } from '../../../../routes/paths'
-import ViewSMSTemplate from '../../../../components/modals/ViewSMSTemplate'
+import ViewSMSTemplate from '../../../../components/modals/view/ViewSMSTemplate'
 import { NotificationType } from '../../../../models/NotificationType'
 import { useGetWhatsappTemplateByIdMutation } from '../../../../redux/services/whatsAppApi'
-import { SendIndivWhatsapp } from '../../../../models/sms/SendWhatsAppMsg'
+import { SendIndivWhatsapp, SendWhatsappSeparately } from '../../../../models/sms/SendWhatsAppMsg'
 interface Props{
     type:NotificationType
   }
@@ -94,8 +94,7 @@ const generateSendSeparatelyList = (): SendIndiv => {
   for (let i = 0; i < rowCount; i++) {
     const row: Record<string, string> = {};
     let isUnknown = false;
-    const usedTemplate = type===NotificationType.SMS? template:templateWhatsapp
-    usedTemplate?.placeholders?.forEach(placeholder => {
+    template?.placeholders?.forEach(placeholder => {
       const value = placeholderData[placeholder.toLowerCase()]?.[i] || '';
       row[placeholder] = value;
       if (typeof value === 'string' && value.toLowerCase() === 'unknown') {
@@ -103,12 +102,12 @@ const generateSendSeparatelyList = (): SendIndiv => {
       }
     });
 
-    const number = type===NotificationType.SMS? placeholderData['phone']?.[i] || '':placeholderData['whatsapp']?.[i] || '';
+    const number = placeholderData['phone']?.[i] || '';
     if (typeof number === 'string' && number.toLowerCase() === 'unknown') {
       isUnknown = true;
     }
 
-    if (!isUnknown) {
+    if (!isUnknown ) {
       sendSeparatelyList.push({
         number: number.toString(), 
         placeholderValues: row,
@@ -120,10 +119,41 @@ const generateSendSeparatelyList = (): SendIndiv => {
 
 };
 
+const generateSendSeparatelyListWhatsapp = (): SendIndivWhatsapp => {
+  const placeholderData = getPlaceholderData();
+  const rowCount = placeholderData[Object.keys(placeholderData)[0]]?.length || 0;
 
-const sendSeparatelyList = generateSendSeparatelyList();
-console.log("🚀 ~ SendSeparately ~ sendSeparatelyList:", sendSeparatelyList)
+  const sendSeparatelyList: SendWhatsappSeparately[] = [];
+  for (let i = 0; i < rowCount; i++) {
+    const row: Record<string, string> = {};
+    let isUnknown = false;
+    templateWhatsapp?.placeholders?.forEach(placeholder => {
+      const value = placeholderData[placeholder.toLowerCase()]?.[i] || '';
+      row[placeholder] = value;
+      if (typeof value === 'string' && value.toLowerCase() === 'unknown') {
+        isUnknown = true;
+      }
+    });
 
+    const number = placeholderData['whatsapp']?.[i] || '';
+    if (typeof number === 'string' && number.toLowerCase() === 'unknown') {
+      isUnknown = true;
+    }
+
+    if (!isUnknown && type===NotificationType.SMS ) {
+      sendSeparatelyList.push({
+        number: number.toString(), 
+        placeholders:Object.values(row),
+      });
+    }
+  }
+
+    return { whatsAppTemplateResponse:templateWhatsapp, sendSeparatelyList }
+
+};
+
+
+const sendSeparatelyList = type===NotificationType.SMS?generateSendSeparatelyList():generateSendSeparatelyListWhatsapp();
 
 
 const handleSubmit: (evt: FormEvent<HTMLFormElement>) => void = async (
@@ -132,7 +162,7 @@ const handleSubmit: (evt: FormEvent<HTMLFormElement>) => void = async (
   e.preventDefault();
   setLoading(true);
   if(id){
-    const sendSms:SendIndiv=sendSeparatelyList;
+    const sendSms:SendIndiv=generateSendSeparatelyList();
   try {
       await sendSMSSeprartely(sendSms)
       toast.success("SMS sent Successfully !");

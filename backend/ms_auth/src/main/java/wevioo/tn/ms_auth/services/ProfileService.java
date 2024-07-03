@@ -8,6 +8,7 @@ import wevioo.tn.ms_auth.dtos.responses.UsersResponse;
 import wevioo.tn.ms_auth.entities.Member;
 import wevioo.tn.ms_auth.entities.Team;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface ProfileService {
@@ -23,4 +24,5 @@ public interface ProfileService {
     String deleteMember(Long id);
     TeamResponse updateTeamWithMembers(Long teamId, TeamRequest teamDto);
     void deleteTeam(Long teamId);
+    List<MemberResponse> addMembers(Collection<Member> members, Long userId);
 }

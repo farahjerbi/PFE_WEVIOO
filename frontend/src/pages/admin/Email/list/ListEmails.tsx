@@ -36,10 +36,10 @@ import { Role } from "../../../../models/user/Role";
 import { selectRole, selectUser } from "../../../../redux/state/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { ADD_EMAIL_TEMPLATE, EDIT_EMAIL_TEMPLATE, SEND_EMAIL, SEND_EMAIL_SCHEDULED } from "../../../../routes/paths";
-import DeleteTemplateModal from "../../../../components/modals/DeleteTemplateModal";
-import ViewEmailTemplateSimple from "../../../../components/modals/ViewEmailTemplateSimple";
 import { getTemplatesEmail, selectEmails, setSelectedEmail, setUpdateEmailFav } from "../../../../redux/state/emailSlice";
 import { AppDispatch } from "../../../../redux/store";
+import DeleteTemplateModal from "../../../../components/modals/delete/DeleteTemplateModal";
+import ViewEmailTemplateSimple from "../../../../components/modals/view/ViewEmailTemplateSimple";
 
 const ListEmails = () => {
   const [basicModal, setBasicModal] = useState(false);

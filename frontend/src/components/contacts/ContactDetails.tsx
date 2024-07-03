@@ -7,7 +7,7 @@ import Avatar from 'react-avatar';
 import { Button, Tooltip } from '@mui/material';
 import Update from '@mui/icons-material/Update';
 import Delete from '@mui/icons-material/Delete';
-import DeleteContact from '../modals/DeleteContact';
+import DeleteContact from '../modals/delete/DeleteContact';
 interface ContactDetailsProps {
   onClose: () => void;
 }

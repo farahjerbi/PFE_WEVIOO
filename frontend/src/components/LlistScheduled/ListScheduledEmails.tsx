@@ -5,8 +5,8 @@ import React, { useState } from 'react'
 import { ScheduledEmailResponse } from '../../models/email/ScheduledEmailRespose'
 import './ListScheduled.css'
 import Delete from '@mui/icons-material/Delete'
-import DeleteScheduledNotif from '../modals/DeleteScheduledNotif'
 import { NotificationType } from '../../models/NotificationType'
+import DeleteScheduledNotif from '../modals/delete/DeleteScheduledNotif'
 interface Props{
     emails:ScheduledEmailResponse[] 
     }

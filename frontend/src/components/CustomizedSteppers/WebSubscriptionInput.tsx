@@ -1,5 +1,7 @@
 import { MDBBtn, MDBIcon, MDBInput } from 'mdb-react-ui-kit';
 import React, { useEffect, useState } from 'react'
+import ExcelButton from '../button/ExcelButton';
+import ContactPushModal from '../modals/contacts/ContactPushModal';
 interface WebSubscriptionInputProps {
   onChange: (subscriptions: WebPushSubscription[]) => void;
 }
@@ -11,6 +13,8 @@ interface WebPushSubscription {
 }
 const WebSubscriptionInput: React.FC<WebSubscriptionInputProps> = ({ onChange }) => {
   const [subscriptions, setSubscriptions] = useState<WebPushSubscription[]>([{ notificationEndPoint: '', publicKey: '', auth: '' }]);
+  console.log("🚀 ~ subscriptions:", subscriptions)
+  const [open, setOpen] = useState<boolean>(false);   
 
   useEffect(() => {
     onChange(subscriptions);
@@ -33,6 +37,8 @@ const WebSubscriptionInput: React.FC<WebSubscriptionInputProps> = ({ onChange })
     newSubscriptions.splice(index, 1);
     setSubscriptions(newSubscriptions);
   };
+
+
   return (
     <div className='container-input mt-5'>
 
@@ -77,7 +83,12 @@ const WebSubscriptionInput: React.FC<WebSubscriptionInputProps> = ({ onChange })
           Add
         </MDBBtn>
       )}
-    </div>
+       <MDBBtn onClick={() => setOpen(true)} type="button" className="add-btn ms-3 baby-bluee" style={{ padding: '8px 16px' }}>
+              Select From Contacts<MDBIcon icon="address-book" style={{ marginRight: "3px" }} />
+            </MDBBtn>
+
+      <ContactPushModal onClose={()=>setOpen(false)} onSubmit={setSubscriptions}  show={open} />
+            </div>
   );
 }
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { selectContact, selectTeamsWithContacts } from '../../redux/state/authSlice'
+import { selectContact, selectTeamsWithContacts } from '../../../redux/state/authSlice'
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import Stack from '@mui/joy/Stack';
@@ -13,23 +13,21 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Checkbox from '@mui/material/Checkbox';
 import Avatar from '@mui/material/Avatar';
-import { ITeamWithContact } from '../../models/user/Team';
-import { NotificationType } from '../../models/NotificationType';
+import { ITeamWithContact } from '../../../models/user/Team';
 export interface ModalContactProps {
     onClose: () => void;
     show:boolean;
     onSubmit: (checked: string[]) => void;
-    type:NotificationType
   }
 
-const ContactNumbersModal: React.FC<ModalContactProps> = ({ onClose, show,onSubmit,type }) => {
+
+  const ContactEmailModal: React.FC<ModalContactProps> = ({ onClose, show,onSubmit }) => {
     const contacts = useSelector(selectContact);
     const [open, setOpen] = useState<boolean>(show);
     const [isGroup, setIsGroup] = useState<boolean>(true);
     const [checked, setChecked] = useState<string[]>([]);
     const [checkedTeam, setCheckedTeam] = useState<number[]>([]);
     const teams = useSelector(selectTeamsWithContacts);  
-
     const handleToggle = (value: string) => () => {
       const currentIndex = checked.indexOf(value);
       const newChecked = [...checked];
@@ -44,23 +42,23 @@ const ContactNumbersModal: React.FC<ModalContactProps> = ({ onClose, show,onSubm
     };
   
     const handleToggleTeam = (team: ITeamWithContact) => () => {
-        const currentIndex = checkedTeam.indexOf(team.id ?? -1);
-        const newCheckedTeam = currentIndex === -1 ? [...checkedTeam, team.id!] : checkedTeam.filter(id => id !== team.id);
-      
-        let numbersToAdd: string[] = [];
-        if (team.id !== undefined) {
-          numbersToAdd = team.members.map((member) => type === NotificationType.SMS ? member.phone : member.whatsapp);
-        }
-      
-        const updatedChecked = currentIndex === -1
-          ? [...checked, ...numbersToAdd]
-          : checked.filter(num => !numbersToAdd.includes(num));
-      
-        setChecked(updatedChecked);
-        setCheckedTeam(newCheckedTeam);
-      };
-
-      
+      const currentIndex = checkedTeam.indexOf(team.id ?? -1);
+      const newCheckedTeam = [...checkedTeam];
+  
+      if (currentIndex === -1 && team.id !== undefined) {
+        newCheckedTeam.push(team.id);
+        const emails: string[] = team.members.map((member) => member.email);
+        setChecked([...checked, ...emails]);
+      } else {
+        newCheckedTeam.splice(currentIndex, 1);
+        const emailsToRemove: string[] = team.members.map((member) => member.email);
+        const filteredChecked = checked.filter((email) => !emailsToRemove.includes(email));
+        setChecked(filteredChecked);
+      }
+  
+      setCheckedTeam(newCheckedTeam);
+    };
+  
     useEffect(() => {
       setOpen(show);
     }, [show]);
@@ -70,8 +68,9 @@ const ContactNumbersModal: React.FC<ModalContactProps> = ({ onClose, show,onSubm
       onSubmit(uniqueChecked);
       onClose();
     };
-  return (
-  <>
+  
+    return (
+      <>
         <Modal open={show} onClose={onClose}>
           <ModalDialog  minWidth={500} maxWidth={600} style={{overflow: 'auto'}}>
             <Stack spacing={2}>
@@ -107,8 +106,8 @@ const ContactNumbersModal: React.FC<ModalContactProps> = ({ onClose, show,onSubm
                           <ListItemText id={labelId} primary={value.fullName} />
                           <Checkbox
                             edge="end"
-                            onChange={type===NotificationType.SMS ?handleToggle(value.phone):handleToggle(value.whatsapp)}
-                            checked={(type===NotificationType.SMS ?checked.indexOf(value.phone):checked.indexOf(value.whatsapp)) !== -1}
+                            onChange={handleToggle(value.email)}
+                            checked={checked.indexOf(value.email) !== -1}
                             inputProps={{ 'aria-labelledby': labelId }}
                           />
                         </ListItemButton>
@@ -163,7 +162,8 @@ const ContactNumbersModal: React.FC<ModalContactProps> = ({ onClose, show,onSubm
             </Stack>
           </ModalDialog>
         </Modal>
-      </>  )
-}
-
-export default ContactNumbersModal
+      </>
+    );
+  };
+  
+  export default ContactEmailModal;

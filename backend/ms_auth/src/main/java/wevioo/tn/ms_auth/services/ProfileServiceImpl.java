@@ -157,6 +157,32 @@ public class ProfileServiceImpl implements ProfileService {
         return memberResponse;
     }
 
+    @Transactional
+    public List<MemberResponse> addMembers(Collection<Member> members, Long userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("User not found"));
+
+        Set<Member> userMembers = user.getMembers();
+        if (userMembers == null) {
+            userMembers = new HashSet<>();
+        }
+
+        for (Member member : members) {
+            userMembers.add(member);
+            member.setUser(user);
+        }
+
+        user.setMembers(userMembers);
+
+        memberRepository.saveAll(members);
+        userRepository.save(user);
+
+        return members.stream()
+                .map(member -> modelMapper.map(member, MemberResponse.class))
+                .collect(Collectors.toList());
+    }
+
+
 
     @Transactional
     public String deleteMember(Long memberId) {

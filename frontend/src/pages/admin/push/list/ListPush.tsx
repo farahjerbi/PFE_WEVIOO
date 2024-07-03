@@ -14,7 +14,6 @@ import { WebPushTemplate } from '../../../../models/push/WebPushTemplate';
 import { getTemplatesPush, selectPushs, setSelectedPush, setUpdatePushFav } from '../../../../redux/state/pushSlice';
 import { AppDispatch } from '../../../../redux/store';
 import UpdatePush from '../update/UpdatePush';
-import DeletePushTemplate from '../../../../components/modals/DeletePushTemplate';
 import { Role } from '../../../../models/user/Role';
 import Send from '@mui/icons-material/Send';
 import BookmarkRemoveOutlined from '@mui/icons-material/BookmarkRemoveOutlined';
@@ -22,6 +21,7 @@ import BookmarkAddedOutlined from '@mui/icons-material/BookmarkAddedOutlined';
 import { useToggleFavoritePushMutation } from '../../../../redux/services/pushApi';
 import { toast } from 'sonner';
 import CustomizedSteppers from '../../../../components/CustomizedSteppers/CustomizedSteppers';
+import DeletePushTemplate from '../../../../components/modals/delete/DeletePushTemplate';
 interface Props{
     query:string
     }

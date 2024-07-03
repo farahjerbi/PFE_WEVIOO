@@ -103,6 +103,13 @@ public class ProfileController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
+    @PostMapping("/{userId}/members")
+    public ResponseEntity<List<MemberResponse>> addMembers(
+            @PathVariable Long userId,
+            @RequestBody List<Member> members) {
+        List<MemberResponse> memberResponses = profileService.addMembers(members, userId);
+        return ResponseEntity.ok(memberResponses);
+    }
 
     @PostMapping("updateMember")
     public ResponseEntity<MemberResponse> updateMember(@RequestBody UpdateMember member) {

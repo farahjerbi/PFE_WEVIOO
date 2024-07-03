@@ -40,6 +40,7 @@ const ExcelButton: React.FC<ExcelButtonProps> = ({ onExcelUpload }) => {
               const publicKey: string[] = [];
               const endPoint: string[] = [];
 
+
               jsonData.forEach((row: any) => {
                 const email = getValue(row, 'email') || getValue(row, 'emails');
                 const phone = getValue(row, 'phone') || getValue(row, 'phone');
@@ -47,6 +48,7 @@ const ExcelButton: React.FC<ExcelButtonProps> = ({ onExcelUpload }) => {
                 const a = getValue(row, 'auth') || getValue(row, 'auth');
                 const pk = getValue(row, 'publicKey') || getValue(row, 'publicKey');
                 const ep = getValue(row, 'endPoint') || getValue(row, 'endPoint');
+
 
                         if (email && validateEmail(email)) {
                             emails.push(email);
@@ -66,6 +68,7 @@ const ExcelButton: React.FC<ExcelButtonProps> = ({ onExcelUpload }) => {
                         if (ep) {
                             endPoint.push(ep);
                         }
+                     
                         });
                     
               setUploadedEmails(emails);

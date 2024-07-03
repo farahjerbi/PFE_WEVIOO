@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import { DeleteScheduledNotifProps } from '../../models/DeleteModels'
-import { useDeleteScheduledEmailMutation } from '../../redux/services/emailApi'
-import { useDispatch } from 'react-redux'
 import { toast } from 'sonner';
 import { Button, DialogContent, DialogTitle, Modal } from '@mui/material';
 import ModalDialog from '@mui/joy/ModalDialog';
 import { MDBBtn } from 'mdb-react-ui-kit';
-import { useDeleteSMSTemplateMutation, useDeleteScheduledSMSMutation } from '../../redux/services/smsApi';
-import { useDeleteScheduledWhatsappMutation } from '../../redux/services/whatsAppApi';
-import { useDeleteScheduledPushMutation } from '../../redux/services/pushApi';
-import { NotificationType } from '../../models/NotificationType';
+import { DeleteScheduledNotifProps } from '../../../models/DeleteModels';
+import { NotificationType } from '../../../models/NotificationType';
+import { useDeleteScheduledEmailMutation } from '../../../redux/services/emailApi';
+import { useDeleteScheduledPushMutation } from '../../../redux/services/pushApi';
+import { useDeleteScheduledSMSMutation } from '../../../redux/services/smsApi';
+import { useDeleteScheduledWhatsappMutation } from '../../../redux/services/whatsAppApi';
+
 const DeleteScheduledNotif: React.FC<DeleteScheduledNotifProps> = ({ id , onClose ,show,type }) => {
     
 const[deleteScheduledEmail]=useDeleteScheduledEmailMutation()

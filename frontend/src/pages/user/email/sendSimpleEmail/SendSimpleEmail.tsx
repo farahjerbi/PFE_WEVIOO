@@ -6,7 +6,6 @@ import { useGetTemplateByIdMutation, useGetTemplatePlaceholdersMutation } from '
 import { toast } from 'sonner';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import ScheduleModal from '../../../../components/modals/ScheduleModal';
 import { selectUser } from '../../../../redux/state/authSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { LIST_EMAIL_TEMPLATES } from '../../../../routes/paths';
@@ -14,8 +13,9 @@ import { Button, styled } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import BreadcrumSection from '../../../../components/BreadcrumSection/BreadcrumSection';
 import { selectEmail, setSelectedEmail } from '../../../../redux/state/emailSlice';
-import InstructionsUserModal from '../../../../components/modals/InstructionsUserModal';
+import InstructionsUserModal from '../../../../components/modals/instructions/InstructionsUserModal';
 import React from 'react';
+import ScheduleModal from '../../../../components/modals/schedule/ScheduleModal';
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
   clipPath: 'inset(50%)',

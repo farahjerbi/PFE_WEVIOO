@@ -9,12 +9,12 @@ import { Role } from '../../models/user/Role';
 import { IUser } from '../../models/user/User';
 import './WhatsAppCard.css'
 import { WhatsAppTemplateResponse } from '../../models/sms/WhatsAppTemplateResponse';
-import ViewSMSTemplate from '../modals/ViewSMSTemplate';
-import DeleteSMSTemplate from '../modals/DeleteSMSTemplate';
+import ViewSMSTemplate from '../modals/view/ViewSMSTemplate';
 import { getLanguageName } from '../../models/sms/Language';
 import { selectCurrentSms, setCurrentWhatsappTemplate } from '../../redux/state/smsSlice';
 import { useDispatch } from 'react-redux';
 import { SEND_WHATSAPP, SEND_WHATSAPP_SEPARATELY } from '../../routes/paths';
+import DeleteSMSTemplate from '../modals/delete/DeleteSMSTemplate';
 interface PropsWhatsapp{
     role:Role | null,
     templates:WhatsAppTemplateResponse[] ,

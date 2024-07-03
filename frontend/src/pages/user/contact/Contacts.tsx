@@ -11,8 +11,10 @@ import ContactDetails from '../../../components/contacts/ContactDetails'
 import TeamDetails from '../../../components/contacts/TeamDetails'
 import UpdateCnct from '../../../components/contacts/UpdateCnct'
 import UpdateTeam from '../../../components/contacts/UpdateTeam'
+import AddContacts from '../../../components/modals/contacts/AddContacts'
 const Contacts = () => {
   const [open, setOpen] = useState<boolean>(false);
+  const [openAddContacts, setOpenAddContacts] = useState<boolean>(false);
   const [openAddContact, setOpenAddContact] = useState<boolean>(false);
   const [openAddTeam, setOpenAddTeam] = useState<boolean>(false);
   const [openContactDetails, setOpenContactDetails] = useState<boolean>(false);
@@ -61,7 +63,8 @@ const Contacts = () => {
         <div className={open ? 'contact-container-open' : 'contact-container'}>
         <MDBCard className={open ? 'contact-card mb-5 me-5': 'contact-card mb-5 me-5 ms-5'}>
             <MDBCardBody>
-            <Button
+              <div className='d-flex'>
+              <Button
                 onClick={()=>{
                   setOpenAddTeam(false);
                   setOpenContactDetails(false);
@@ -71,7 +74,7 @@ const Contacts = () => {
                   dispatch(setContactDetails(null));
                   setOpen(true);
                   setOpenAddContact(true);}}
-                className='mb-4'
+                className='mb-4 me-4'
                 component="label"
                 role={undefined}
                 variant="contained"
@@ -82,6 +85,22 @@ const Contacts = () => {
                 <img alt='img' src='../../../assets/add-contact.png' style={{ width: "19%" }} />
                 <span>Add Contact</span>
                 </Button>
+                <Button
+                onClick={()=>setOpenAddContacts(true)}
+                className='mb-4'
+                component="label"
+                role={undefined}
+                variant="contained"
+                tabIndex={-1}
+                color='inherit'
+                style={{ display: 'flex', alignItems: 'center', gap: '3px' ,width:"40%"}} 
+                >
+                <img alt='img' src='../../../assets/contactts.png' style={{ width: "19%" }} />
+                <span>Add Many</span>
+                </Button>
+              </div>
+          
+
                 {contactsUser && contactsUser.map((c, index) => (
                   
                 <MDBBadge onClick={()=>{{
@@ -148,30 +167,33 @@ const Contacts = () => {
         {open && (
 
           <MDBCard className='contact-card-details'>
-          <MDBCardBody>
-            {openAddContact && (
-                 <AddContact onClose={closeEverything} />
-            )}
-             {openAddTeam && (
-                 <Team onClose={closeEverything} />
-            )}
-            {openContactDetails && (
-              <ContactDetails  onClose={handleContactDetailsUpdate}/>
-            )}
-            {openTeamDetails && (
-                <TeamDetails onClose={handleTeamDetailsUpdate} />
+            <MDBCardBody>
+              {openAddContact && (
+                  <AddContact onClose={closeEverything} />
               )}
-                   {openUpdateContact && (
-                <UpdateCnct onClose={closeEverything} />
+              {openAddTeam && (
+                  <Team onClose={closeEverything} />
               )}
-                {openUpdateTeam && (
-                <UpdateTeam onClose={closeEverything} />
+              {openContactDetails && (
+                <ContactDetails  onClose={handleContactDetailsUpdate}/>
               )}
-          </MDBCardBody>
+              {openTeamDetails && (
+                  <TeamDetails onClose={handleTeamDetailsUpdate} />
+                )}
+                    {openUpdateContact && (
+                  <UpdateCnct onClose={closeEverything} />
+                )}
+                  {openUpdateTeam && (
+                  <UpdateTeam onClose={closeEverything} />
+                )}
+            </MDBCardBody>
           </MDBCard>
         )}
      
         </div>
+        {openAddContacts && (
+                  <AddContacts onClose={()=>setOpenAddContacts(false)} show={openAddContacts} />
+              )}
     </>
   )
 }

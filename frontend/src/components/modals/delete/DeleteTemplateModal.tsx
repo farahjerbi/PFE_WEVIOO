@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { useDeleteTemplateMutation } from '../../redux/services/emailApi';
 import { toast } from 'sonner';
 import { Button, DialogContent, DialogTitle, Modal } from '@mui/material';
 import ModalDialog from '@mui/joy/ModalDialog';
 import { MDBBtn } from 'mdb-react-ui-kit';
-import { DeleteTemplateModalProps } from '../../models/DeleteModels';
 import { useDispatch } from 'react-redux';
-import { setDeleteEmail } from '../../redux/state/emailSlice';
+import { DeleteTemplateModalProps } from '../../../models/DeleteModels';
+import { useDeleteTemplateMutation } from '../../../redux/services/emailApi';
+import { setDeleteEmail } from '../../../redux/state/emailSlice';
 
 
 const DeleteTemplateModal: React.FC<DeleteTemplateModalProps> = ({ id , onClose ,show }) => {

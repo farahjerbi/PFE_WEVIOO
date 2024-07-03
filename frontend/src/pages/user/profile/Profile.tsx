@@ -3,7 +3,7 @@ import './Profile.css'
 import Avatar from 'react-avatar';
 import BreadcrumSection from '../../../components/BreadcrumSection/BreadcrumSection'
 import { MDBBtn, MDBCard, MDBCardBody, MDBCol, MDBContainer, MDBIcon, MDBInput, MDBRow } from 'mdb-react-ui-kit'
-import DeleteUserModal from '../../../components/modals/DeleteUserModal';
+import DeleteUserModal from '../../../components/modals/delete/DeleteUserModal';
 import { Role } from '../../../models/user/Role';
 import ChangePassword from '../changePassword/ChangePassword';
 import { toast } from 'sonner';

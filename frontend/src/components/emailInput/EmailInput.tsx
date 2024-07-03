@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { MDBBtn, MDBIcon, MDBInput } from 'mdb-react-ui-kit';
 import './EmailInput.css';
 import ExcelButton from '../button/ExcelButton';
-import ContactEmailModal from '../modals/ContactEmailModal';
+import ContactEmailModal from '../modals/contacts/ContactEmailModal';
 interface EmailInputProps {
   label: string;
   onChange: (emails: string[]) => void;

@@ -5,7 +5,7 @@ import PhoneInput from 'react-phone-input-2'
 import "react-phone-input-2/lib/style.css";
 import ExcelButton from '../button/ExcelButton';
 import { NotificationType } from '../../models/NotificationType';
-import ContactNumbersModal from '../modals/ContactNumbersModal';
+import ContactNumbersModal from '../modals/contacts/ContactNumbersModal';
 
 interface NumberInputProps {
     label: string;

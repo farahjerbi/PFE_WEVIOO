@@ -1,7 +1,6 @@
 import React from 'react'
 import { Button, Tooltip } from '@mui/material';
 import Visibility from "@mui/icons-material/Visibility";
-import ViewEmailTemplateSimple from '../modals/ViewEmailTemplateSimple';
 import ScheduleSend from "@mui/icons-material/ScheduleSend";
 import BookmarkRemoveOutlined from "@mui/icons-material/BookmarkRemoveOutlined";
 import Send from "@mui/icons-material/Send";
@@ -17,9 +16,10 @@ import {  setUpdateEmailFavList } from '../../redux/state/emailSlice';
 import { toast } from 'sonner';
 import { selectUser } from '../../redux/state/authSlice';
 import { SmsTemplate } from '../../models/sms/SmsTemplate';
-import ViewSMSTemplate from '../modals/ViewSMSTemplate';
+import ViewSMSTemplate from '../modals/view/ViewSMSTemplate';
 import { useToggleFavoriteSMSMutation } from '../../redux/services/smsApi';
 import { setUpdateSmsFavList } from '../../redux/state/smsSlice';
+import ViewEmailTemplateSimple from '../modals/view/ViewEmailTemplateSimple';
 interface SheetContentProps<T> {
     templates: T[];
     type: string;

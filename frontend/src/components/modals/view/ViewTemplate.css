@@ -2,7 +2,7 @@
     min-height: 600px;
     min-width: 800px;
     background-size: 150% 120%; 
-    background-image:url("../../../public/assets/phone.jpg");
+    background-image:url("../../../../public/assets/phone.jpg");
     background-repeat: no-repeat;
     background-position: center;
 }

@@ -13,13 +13,13 @@ import { Role } from '../../models/user/Role';
 import { SmsTemplate } from '../../models/sms/SmsTemplate';
 import { IUser } from '../../models/user/User';
 import './SMSCard.css'
-import ViewSMSTemplate from '../modals/ViewSMSTemplate';
-import DeleteSMSTemplate from '../modals/DeleteSMSTemplate';
+import ViewSMSTemplate from '../modals/view/ViewSMSTemplate';
 import {  setSelectedSms, setUpdateSMSFav } from '../../redux/state/smsSlice';
 import { CREATE_SMS_TEMPLATE, SEND_SMS, SEND_SMS_SEPARATELY, UPDATE_SMS_TEMPLATE } from '../../routes/paths';
 import { useDispatch } from 'react-redux';
 import { useToggleFavoriteSMSMutation } from '../../redux/services/smsApi';
 import { toast } from 'sonner';
+import DeleteSMSTemplate from '../modals/delete/DeleteSMSTemplate';
 interface PropsSMS{
 role:Role | null,
 templates:SmsTemplate[] | null,

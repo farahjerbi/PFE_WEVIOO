@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import {  DeleteTemplateSMSModalProps } from '../../models/DeleteModels'
-import { useDeleteSMSTemplateMutation } from '../../redux/services/smsApi';
+
 import { useDispatch } from 'react-redux';
-import { setDeleteSms, setDeleteWhatsapp } from '../../redux/state/smsSlice';
 import { toast } from 'sonner';
 import { Button, DialogContent, DialogTitle, Modal } from '@mui/material';
 import ModalDialog from '@mui/joy/ModalDialog';
 import { MDBBtn } from 'mdb-react-ui-kit';
-import { useDeleteWhatsappTemplateMutation } from '../../redux/services/whatsAppApi';
+import { DeleteTemplateSMSModalProps } from '../../../models/DeleteModels';
+import { useDeleteSMSTemplateMutation } from '../../../redux/services/smsApi';
+import { useDeleteWhatsappTemplateMutation } from '../../../redux/services/whatsAppApi';
+import { setDeleteSms, setDeleteWhatsapp } from '../../../redux/state/smsSlice';
 
 const DeleteSMSTemplate: React.FC<DeleteTemplateSMSModalProps> = ({ id , onClose ,show }) => {
   useEffect(() => {

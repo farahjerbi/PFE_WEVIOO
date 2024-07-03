@@ -113,11 +113,20 @@ export const usersApi = createApi({
                 };
             }
         }),
+        addMembers : builder.mutation({
+            query:(body:{contact:any[],id:number|undefined})=>{
+                return{
+                    url:`/${body.id}/members`,
+                    method:"POST",
+                    body:body.contact
+                };
+            }
+        }),
 
     })
 })
 
 export const {useGetAllUsersMutation ,useResetPasswordMutation,useCreateMemberMutation,useCreateTeamMutation,
     useActivateUserMutation,useDesActivateUserMutation,useDeleteUserMutation,useChangePasswordMutation,
-    useUpdateMemberMutation,useDeleteTeamMutation,useDeleteMemberMutation,useUpdateTeamMutation
+    useUpdateMemberMutation,useDeleteTeamMutation,useDeleteMemberMutation,useUpdateTeamMutation,useAddMembersMutation
 }=usersApi;
