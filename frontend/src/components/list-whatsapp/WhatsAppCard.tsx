@@ -12,9 +12,9 @@ import { WhatsAppTemplateResponse } from '../../models/sms/WhatsAppTemplateRespo
 import ViewSMSTemplate from '../modals/ViewSMSTemplate';
 import DeleteSMSTemplate from '../modals/DeleteSMSTemplate';
 import { getLanguageName } from '../../models/sms/Language';
-import { selectCurrentSms } from '../../redux/state/smsSlice';
+import { selectCurrentSms, setCurrentWhatsappTemplate } from '../../redux/state/smsSlice';
 import { useDispatch } from 'react-redux';
-import { SEND_WHATSAPP } from '../../routes/paths';
+import { SEND_WHATSAPP, SEND_WHATSAPP_SEPARATELY } from '../../routes/paths';
 interface PropsWhatsapp{
     role:Role | null,
     templates:WhatsAppTemplateResponse[] ,
@@ -39,7 +39,7 @@ const WhatsAppCard : React.FC<PropsWhatsapp> = ({ role ,templates ,user }) => {
          };
        
   return (
-    <MDBCard className='ms-5 whatsapp-card' >
+    <MDBCard className='whatsapp-card' >
  
 <MDBCardBody>
 <div className="d-flex align-items-center justify-content-end mb-2">
@@ -118,8 +118,8 @@ const WhatsAppCard : React.FC<PropsWhatsapp> = ({ role ,templates ,user }) => {
               }
               }
               >
-              <Send style={{color:"whitesmoke"}}  />
-              </Button>                           
+                   <i style={{color:"whitesmoke",fontSize:"1.4rem"}} className="fas fa-envelopes-bulk"></i>                     
+                   </Button>                           
               </Tooltip>
           </td>
 
@@ -128,7 +128,7 @@ const WhatsAppCard : React.FC<PropsWhatsapp> = ({ role ,templates ,user }) => {
               <Button  
                  onClick={() =>
               {
-                navigate(`${SEND_WHATSAPP}/${template.id}`)
+                navigate(`${SEND_WHATSAPP_SEPARATELY}/${template.id}`)
               }
               }
               >

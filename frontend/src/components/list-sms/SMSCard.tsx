@@ -169,8 +169,8 @@ const SMSCard : React.FC<PropsSMS> = ({ role ,templates ,user }) => {
               <Button  
                  onClick={() =>{navigate(`${SEND_SMS}/${template.id}`)}}
               >
-              <Send style={{color:"whitesmoke"}}  />
-              </Button>                           
+                   <i style={{color:"whitesmoke",fontSize:"1.4rem"}} className="fas fa-envelopes-bulk"></i>                     
+                          </Button>                           
               </Tooltip>
           </td>
 

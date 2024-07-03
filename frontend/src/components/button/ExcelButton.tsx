@@ -1,6 +1,7 @@
 import { MDBBtn, MDBIcon } from 'mdb-react-ui-kit';
 import React, { useState } from 'react'
 import *as xlsx from 'xlsx';
+import { getValue, validateEmail, validatePhone } from '../../routes/Functions';
 interface ExcelButtonProps {
     onExcelUpload: (
       emails: string[],
@@ -11,26 +12,6 @@ interface ExcelButtonProps {
       endPoint: string[]
     ) => void;
   }
-  const getValue = (row: any, key: string) => {
-    const lcKey = key.toLowerCase();
-    for (const k in row) {
-      if (k.toLowerCase() === lcKey) {
-        return row[k];
-      }
-    }
-    return undefined;
-  };
-
-  const validateEmail = (email: string): boolean => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-  };
-
-  const validatePhone = (phone: string): boolean => {
-    const regex = /^\d{11}$/;
-    return regex.test(phone);
-  };
-  
 const ExcelButton: React.FC<ExcelButtonProps> = ({ onExcelUpload }) => {
 
     const [uploadedEmails, setUploadedEmails] = useState<string[]>([]);

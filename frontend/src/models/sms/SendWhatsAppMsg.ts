@@ -5,3 +5,13 @@ export interface SendWhatsAppMsg{
     numbers:string[];
     placeholders:string[];
 }
+
+export interface SendWhatsappSeparately{
+    number:string
+    placeholders:string[];
+}
+
+export interface SendIndivWhatsapp{
+    whatsAppTemplateResponse:WhatsAppTemplateResponse;
+    sendSeparatelyList:SendWhatsappSeparately[];
+}
