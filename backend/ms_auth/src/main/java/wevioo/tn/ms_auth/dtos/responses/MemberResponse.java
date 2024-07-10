@@ -19,7 +19,7 @@ public class MemberResponse {
     private String whatsapp;
     private String email;
     private String auth;
-    private String endpoint;
+    private String endPoint;
     private String publicKey;
     private Set<TeamResponse> teams;
 

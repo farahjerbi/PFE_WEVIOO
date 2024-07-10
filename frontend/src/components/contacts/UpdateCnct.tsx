@@ -11,6 +11,7 @@ import { IAddContact, IContact, UpdateContact } from '../../models/user/Contact'
 import { Button, Checkbox, Grid, List, ListItemButton, ListItemIcon, ListItemText, Paper } from '@mui/material';
 import { ITeam } from '../../models/user/Team';
 import { setIsOpen } from '../../redux/state/styleSlice';
+import { validateEmail } from '../../routes/Functions';
 function not(a: readonly ITeam[], b: readonly ITeam[]) {
   return a.filter((value) => b.indexOf(value) === -1);
 }
@@ -32,7 +33,7 @@ const UpdateCnct: React.FC<Props> = ({ onClose  }) => {
     phone:""  || contact?.phone ,
     whatsapp:""  || contact?.whatsapp,
     auth:"" || contact?.auth,
-    endPoint:"" || contact?.Endpoint,
+    endPoint:"" || contact?.endPoint,
     publicKey:"" || contact?.publicKey,
   }
 
@@ -61,8 +62,8 @@ const UpdateCnct: React.FC<Props> = ({ onClose  }) => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   
-    if (!fullName || !email) {
-      toast.warning("Please fill in at least name and email");
+    if (!fullName || !email || !phone) {
+      toast.warning("Please fill in at least name, email and a phone number");
       return;
     }
   
@@ -74,7 +75,7 @@ const UpdateCnct: React.FC<Props> = ({ onClose  }) => {
         phone: phone || "",
         whatsapp: whatsapp || "",
         auth: auth || "",
-        Endpoint: endPoint || "",
+        endPoint: endPoint || "",
         publicKey: publicKey || "",
         id: contact.id,
         teamId: right.map(contact => contact.id).filter((id): id is number => id !== undefined),
@@ -207,7 +208,23 @@ const UpdateCnct: React.FC<Props> = ({ onClose  }) => {
         <MDBInput name='auth' label='Auth' value={auth} onChange={(e) => handleChange(e)} />
         </div>
 </div>
-      <MDBBtn onClick={()=>setPrevious(true)} type='button' color='secondary' className='mt-4' >
+      <MDBBtn onClick={()=>{
+         if (!fullName || !email || !phone) {
+          toast.warning("Please fill in at least name, email and a phone number");
+          return;}
+          else if ( !validateEmail(email) ) {
+            toast.warning("Please add a valid email");
+            return;
+          }
+          else if ( fullName.length<=3 ) {
+            toast.warning("FullName must have +3 caracters");
+            return;
+          }
+        
+        else{
+          setPrevious(true)
+        }
+        }} type='button' color='secondary' className='mt-4' >
         Next
       </MDBBtn>
           </>

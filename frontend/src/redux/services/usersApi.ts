@@ -1,11 +1,21 @@
 import {createApi , fetchBaseQuery} from "@reduxjs/toolkit/query/react"
-import { IAddContact, IContact, UpdateContact } from "../../models/user/Contact";
+import { IAddContact, UpdateContact } from "../../models/user/Contact";
 import { IUpdateTeam, Team } from "../../models/user/Team";
 
 export const usersApi = createApi({
     reducerPath: 'usersApi',
     baseQuery:fetchBaseQuery({
-        baseUrl:"http://localhost:8099/api/users"
+        baseUrl:"http://localhost:8099/api/users",
+        prepareHeaders: (headers) => {
+            let token = localStorage.getItem('token');
+            if (token && token.startsWith('"') && token.endsWith('"')) {
+                token = token.substring(1, token.length - 1);
+                headers.set('Authorization', `Bearer ${token}`);
+            }
+            
+            return headers;
+          }
+        //HttpOnlycookie
     }),
     endpoints:(builder)=>({
         activateUser : builder.mutation({

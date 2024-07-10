@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { useDispatch, useSelector } from 'react-redux';
 import { addContact, selectContactDetails, selectUser } from '../../redux/state/authSlice';
 import { IAddContact, IContact } from '../../models/user/Contact';
+import { validateEmail } from '../../routes/Functions';
 
 interface Props{
   onClose: () => void;
@@ -23,7 +24,7 @@ const Contact : React.FC<Props> = ({ onClose  }) => {
     phone:""  || contact?.phone ,
     whatsapp:""  || contact?.whatsapp,
     auth:"" || contact?.auth,
-    endPoint:"" || contact?.Endpoint,
+    endPoint:"" || contact?.endPoint,
     publicKey:"" || contact?.publicKey,
   }
 
@@ -39,8 +40,16 @@ const Contact : React.FC<Props> = ({ onClose  }) => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   
-    if (!fullName || !email) {
-      toast.warning("Please fill in at least name and email");
+    if (!fullName || !email || !phone) {
+      toast.warning("Please fill in at least name, email and a phone number");
+      return;
+    }
+    if ( !validateEmail(email) ) {
+      toast.warning("Please add a valid email");
+      return;
+    }
+    if ( fullName.length<=3 ) {
+      toast.warning("FullName must have +3 caracters");
       return;
     }
   
@@ -50,7 +59,7 @@ const Contact : React.FC<Props> = ({ onClose  }) => {
       phone: phone || "",
       whatsapp: whatsapp || "",
       auth: auth || "",
-      Endpoint: endPoint || "",
+      endPoint: endPoint || "",
       publicKey: publicKey || ""
     };
   

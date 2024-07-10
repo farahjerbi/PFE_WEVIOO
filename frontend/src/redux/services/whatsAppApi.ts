@@ -5,7 +5,16 @@ import { SendIndivWhatsapp, SendWhatsAppMsg } from "../../models/sms/SendWhatsAp
 export const whatsAppApi = createApi({
     reducerPath: 'whatsAppApi',
     baseQuery:fetchBaseQuery({
-        baseUrl:"http://localhost:8099/apiWhatsApp"
+        baseUrl:"http://localhost:8099/apiWhatsApp",
+        prepareHeaders: (headers) => {
+            let token = localStorage.getItem('token');
+            if (token && token.startsWith('"') && token.endsWith('"')) {
+                token = token.substring(1, token.length - 1);
+                headers.set('Authorization', `Bearer ${token}`);
+            }
+            
+            return headers;
+          }
     }),
     endpoints:(builder)=>({
         addTemplateWhatsapp : builder.mutation({

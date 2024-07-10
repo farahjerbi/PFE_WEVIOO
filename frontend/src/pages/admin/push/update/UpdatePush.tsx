@@ -16,6 +16,7 @@ import { setPush, setUpdatePush } from '../../../../redux/state/pushSlice';
 import { WebPushTemplate } from '../../../../models/push/WebPushTemplate';
 import axios from 'axios';
 import { toast } from 'sonner';
+import { validateClickTarget } from '../../../../routes/Functions';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -31,11 +32,14 @@ const VisuallyHiddenInput = styled('input')({
   interface Props{
     onClose: () => void;
     show:boolean;
-    template:WebPushTemplate|undefined
+    template:WebPushTemplate|undefined;
+    view:boolean|null|undefined
     }
 
-const UpdatePush :React.FC<Props> = ({onClose,show ,template}) => {
-
+const UpdatePush :React.FC<Props> = ({onClose,show ,template,view}) => {
+      useEffect(() => {
+        setOpen(show);
+    }, [show]);
     const toggleOpen = () =>{
         onClose();
         setOpen(false);
@@ -51,9 +55,43 @@ const UpdatePush :React.FC<Props> = ({onClose,show ,template}) => {
     const {title,message,clickTarget}=formData;
     const [icon, setIcon] = useState<File | null>(null);
     const dispatch=useDispatch()
+
+    const [errors,setErrors] = useState(
+      {
+        title: '',
+        message: '',
+        clickTarget:'',
+      }
+  )
+  const formValidation = () => {
+          
+    let etat = true ;
+    let localError = {
+      title: '',
+      message: '',
+      clickTarget:'',
+    }
+    if (!title.trim()  || title.length <=3 ) {
+      localError.title = "Title Required and 4 caracters min" ;
+       etat = false;}
+  
+     if(!message.trim() || message.length < 10  ){
+        localError.message = " Content required and 10 caracters min" ;
+        etat = false;
+     }
+
+     if (!clickTarget.trim() ||!validateClickTarget(clickTarget)) {
+       localError.clickTarget = "Click Target required and must be a valid URL";
+       etat = false;
+     } 
+     setErrors(localError)
+     return etat ; 
+      
+  }
     const handleChange=(e: React.ChangeEvent<HTMLInputElement>)=>{
       setFormData({...formData,[e.target.name]:e.target.value})
     }
+
 
     const handleUpdate: (evt: FormEvent<HTMLFormElement>) => void = async (
       e: FormEvent<HTMLFormElement>
@@ -93,10 +131,8 @@ const UpdatePush :React.FC<Props> = ({onClose,show ,template}) => {
     ) => {
       e.preventDefault();
     
-      if (!title || !message || !clickTarget ) {
-        toast.warning("Please fill in all fields ");
-        return;
-      }
+      const isFormValid = formValidation();
+      if(isFormValid){
       const formData = new FormData();
       formData.append('title', title);
       formData.append('message', message);
@@ -120,6 +156,7 @@ const UpdatePush :React.FC<Props> = ({onClose,show ,template}) => {
         console.error("Error updating user:", err);
       }
     }
+    }
 
     const handleClick = (evt: FormEvent<HTMLFormElement>) => {
       evt.preventDefault();
@@ -129,13 +166,24 @@ const UpdatePush :React.FC<Props> = ({onClose,show ,template}) => {
         handleAdd(evt);
       }
     };
+
   return (
     <>
       <Modal open={open} onClose={toggleOpen}>
         <ModalDialog>
-          <DialogTitle>{template?"Update Push Template":"Add Push Template"}</DialogTitle>
-          <DialogContent>{template?"Change the information of the template.":"Add the information of the template."}</DialogContent>
-          <form onSubmit={handleClick}>
+          {!view && (
+            <>
+                      <DialogTitle>{template?"Update Push Template":"Add Push Template"}</DialogTitle>
+                      <DialogContent>{template?"Change the information of the template.":"Add the information of the template."}</DialogContent>
+            </>
+          )}
+          {view && (
+            <>
+                      <DialogTitle>View Template</DialogTitle>
+                      <DialogContent>Heres more information about the template</DialogContent>
+            </>
+          )}
+                  <form onSubmit={handleClick}>
           <Card
             variant="outlined"
             orientation="horizontal"
@@ -152,7 +200,9 @@ const UpdatePush :React.FC<Props> = ({onClose,show ,template}) => {
                     alt=""
                 />
             </AspectRatio>
-            <Tooltip title="Upload Icon">
+            {!view && (
+              <>
+               <Tooltip title="Upload Icon">
                 <Button
                     className='mb-4'
                     component="label"
@@ -161,30 +211,52 @@ const UpdatePush :React.FC<Props> = ({onClose,show ,template}) => {
                     tabIndex={-1}
                     color='info'
                     startIcon={<CloudUploadIcon />}
-                    sx={{ marginTop: 2 }}  // Optional: Adjust spacing if needed
+                    sx={{ marginTop: 2 }}  
                 >
                     <VisuallyHiddenInput accept="*/*" onChange={(e) => setIcon(e.target.files && e.target.files[0])}  type="file" />
                     Upload
                 </Button>
             </Tooltip>
+              </>
+            )}
+           
         </div>
             <CardContent>
             <FormControl>
                 <FormLabel>Title</FormLabel>
-                <Input name='title' value={title} onChange={handleChange}  required />
+                <Input name='title'  {...(view && { disabled: true })}  value={title} onChange={handleChange}   />
+                {errors.title && (
+                  <div className='d-flex mt-1'>
+                    <i  style={{ color: "red" }} className="fas fa-exclamation-circle trailing me-2 "></i>
+                    <b style={{fontSize:"0.7rem",color:"red"}}>{errors.title}</b>
+                  </div>
+                )}
               </FormControl>
            <FormControl>  
             <FormLabel>Message</FormLabel>
-                <Input name='message' value={message} onChange={handleChange} required />
+                <Input name='message'  {...(view && { disabled: true })}  value={message} onChange={handleChange}  />
+                {errors.message && (
+                  <div className='d-flex mt-1'>
+                    <i  style={{ color: "red" }} className="fas fa-exclamation-circle trailing me-2 "></i>
+                    <b style={{fontSize:"0.7rem",color:"red"}}>{errors.message}</b>
+                  </div>
+                )}
               </FormControl>  
             <FormControl>
                 <FormLabel>Click Target</FormLabel>
-                <Input name='clickTarget' value={clickTarget} onChange={handleChange}  required />
+                <Input name='clickTarget'  {...(view && { disabled: true })}  value={clickTarget} onChange={handleChange}   />
+                {errors.clickTarget && (
+                  <div className='d-flex mt-1'>
+                    <i  style={{ color: "red" }} className="fas fa-exclamation-circle trailing me-2 "></i>
+                    <b style={{fontSize:"0.7rem",color:"red"}}>{errors.clickTarget}</b>
+                  </div>)}
               </FormControl>
             </CardContent>
         </Card>
         
-              <Button type="submit">{template?"Update":"Add"}</Button>
+        {!view && (
+           <Button type="submit">{template?"Update":"Add"}</Button>
+        )}     
           </form>
         </ModalDialog>
       </Modal>

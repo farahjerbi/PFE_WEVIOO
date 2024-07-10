@@ -71,19 +71,28 @@ public class ProfileController {
         return authenticationService.deactivateUser(email);
     }
 
+
     @GetMapping("getUserByEmail/{email}")
-    public UserResponse getUserByEmail(@PathVariable String email){
+    public ResponseEntity<?> getUserByEmail(@PathVariable String email) {
         UserEntity user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalStateException("User not found"));
-        return  modelMapper.map(user, UserResponse.class);
+
+        UserResponse userResponse = modelMapper.map(user, UserResponse.class);
+        return ResponseEntity.ok(userResponse);
     }
 
     @GetMapping("getUserById/{id}")
     @Transactional
-    public UserResponse getUserById(@PathVariable Long id){
-        Optional<UserEntity> user = userRepository.findById(id);
-        return  modelMapper.map(user, UserResponse.class);
+    public ResponseEntity<?> getUserById(@PathVariable Long id) {
+        Optional<UserEntity> userOptional = userRepository.findById(id);
+        if (userOptional.isPresent()) {
+            UserResponse userResponse = modelMapper.map(userOptional.get(), UserResponse.class);
+            return ResponseEntity.ok(userResponse);
+        } else {
+            throw new IllegalArgumentException("User not found");
+        }
     }
+
     @PostMapping("createTeam/{id}")
     public ResponseEntity<TeamResponse> createTeamWithMembers(@RequestBody TeamRequest teamDto, @PathVariable Long id) {
         try {
@@ -133,7 +142,7 @@ public class ProfileController {
     @DeleteMapping("deleteTeam/{id}")
     public ResponseEntity<String> deleteTeam(@PathVariable Long id){
          profileService.deleteTeam(id);
-        return ResponseEntity.status(HttpStatus.OK).body("Deleted succesffully");
+        return ResponseEntity.status(HttpStatus.OK).body("Deleted successfully");
     }
 
 

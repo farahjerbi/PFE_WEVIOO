@@ -89,6 +89,10 @@ const EmailDragAndDrop: React.FC = () => {
 
   const handleAddTemplate: (evt: React.FormEvent<HTMLFormElement>) => void = async (e) => {
     e.preventDefault();
+    if(!name || !language || !subject){
+      toast.warning("Please fill in all the inputs")
+      return;
+    }
     try {
       const emailTemplate: EmailTemplate = {
         name: formData.name,
@@ -159,15 +163,15 @@ const EmailDragAndDrop: React.FC = () => {
             <Stack spacing={2}>
               <FormControl>
                 <FormLabel>Name</FormLabel>
-                <Input name='name' value={name} onChange={handleChange} autoFocus required />
+                <Input name='name' value={name} onChange={handleChange} autoFocus  />
               </FormControl>
               <FormControl>
                 <FormLabel>Language</FormLabel>
-                <Input name='language' value={language} onChange={handleChange} required />
+                <Input name='language' value={language} onChange={handleChange}  />
               </FormControl>
               <FormControl>
                 <FormLabel>Subject</FormLabel>
-                <Input name='subject' value={subject} onChange={handleChange}  required />
+                <Input name='subject' value={subject} onChange={handleChange}   />
               </FormControl>
               <Button type="submit">Submit</Button>
             </Stack>

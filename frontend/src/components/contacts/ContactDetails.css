@@ -2,11 +2,8 @@
   /* fallback for old browsers */
   background: #6582f6;
 
-  /* Chrome 10-25, Safari 5.1-6 */
-  background: -webkit-linear-gradient(to right bottom, rgb(77, 95, 199), rgb(48, 57, 228));
-
   /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-  background: linear-gradient(to right bottom, rgb(177, 217, 255), rgb(193, 223, 230))
+  background: linear-gradient(90deg, #beddf2 0%, rgb(110, 175, 219) 50%, #beddf2  100%)
 }
 
   /* Fade-in effect */
@@ -41,6 +38,6 @@
       color: rgb(201, 216, 222);
     }
     to {
-      color: #273bd8;
+      color: #8376ca;
     }
   }

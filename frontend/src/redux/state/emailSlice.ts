@@ -6,9 +6,20 @@ import axios from "axios";
 export const getTemplatesEmail = createAsyncThunk<any| null, void>(
     "email/getTemplatesEmail",
     async (_, { rejectWithValue }) => {
+      let token = localStorage.getItem("token");
+      console.log("🚀 ~ token:", token)
+      if (token && token.startsWith('"') && token.endsWith('"')) {
+        token = token.substring(1, token.length - 1);
+    }
+      if (token) {
             try {
                 const response = await axios.get<any>(
-                    `http://localhost:8099/apiEmail/getAll`
+                    `http://localhost:8099/apiEmail/getAll`,
+                    {
+                      headers: {
+                        Authorization: `Bearer ${token}`, 
+                      },
+                    }
                 );
                 console.log("🚀 ~ response.data:", response.data)
                 return response.data;
@@ -17,6 +28,8 @@ export const getTemplatesEmail = createAsyncThunk<any| null, void>(
                 return rejectWithValue(null);
             }
         }
+        return null;
+      }
 );
 
 export interface EmailState{

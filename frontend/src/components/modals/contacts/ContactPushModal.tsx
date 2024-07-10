@@ -14,7 +14,7 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Checkbox from '@mui/material/Checkbox';
 import Avatar from '@mui/material/Avatar';
 import { ITeamWithContact } from '../../../models/user/Team';
-import { IAddContact, IContact } from '../../../models/user/Contact';
+import { IAddContact } from '../../../models/user/Contact';
 export interface ModalContactProps {
   onClose: () => void;
   show: boolean;
@@ -23,48 +23,59 @@ export interface ModalContactProps {
 
 const ContactPushModal: React.FC<ModalContactProps> = ({ onClose, show, onSubmit }) => {
   const contacts = useSelector(selectContact);
+  const teams = useSelector(selectTeamsWithContacts);
   const [open, setOpen] = useState<boolean>(show);
   const [isGroup, setIsGroup] = useState<boolean>(true);
-  const [checked, setChecked] = useState<{ notificationEndPoint: string; publicKey: string; auth: string }[]>([]);
-  const [checkedTeam, setCheckedTeam] = useState<string[]>([]);
-  const teams = useSelector(selectTeamsWithContacts);
+  const [checked, setChecked] = useState<string[]>([]);
+  const [checkedTeam, setCheckedTeam] = useState<number[]>([]);
+  const [selectedContacts, setSelectedContacts] = useState<{ notificationEndPoint: string; publicKey: string; auth: string }[]>([]);
 
-  const handleToggle = (contact: IAddContact) => () => {
-    const index = checked.findIndex(c => c.notificationEndPoint === contact.Endpoint);
+  const handleToggle = (email: string, contact: IAddContact) => () => {
+    const currentIndex = checked.indexOf(email);
     const newChecked = [...checked];
 
-    if (index === -1) {
-      newChecked.push({
-        notificationEndPoint: contact.Endpoint,
-        publicKey: contact.publicKey,
-        auth: contact.auth,
-      });
+    if (currentIndex === -1) {
+      newChecked.push(email);
+      setSelectedContacts(prevState => [
+        ...prevState,
+        {
+          notificationEndPoint: contact.endPoint,
+          publicKey: contact.publicKey,
+          auth: contact.auth,
+        },
+      ]);
     } else {
-      newChecked.splice(index, 1);
+      newChecked.splice(currentIndex, 1);
+      setSelectedContacts(prevState => prevState.filter(c => c.notificationEndPoint !== contact.endPoint));
     }
 
     setChecked(newChecked);
   };
 
   const handleToggleTeam = (team: ITeamWithContact) => () => {
-    const currentIndex = checkedTeam.indexOf(team.id?.toString() ?? '');
-    const newCheckedTeam = currentIndex === -1 ? [...checkedTeam, team.id!.toString()] : checkedTeam.filter(id => id !== team.id?.toString());
+    const currentIndex = checkedTeam.indexOf(team.id ?? -1);
+    const newCheckedTeam = [...checkedTeam];
 
-    let contactsToAdd: { notificationEndPoint: string; publicKey: string; auth: string }[] = [];
-    if (team.id !== undefined) {
-      contactsToAdd = team.members.map(member => ({
-        notificationEndPoint: member.Endpoint,
-        publicKey: member.publicKey,
-        auth: member.auth,
-      }));
+    if (currentIndex === -1 && team.id !== undefined) {
+      newCheckedTeam.push(team.id);
+      const emails: string[] = team.members.map((member) => member.email);
+      setChecked([...checked, ...emails]);
+      setSelectedContacts(prevState => [
+        ...prevState,
+        ...team.members.map(member => ({
+          notificationEndPoint: member.endPoint,
+          publicKey: member.publicKey,
+          auth: member.auth,
+        })),
+      ]);
+    } else {
+      newCheckedTeam.splice(currentIndex, 1);
+      const emailsToRemove: string[] = team.members.map((member) => member.email);
+      const filteredChecked = checked.filter((email) => !emailsToRemove.includes(email));
+      setChecked(filteredChecked);
+      setSelectedContacts(prevState => prevState.filter(contact => !emailsToRemove.includes(contact.notificationEndPoint)));
     }
 
-    const updatedChecked =
-      currentIndex === -1
-        ? [...checked, ...contactsToAdd]
-        : checked.filter(contact => !contactsToAdd.some(newContact => newContact.notificationEndPoint === contact.notificationEndPoint));
-
-    setChecked(updatedChecked);
     setCheckedTeam(newCheckedTeam);
   };
 
@@ -73,8 +84,8 @@ const ContactPushModal: React.FC<ModalContactProps> = ({ onClose, show, onSubmit
   }, [show]);
 
   const handleSubmit = () => {
-    const uniqueChecked = Array.from(new Set(checked.map(contact => contact.notificationEndPoint)))
-      .map(endpoint => checked.find(contact => contact.notificationEndPoint === endpoint))
+    const uniqueChecked = Array.from(new Set(selectedContacts.map(contact => contact.notificationEndPoint)))
+      .map(endpoint => selectedContacts.find(contact => contact.notificationEndPoint === endpoint))
       .filter(contact => !!contact) as { notificationEndPoint: string; publicKey: string; auth: string }[];
 
     onSubmit(uniqueChecked);
@@ -96,12 +107,13 @@ const ContactPushModal: React.FC<ModalContactProps> = ({ onClose, show, onSubmit
                 </Button>
               </div>
             </div>
+
             {isGroup && (
               <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
                 {contacts?.map(contact => {
-                  const labelId = `checkbox-list-secondary-label-${contact.email}`;
+                  const labelId = `checkbox-list-secondary-label-${contact.id}`;
                   return (
-                    <ListItem key={contact.email} disablePadding>
+                    <ListItem key={contact.id} disablePadding>
                       <ListItemButton>
                         <ListItemAvatar>
                           <Avatar>{/* Adjust avatar props as per your setup */}</Avatar>
@@ -109,8 +121,8 @@ const ContactPushModal: React.FC<ModalContactProps> = ({ onClose, show, onSubmit
                         <ListItemText id={labelId} primary={contact.fullName} />
                         <Checkbox
                           edge="end"
-                          onChange={handleToggle(contact)}
-                          checked={checked.some(c => c.notificationEndPoint === contact.Endpoint)}
+                          onChange={handleToggle(contact.email, contact)}
+                          checked={checked.includes(contact.email)}
                           inputProps={{ 'aria-labelledby': labelId }}
                         />
                       </ListItemButton>
@@ -121,25 +133,25 @@ const ContactPushModal: React.FC<ModalContactProps> = ({ onClose, show, onSubmit
             )}
 
             {!isGroup && (
-               <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-               {teams?.map(value => {
-                 const labelId = `checkbox-list-secondary-label-${value.id}`;
-                 return (
-                   <ListItem key={value.id} disablePadding>
-                     <ListItemButton>
-                       <img className="me-2" style={{ width: '18%' }} src={value?.avatar ?? ''} alt={value?.avatar ?? ''} />
-                       <ListItemText id={labelId} primary={value.name} />
-                       <Checkbox
-                         edge="end"
-                         onChange={handleToggleTeam(value)}
-                         checked={value.id !== undefined && checkedTeam.indexOf(value.id.toString()) !== -1}
-                         inputProps={{ 'aria-labelledby': labelId }}
-                       />
-                     </ListItemButton>
-                   </ListItem>
-                 );
-               })}
-             </List>
+              <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+                {teams?.map(team => {
+                  const labelId = `checkbox-list-secondary-label-${team.id}`;
+                  return (
+                    <ListItem key={team.id} disablePadding>
+                      <ListItemButton>
+                        <img className="me-2" style={{ width: '18%' }} src={team?.avatar ?? ''} alt={team?.avatar ?? ''} />
+                        <ListItemText id={labelId} primary={team.name} />
+                        <Checkbox
+                          edge="end"
+                          onChange={handleToggleTeam(team)}
+                          checked={team.id !== undefined && checkedTeam.includes(team.id)}
+                          inputProps={{ 'aria-labelledby': labelId }}
+                        />
+                      </ListItemButton>
+                    </ListItem>
+                  );
+                })}
+              </List>
             )}
 
             <Stack spacing={2}>

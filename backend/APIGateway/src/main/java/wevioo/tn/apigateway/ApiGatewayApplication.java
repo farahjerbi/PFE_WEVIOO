@@ -37,6 +37,9 @@ public class ApiGatewayApplication {
                 .route("push", r -> r.path("/apiPush/**","/uploadsPush/**")
                         .filters(f -> f.filter(authenticationFilter))
                         .uri("http://push:8093/"))
+                .route("searchengine", r -> r.path("/api/search/**")
+                        .filters(f -> f.filter(authenticationFilter))
+                        .uri("http://searchengine:5000/"))
                 .build();
     }
 

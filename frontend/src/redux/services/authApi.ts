@@ -45,6 +45,13 @@ export const authApi = createApi({
                 body:body.email,
             })
         }),
+        verifyUserExist: builder.mutation({
+            query: (body: { email:string }) => ({
+                url: "/verifyUserExist",
+                method: "POST",
+                body:body.email,
+            })
+        }),
         forgotPassword: builder.mutation({
             query: (body: { email:string }) => ({
                 url: "/sendEmailForgotPassword",
@@ -55,5 +62,5 @@ export const authApi = createApi({
     })
 })
 
-export const {useRegisterUserMutation , useLoginUserMutation, useVerifyOTPMutation,
+export const {useRegisterUserMutation , useLoginUserMutation, useVerifyOTPMutation,useVerifyUserExistMutation,
     useVerifyTokenMutation,useVerifyEmailMutation ,useForgotPasswordMutation}=authApi;

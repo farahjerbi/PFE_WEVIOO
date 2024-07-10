@@ -16,6 +16,7 @@ import {setUser } from '../../redux/state/authSlice';
 import { useDispatch } from 'react-redux';
 import { DASHBOARD } from '../../routes/paths';
 import ForgetPasswordModal from '../modals/ForgetPasswordModal';
+import { validateEmail } from '../../routes/Functions';
 
 const Login=()=> {
   const stage="login"
@@ -39,6 +40,18 @@ const Login=()=> {
     e: FormEvent<HTMLFormElement>
   ) => {
     e.preventDefault();
+    if(!email){
+      toast.error("Enter Email please");
+      return
+    }
+    if(!password){
+      toast.error("Enter Password please");
+      return
+    }
+    if (!validateEmail(email)){
+      toast.error("Email format incorrect");
+      return
+    }
     try{
       await loginUser({email,password})
       .unwrap()
@@ -52,15 +65,16 @@ const Login=()=> {
               navigate(DASHBOARD) 
             }
           }
-    })
- 
-    }catch(error){ 
-      console.log("🚀 ~ Login ~ error:", error)
+    }) 
+  } catch (error: any) {
+    if (error && error.data) {
+      toast.error(error.data.message);
+      console.error("🚀 ~ error:", error.message);
+    } else {
+      toast.error("An unknown error occurred.");
+      console.error("🚀 ~ error:", error);
     }
-  }
-
-
-
+  }}
   
     return (
       <>
@@ -68,8 +82,8 @@ const Login=()=> {
               <MDBContainer className='mt-5' >
                 <form onSubmit={handleLogin}>
 
-                  <MDBInput required name='email' value={email} onChange={handleChange} className='mb-4' type='email' id='form7Example1' label='Email address' />
-                  <MDBInput required name='password' value={password} onChange={handleChange} className='mb-4' type='password' id='form7Example2' label='Password' />
+                  <MDBInput  name='email' value={email} onChange={handleChange} className='mb-5' type='email' id='form7Example1' label='Email address' />
+                  <MDBInput  name='password' value={password} onChange={handleChange} className='mb-5' type='password' id='form7Example2' label='Password' />
 
                   <MDBRow className='mb-4'>
                     <MDBCol className='d-flex justify-content-center'>
@@ -80,15 +94,9 @@ const Login=()=> {
                     </MDBCol>
                   </MDBRow>
 
-                  <MDBBtn type='submit' className='mb-4' block>
+                  <MDBBtn type='submit' className='mb-4 mt-3' block>
                     Sign in
                   </MDBBtn>
-
-                  <div className='text-center'>
-                    <p>
-                      Not a member? <p style={{cursor:'pointer'}} >Register</p>
-                    </p>
-                  </div>
                 </form>
               </MDBContainer>
               )}

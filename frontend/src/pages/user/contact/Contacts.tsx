@@ -95,8 +95,8 @@ const Contacts = () => {
                 color='inherit'
                 style={{ display: 'flex', alignItems: 'center', gap: '3px' ,width:"40%"}} 
                 >
-                <img alt='img' src='../../../assets/contactts.png' style={{ width: "19%" }} />
-                <span>Add Many</span>
+                <img alt='img' src='../../../assets/office365.png' style={{ width: "19%" }} />
+                <span>Upload Excel</span>
                 </Button>
               </div>
           

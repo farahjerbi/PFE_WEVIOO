@@ -44,21 +44,10 @@ const Profile = () => {
     const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
     const [resetPassword, setResetPassword] = useState<boolean>(false);
     const [signatureUrl, setSignatureUrl] = useState<string>("");
-    useEffect(() => {
-      if (user && user.signature) {
-        fetchSignatureImage();
-      }
-    }, [user]); 
-    
-    const fetchSignatureImage = async () => {
-      try {
-        if (user && user.signature) {
-          setSignatureUrl(`http://localhost:8099/uploads/${user.signature}`);
-        }
-      } catch (error) {
-        console.error('Error fetching signature image:', error);
-      }
-    };
+    let token = localStorage.getItem('token');
+    if (token && token.startsWith('"') && token.endsWith('"')) {
+        token = token.substring(1, token.length - 1);
+    }
     
     if (!user) {
       return <div>Loading user...</div>;
@@ -80,7 +69,7 @@ const Profile = () => {
               e.preventDefault();
             
               if (!firstName || !lastName || !emailSecret) {
-                console.error("Please fill in all fields and select a signature file.");
+                toast.warning("Please fill in all fields.");
                 return;
               }
               const formData = new FormData();
@@ -89,13 +78,14 @@ const Profile = () => {
               formData.append('emailSecret', emailSecret);
               if (signatureInput !== null) {
                 formData.append('signature', signatureInput);
-              } else {
-                if (signatureUrl) {
-                  formData.append('signatureUrl', signatureUrl);
-                } 
-              }
+              } 
               try {
-                const response = await axios.post(`http://localhost:8099/api/users/updateProfile/${user?.id}`, formData);
+                const response = await axios.post(`http://localhost:8099/api/users/updateProfile/${user?.id}`, formData,
+                  {
+                    headers: {
+                      Authorization: `Bearer ${token}`
+                    }
+                  });
                 
                 if (response.status === 200) {
                   const updatedUser = response.data;
@@ -160,10 +150,11 @@ const Profile = () => {
                               </Button>
                             </Tooltip>
                           {signatureInput && (<p>{signatureInput.name}</p>)}  
-                            {signatureUrl && (
-                                  <img src={signatureUrl} alt="Signature" style={{ maxWidth: '100px', height: 'auto' }} />
-
-                            )}
+                                {user.signature &&
+                                (
+                                  <img src={`http://localhost:8099/uploads/${user.signature}`}alt="Signature" style={{ maxWidth: '100px', height: 'auto' }} />
+                                )
+                                } 
 
                             <div className='d-flex '>
                             <MDBBtn className='w-50 me-2 color_baby_blue'>Update Profile</MDBBtn>                            

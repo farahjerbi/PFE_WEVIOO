@@ -5,7 +5,16 @@ import { SendIndiv, SendsSms } from "../../models/sms/SendsSms";
 export const smsApi = createApi({
     reducerPath: 'smsApi',
     baseQuery:fetchBaseQuery({
-        baseUrl:"http://localhost:8099/apiSms"
+        baseUrl:"http://localhost:8099/apiSms",
+        prepareHeaders: (headers) => {
+            let token = localStorage.getItem('token');
+            if (token && token.startsWith('"') && token.endsWith('"')) {
+                token = token.substring(1, token.length - 1);
+                headers.set('Authorization', `Bearer ${token}`);
+            }
+            
+            return headers;
+          }
     }),
     endpoints:(builder)=>({
         addTemplateSMS : builder.mutation({

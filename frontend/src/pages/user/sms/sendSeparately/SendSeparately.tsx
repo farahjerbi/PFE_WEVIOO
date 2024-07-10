@@ -12,7 +12,7 @@ import { SendIndiv, SendSeperately } from '../../../../models/sms/SendsSms'
 import { LIST_SMS_TEMPLATES } from '../../../../routes/paths'
 import ViewSMSTemplate from '../../../../components/modals/view/ViewSMSTemplate'
 import { NotificationType } from '../../../../models/NotificationType'
-import { useGetWhatsappTemplateByIdMutation } from '../../../../redux/services/whatsAppApi'
+import { useGetWhatsappTemplateByIdMutation, useSendSMSWhatsAppSeparatelyMutation } from '../../../../redux/services/whatsAppApi'
 import { SendIndivWhatsapp, SendWhatsappSeparately } from '../../../../models/sms/SendWhatsAppMsg'
 interface Props{
     type:NotificationType
@@ -23,12 +23,12 @@ const SendSeparately : React.FC<Props> = ({ type}) => {
   const [uploadedData, setUploadedData] = useState<Record<string, string[]>>({});
   const [getSMSTemplateById] = useGetSMSTemplateByIdMutation();
   const[sendSMSSeprartely]=useSendSMSSeprartelyMutation()
+  const[sendSMSWhatsAppSeparately]=useSendSMSWhatsAppSeparatelyMutation()
   const[getWhatsappTemplateById]=useGetWhatsappTemplateByIdMutation()
   const navigate=useNavigate()
   const dispatch = useDispatch();
   const template = useSelector(selectCurrentSms);
   const templateWhatsapp=useSelector(selectCurrentWhatsappTemplate)
-  console.log("🚀 ~ templateWhatsapp:", templateWhatsapp)
   const { id } = useParams();
 
   useEffect(() => {
@@ -60,120 +60,154 @@ const SendSeparately : React.FC<Props> = ({ type}) => {
     setUploadedData(data);
   };
 
-  const getPlaceholderData = () => {
-    if (!templateWhatsapp || !templateWhatsapp.placeholders|| !template || !template.placeholders || Object.keys(uploadedData).length === 0) {
-      return {};
+  const getSMSPlaceholderData = () => {
+    const smsPlaceholderData: Record<string, string[]> = {};
+    if (!template || !template.placeholders || Object.keys(uploadedData).length === 0) {
+      smsPlaceholderData['phone'] = uploadedData['phone'] || [];
+      return smsPlaceholderData;
     }
   
-    const lowerCasePlaceholders = type===NotificationType.SMS? template.placeholders.map(p => p.toLowerCase()):templateWhatsapp.placeholders.map(p => p.toLowerCase());
-    if (!lowerCasePlaceholders.includes('phone') && type===NotificationType.SMS) {
+    const lowerCasePlaceholders = template.placeholders.map(p => p.toLowerCase());
+    if (!lowerCasePlaceholders.includes('phone')) {
       lowerCasePlaceholders.push('phone');
-    }else if(!lowerCasePlaceholders.includes('whatsapp') && type===NotificationType.WHATSAPP){
+    }
+  
+    lowerCasePlaceholders.forEach(placeholder => {
+      smsPlaceholderData[placeholder] = uploadedData[placeholder] || [];
+    });
+  
+    return smsPlaceholderData;
+  };
+  
+  const getWhatsAppPlaceholderData = () => {
+    const whatsappPlaceholderData: Record<string, string[]> = {};
+    if (!templateWhatsapp || !templateWhatsapp.placeholders || Object.keys(uploadedData).length === 0) {
+      whatsappPlaceholderData['whatsapp'] = uploadedData['whatsapp'] || [];
+      return whatsappPlaceholderData;
+    }
+  
+    const lowerCasePlaceholders = templateWhatsapp.placeholders.map(p => p.toLowerCase());
+    if (!lowerCasePlaceholders.includes('whatsapp')) {
       lowerCasePlaceholders.push('whatsapp');
     }
   
-    const rowCount = uploadedData[Object.keys(uploadedData)[0]]?.length || 0;
-    const placeholderData = lowerCasePlaceholders.reduce((acc, placeholder) => {
-      acc[placeholder] = uploadedData[placeholder] || Array(rowCount).fill('unknown');
-      return acc;
-    }, {} as Record<string, string[]>);
+    lowerCasePlaceholders.forEach(placeholder => {
+      whatsappPlaceholderData[placeholder] = uploadedData[placeholder] || [];
+    });
   
-    return placeholderData;
+    return whatsappPlaceholderData;
   };
   
-  
 
-const placeholderData: Record<string, string[]> = getPlaceholderData();
-console.log("🚀 ~ placeholderData:", placeholderData)
+  const placeholderData: Record<string, string[]> = type === NotificationType.SMS ? getSMSPlaceholderData() : getWhatsAppPlaceholderData();
+  console.log("🚀 ~ placeholderData:", placeholderData)
 
-const generateSendSeparatelyList = (): SendIndiv => {
-  const placeholderData = getPlaceholderData();
-  const rowCount = placeholderData[Object.keys(placeholderData)[0]]?.length || 0;
+  const generateSendSeparatelyList = (): SendIndiv => {
+    const placeholderData = getSMSPlaceholderData();
+    const rowCount = placeholderData[Object.keys(placeholderData)[0]]?.length || 0;
 
-  const sendSeparatelyList: SendSeperately[] = [];
-  for (let i = 0; i < rowCount; i++) {
-    const row: Record<string, string> = {};
-    let isUnknown = false;
-    template?.placeholders?.forEach(placeholder => {
-      const value = placeholderData[placeholder.toLowerCase()]?.[i] || '';
-      row[placeholder] = value;
-      if (typeof value === 'string' && value.toLowerCase() === 'unknown') {
+    const sendSeparatelyList: SendSeperately[] = [];
+    for (let i = 0; i < rowCount; i++) {
+      const row: Record<string, string> = {};
+      let isUnknown = false;
+      template?.placeholders?.forEach(placeholder => {
+        const value = placeholderData[placeholder.toLowerCase()]?.[i] || '';
+        row[placeholder] = value;
+        if (typeof value === 'string' && value.toLowerCase() === 'unknown') {
+          isUnknown = true;
+        }
+      });
+
+      const number = placeholderData['phone']?.[i] || '';
+      if (typeof number === 'string' && number.toLowerCase() === 'unknown') {
         isUnknown = true;
       }
-    });
 
-    const number = placeholderData['phone']?.[i] || '';
-    if (typeof number === 'string' && number.toLowerCase() === 'unknown') {
-      isUnknown = true;
+      if (!isUnknown) {
+        sendSeparatelyList.push({
+          number: number.toString(),
+          placeholderValues: row,
+        });
+      }
     }
 
-    if (!isUnknown ) {
-      sendSeparatelyList.push({
-        number: number.toString(), 
-        placeholderValues: row,
-      });
-    }
-  }
-
-    return { idTemplate: Number(id), sendSeparatelyList }
-
-};
+    return { idTemplate: Number(id), sendSeparatelyList };
+  };
 
 const generateSendSeparatelyListWhatsapp = (): SendIndivWhatsapp => {
-  const placeholderData = getPlaceholderData();
-  const rowCount = placeholderData[Object.keys(placeholderData)[0]]?.length || 0;
+    const placeholderData = getWhatsAppPlaceholderData();
+    const rowCount = placeholderData[Object.keys(placeholderData)[0]]?.length || 0;
 
-  const sendSeparatelyList: SendWhatsappSeparately[] = [];
-  for (let i = 0; i < rowCount; i++) {
-    const row: Record<string, string> = {};
-    let isUnknown = false;
-    templateWhatsapp?.placeholders?.forEach(placeholder => {
-      const value = placeholderData[placeholder.toLowerCase()]?.[i] || '';
-      row[placeholder] = value;
-      if (typeof value === 'string' && value.toLowerCase() === 'unknown') {
+    const sendSeparatelyList: SendWhatsappSeparately[] = [];
+    for (let i = 0; i < rowCount; i++) {
+      const row: Record<string, string> = {};
+      let isUnknown = false;
+      templateWhatsapp?.placeholders?.forEach(placeholder => {
+        const value = placeholderData[placeholder.toLowerCase()]?.[i] || '';
+        row[placeholder] = value;
+        if (typeof value === 'string' && value.toLowerCase() === 'unknown') {
+          isUnknown = true;
+        }
+      });
+
+      const number = placeholderData['whatsapp']?.[i] || '';
+      if (typeof number === 'string' && number.toLowerCase() === 'unknown') {
         isUnknown = true;
       }
+
+      if (!isUnknown && type === NotificationType.SMS) {
+        sendSeparatelyList.push({
+          number: number.toString(),
+          placeholders: Object.values(row),
+        });
+      }
+    }
+
+    return { whatsAppTemplateResponse: templateWhatsapp, sendSeparatelyList };
+  };
+
+  const sendSeparatelyList = generateSendSeparatelyList();
+  const sendSeparatelyListWhatsapp = generateSendSeparatelyListWhatsapp();
+
+
+  const handleSubmit: (evt: FormEvent<HTMLFormElement>) => void = async (
+    e: FormEvent<HTMLFormElement>
+  ) => {
+    e.preventDefault();
+    setLoading(true);
+  
+    const isDataValid = Object.values(placeholderData).every(arr => {
+      return arr.length > 0 && !arr.every(value => typeof value === 'string' && value.toLowerCase() === 'unknown');
     });
-
-    const number = placeholderData['whatsapp']?.[i] || '';
-    if (typeof number === 'string' && number.toLowerCase() === 'unknown') {
-      isUnknown = true;
+    
+    if (!isDataValid) {
+      toast.warning("Please fill all columns with valid data before sending!");
+      setLoading(false);
+      return;
     }
-
-    if (!isUnknown && type===NotificationType.SMS ) {
-      sendSeparatelyList.push({
-        number: number.toString(), 
-        placeholders:Object.values(row),
-      });
+  
+  
+    try {
+      if (id) {
+        if (type === NotificationType.SMS) {
+          const sendSms: SendIndiv = sendSeparatelyList;
+          await sendSMSSeprartely(sendSms);
+          toast.success("SMS sent Successfully !");
+          navigate(LIST_SMS_TEMPLATES);
+        } else if (type === NotificationType.WHATSAPP) {
+          const sendWhatsapp: SendIndivWhatsapp = sendSeparatelyListWhatsapp;
+          await sendSMSWhatsAppSeparately(sendWhatsapp);
+          toast.success("WhatsApp message sent Successfully !");
+          navigate(LIST_SMS_TEMPLATES);
+        }
+      }
+    } catch (error) {
+      toast.error("Failed to send notification. Please try again later.");
+      console.error("Error sending notification:", error);
+    } finally {
+      setLoading(false);
     }
-  }
-
-    return { whatsAppTemplateResponse:templateWhatsapp, sendSeparatelyList }
-
-};
-
-
-const sendSeparatelyList = type===NotificationType.SMS?generateSendSeparatelyList():generateSendSeparatelyListWhatsapp();
-
-
-const handleSubmit: (evt: FormEvent<HTMLFormElement>) => void = async (
-  e: FormEvent<HTMLFormElement>
-) => {
-  e.preventDefault();
-  setLoading(true);
-  if(id){
-    const sendSms:SendIndiv=generateSendSeparatelyList();
-  try {
-      await sendSMSSeprartely(sendSms)
-      toast.success("SMS sent Successfully !");
-      navigate(LIST_SMS_TEMPLATES)
-  }
-  finally {
-      setLoading(false); 
-  }
-}
-}
-
+  };
   return (
     <>
       <BreadcrumSection />
@@ -219,22 +253,25 @@ const handleSubmit: (evt: FormEvent<HTMLFormElement>) => void = async (
                           </tr>
                         </MDBTableHead>
                         <tbody>
-                          {placeholderData[Object.keys(placeholderData)[0]]?.map((_, rowIndex) => (
+                          {placeholderData[type === NotificationType.WHATSAPP ? 'whatsapp' : 'phone']?.map((phoneValue, rowIndex) => (
                             <tr key={rowIndex}>
-                              <td> {type===NotificationType.SMS? placeholderData["phone"]?.[rowIndex] || '': placeholderData["whatsapp"]?.[rowIndex] || ''} </td>
-                              {type===NotificationType.SMS && template?.placeholders?.map(placeholder => (
+                              <td>{phoneValue}</td>
+                              {type === NotificationType.SMS && template?.placeholders?.map(placeholder => (
                                 <td key={`${placeholder}-${rowIndex}`}>
-                                  {placeholderData[placeholder]?.[rowIndex] || ''}
+                                  {placeholderData[placeholder.toLowerCase()]?.[rowIndex] || ''}
                                 </td>
                               ))}
-                               {type===NotificationType.WHATSAPP && templateWhatsapp?.placeholders?.map(placeholder => (
-                                <td key={`${placeholder}-${rowIndex}`}>
-                                  {placeholderData[placeholder]?.[rowIndex] || ''}
+                              {type === NotificationType.WHATSAPP && templateWhatsapp?.placeholders?.map(placeholder => (
+                                <td key={`whatsapp-${placeholder}-${rowIndex}`}>
+                                  {placeholderData[placeholder.toLowerCase()]?.[rowIndex] || ''}
                                 </td>
                               ))}
                             </tr>
                           ))}
                         </tbody>
+
+
+
                       </MDBTable>
                     </MDBCardBody>
                   </MDBCard>

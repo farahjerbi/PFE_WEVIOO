@@ -1,0 +1,12 @@
+Flask==3.0.3
+Werkzeug==3.0.3
+psycopg2==2.9.9
+spacy==3.7.5
+transformers==4.42.3
+numpy==1.26.4
+thinc==8.2.5
+flask-cors==4.0.1
+pydantic==2.7.4
+tensorflow==2.16.2
+tf_keras==2.16.0
+

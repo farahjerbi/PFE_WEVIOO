@@ -1,7 +1,7 @@
 import React, { Suspense, useEffect } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { Toaster } from 'sonner';
-import { ADD_ADVANCED_EMAIL_TEMPLATE, ADD_EMAIL_TEMPLATE, ADD_SIMPLE_EMAIL_TEMPLATE, AUTHENTICATION, CALENDAR, DASHBOARD, EDIT_EMAIL_TEMPLATE, EMAILS_STATISTICS, LIST_EMAIL_TEMPLATES, LIST_USERS, PROFILE, SEND_EMAIL, SEND_EMAIL_SCHEDULED, USERS_STATISTICS,SAVEDTEMPLATES, LIST_SMS_TEMPLATES, ADD_SMS_TEMPLATE, CREATE_SMS_TEMPLATE, CREATE_WHATSAPP_TEMPLATE, UPDATE_SMS_TEMPLATE, SEND_SMS, SEND_WHATSAPP, LIST_PUSH_TEMPLATES, CONTACT, SEND_SMS_SEPARATELY, SEND_WHATSAPP_SEPARATELY } from "./routes/paths";
+import { ADD_ADVANCED_EMAIL_TEMPLATE, ADD_EMAIL_TEMPLATE, ADD_SIMPLE_EMAIL_TEMPLATE, AUTHENTICATION, CALENDAR, DASHBOARD, EDIT_EMAIL_TEMPLATE, EMAILS_STATISTICS, LIST_EMAIL_TEMPLATES, LIST_USERS, PROFILE, SEND_EMAIL, SEND_EMAIL_SCHEDULED, USERS_STATISTICS,SAVEDTEMPLATES, LIST_SMS_TEMPLATES, ADD_SMS_TEMPLATE, CREATE_SMS_TEMPLATE, CREATE_WHATSAPP_TEMPLATE, UPDATE_SMS_TEMPLATE, SEND_SMS, SEND_WHATSAPP, LIST_PUSH_TEMPLATES, CONTACT, SEND_SMS_SEPARATELY, SEND_WHATSAPP_SEPARATELY, SEND_PUSH_SEPARATELY } from "./routes/paths";
 import { decodeToken, selectIsAuth, selectRole } from "./redux/state/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Role } from "./models/user/Role";
@@ -10,6 +10,7 @@ import Loading from "./components/loading/Loading";
 import AddSMS from './pages/admin/sms/add/AddSMS';
 import CreateWhatsapp from './pages/admin/sms/createWhatsapp/CreateWhatsapp';
 import { NotificationType } from './models/NotificationType';
+import SendPushSeparately from './pages/admin/push/sendSeparately/SendPushSeparately';
 // Lazy load components
 const Dashboard = React.lazy(() => import('./pages/dashboard/Dashboard'));
 const Authentication = React.lazy(() => import('./pages/authentication/Authentication'));
@@ -84,6 +85,8 @@ function App() {
                     element={<ProtectedRoute><SendSimpleEmail isScheduled={true} /></ProtectedRoute>} />
                     <Route path={`${SEND_SMS}/:id`}
                     element={<ProtectedRoute><SendSMS /></ProtectedRoute>} />
+                         <Route path={`${SEND_PUSH_SEPARATELY}/:id`}
+                    element={<ProtectedRoute><SendPushSeparately /></ProtectedRoute>} />
                       <Route path={`${SEND_SMS_SEPARATELY}/:id`}
                     element={<ProtectedRoute><SendSeparately type={NotificationType.SMS} /></ProtectedRoute>} />
                      <Route path={`${SEND_WHATSAPP_SEPARATELY}/:id`}

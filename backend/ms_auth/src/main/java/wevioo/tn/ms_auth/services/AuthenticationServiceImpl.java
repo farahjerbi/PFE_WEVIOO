@@ -160,7 +160,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setEnabled(true);
         userRepository.save(user);
         return "User Enabled successfully";
-
     }
 
     public String deactivateUser(String email){
@@ -174,7 +173,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return "User Deactivated successfully";
 
     }
-
 
 
 }

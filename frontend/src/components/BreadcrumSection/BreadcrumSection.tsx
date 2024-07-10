@@ -1,11 +1,14 @@
 import { MDBCard, MDBCardBody, MDBBreadcrumb, MDBBreadcrumbItem } from 'mdb-react-ui-kit';
 import './BreadcrumSection.css'
 import { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import FirstPage from '@mui/icons-material/FirstPage';
+import { Button, Tooltip } from '@mui/material';
+
 const BreadcrumSection = () => {
   const location = useLocation();
   const [breadcrumbs, setBreadcrumbs] = useState<{ displayName: string; path: string; }[]>([]); 
-
+  const navigate=useNavigate()
   useEffect(() => {
     const pathname = location.pathname;
     const pathParts = pathname.split('/').filter(part => part !== ''); // Remove empty parts
@@ -29,8 +32,13 @@ const BreadcrumSection = () => {
           ))}
           </div>
             </MDBBreadcrumb>
-            {/* <img src="../../../assets/images.png" alt="" style={{  transform: "rotate(7deg)",position: "absolute", width: "20%", right:0, height: "180%", top: "-35%" }} /> */}
+            <Tooltip title="Go Back"   style={{marginLeft:"60%"}}>
+              <Button onClick={()=> navigate(-1)}>
+            <FirstPage style={{color:"whitesmoke"}}/>
+                          </Button>                           
+                          </Tooltip>
 
+            {/* <img src="../../../assets/images.png" alt="" style={{  transform: "rotate(7deg)",position: "absolute", width: "20%", right:0, height: "180%", top: "-35%" }} /> */}
     </MDBCardBody>
   </MDBCard>
   

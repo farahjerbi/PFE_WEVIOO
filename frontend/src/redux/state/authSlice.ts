@@ -12,13 +12,23 @@ import { ITeam, ITeamWithContact } from "../../models/user/Team";
   export const decodeToken = createAsyncThunk<IUser | null, void>(
     "auth/decodeToken",
     async (_, { rejectWithValue }) => {
-        const token = localStorage.getItem("token");
+        let token = localStorage.getItem("token");
+        console.log("🚀 ~ token:", token)
+        if (token && token.startsWith('"') && token.endsWith('"')) {
+          token = token.substring(1, token.length - 1);
+      }
         if (token) {
+          
             try {
                 const decodedToken: DecodedToken = jwtDecode(token);
                 const userEmail = decodedToken.sub;
                 const response = await axios.get<IUser>(
-                    `http://localhost:8099/api/users/getUserByEmail/${userEmail}`
+                  `http://localhost:8099/api/users/getUserByEmail/${userEmail}`,
+                  {
+                    headers: {
+                      Authorization: `Bearer ${token}`, 
+                    },
+                  }
                 );
                 console.log("🚀 ~ response.data:", response.data)
                 return response.data;
@@ -265,7 +275,7 @@ export const selectContactsByTeamId = (teamId: number | undefined) => (state: Ro
               whatsapp: contact.whatsapp,
               email: contact.email,
               auth: contact.auth,
-              Endpoint: contact.Endpoint,
+              endPoint: contact.endPoint,
               publicKey: contact.publicKey,
             });
           }

@@ -63,11 +63,6 @@ const UpdateTeam : React.FC<Props> = ({ onClose }) => {
       e: FormEvent<HTMLFormElement>
     ) => {
       e.preventDefault();
-    
-      if (!name || !description  ) {
-        toast.warning("Please fill in at least name and email ");
-        return;
-      }
         const contactRes={
             id:team?.id,
             name:name,
@@ -190,7 +185,19 @@ const UpdateTeam : React.FC<Props> = ({ onClose }) => {
         <img className='me-2' src="../../../assets/gmail.png" style={{width:"6.3%"}} alt="" />
       <MDBInput name="description" label='Description' value={description} onChange={(e) => handleChange(e)} />
       </div>
-      <MDBBtn color='secondary' type='button' onClick={()=>setPrevious(true)} className='mt-4' >
+      <MDBBtn color='secondary' type='button' onClick={()=>{
+                     if (!name || !description  ) {
+                      toast.warning("Please fill in at least name and description ");
+                      return;
+                    }  
+                    else if (name.length<=3 || description.length<=10  ) {
+                      toast.warning("name must have at least +3 caracters and description +10 caracters ");
+                      return;
+                    }
+                    else{
+                      setPrevious(true)
+                    }
+                  }}  className='mt-4' >
           Next
       </MDBBtn>
                  

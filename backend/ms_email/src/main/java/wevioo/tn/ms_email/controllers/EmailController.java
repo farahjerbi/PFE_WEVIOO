@@ -1,6 +1,5 @@
 package wevioo.tn.ms_email.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
@@ -14,9 +13,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import wevioo.tn.ms_email.FeignClients.UsersClient;
-import wevioo.tn.ms_email.config.EmailJob;
 import wevioo.tn.ms_email.dtos.request.ScheduleEmailRequest;
 import wevioo.tn.ms_email.dtos.request.SendEmail;
+import wevioo.tn.ms_email.dtos.request.SendEmailSeparately;
 import wevioo.tn.ms_email.dtos.request.UpdateTemplateRequest;
 import wevioo.tn.ms_email.dtos.response.ScheduleEmailResponse;
 import wevioo.tn.ms_email.dtos.response.ScheduledEmailInfo;
@@ -42,9 +41,10 @@ public class EmailController {
     private final TemplateUtils templateUtils;
     private final Scheduler scheduler;
     private final UsersClient usersClient;
+    private static final String JOB_GROUP = "email-jobs";
 
     @PostMapping("addTemplate")
-    public ResponseEntity<EmailTemplate> createEmailTemplate(@RequestBody EmailTemplate emailTemplate, Object jsonObject) {
+    public ResponseEntity<EmailTemplate> createEmailTemplate(@RequestBody EmailTemplate emailTemplate) {
         EmailTemplate createdEmailTemplate = emailTemplateService.createEmailTemplate(emailTemplate);
         return ResponseEntity.ok(createdEmailTemplate);
     }
@@ -75,8 +75,7 @@ public class EmailController {
                 return ResponseEntity.ok("Email template not found.");
             }
             ObjectMapper mapper = new ObjectMapper();
-            Map<String, String> requestBody = mapper.readValue(email.getRequestBody(), new TypeReference<Map<String, String>>() {});
-            System.out.println("Converted Request Body: " + requestBody.toString());
+            Map<String, String> requestBody = mapper.readValue(email.getRequestBody(), new TypeReference<>() {});
             boolean isSentSeparately = Boolean.parseBoolean(email.getIsSentSeparately());
             if (isSentSeparately) {
                 // Send emails separately
@@ -98,14 +97,29 @@ public class EmailController {
         }
     }
 
+    @PostMapping(value = "SendEmailSeparately/{emailTemplateId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<?> SendEmailSeparately(
+            @PathVariable Long emailTemplateId, @ModelAttribute List<SendEmailSeparately> email) {
+        try {
+            EmailTemplate emailTemplate = emailTemplateRepository.findEmailTemplateWithDetails(emailTemplateId);
+            if (emailTemplate == null) {
+                return ResponseEntity.ok("Email template not found.");
+            }
+            ObjectMapper mapper = new ObjectMapper();
+            for (SendEmailSeparately recipient : email) {
+                Map<String, String> requestBody = mapper.readValue(recipient.getRequestBody(), new TypeReference<>() {});
+                String[] singleRecipient = {recipient.getRecipient()};
 
-    @PostMapping("test")
-    public String testReplacePlaceholders(@RequestBody Map<String, Object> requestBody) {
-        String template = (String) requestBody.get("template");
-        Map<String, String> placeholderValues = (Map<String, String>) requestBody.get("placeholderValues");
-        return templateUtils.replacePlaceholders(template, placeholderValues);
-
+                emailService.sendEmail(emailTemplate.getTemplateBody(), requestBody, recipient.getAttachment(),
+                        singleRecipient, recipient.getCc(), recipient.getReplyTo(), recipient.getId(), recipient.getAddSignature());
+            }
+            return ResponseEntity.ok().body("Email sent successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to send email: " + e.getMessage());
+        }
     }
+
 
     @GetMapping("getTemplatePlaceholders/{id}")
     @Transactional
@@ -287,8 +301,8 @@ public class EmailController {
     @DeleteMapping("deleteScheduledEmail/{jobName}")
     public ResponseEntity<String> deleteScheduledEmail(@PathVariable String jobName) {
         try {
-            if (scheduler.checkExists(JobKey.jobKey(jobName, "email-jobs"))) {
-                scheduler.deleteJob(JobKey.jobKey(jobName, "email-jobs"));
+            if (scheduler.checkExists(JobKey.jobKey(jobName, JOB_GROUP))) {
+                scheduler.deleteJob(JobKey.jobKey(jobName, JOB_GROUP));
                 return ResponseEntity.ok("Job deleted successfully.");
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Job not found.");
@@ -302,9 +316,9 @@ public class EmailController {
     @PutMapping("updateScheduledEmail/{jobName}")
     public ResponseEntity<String> updateScheduledEmail(@PathVariable String jobName, @RequestBody ScheduleEmailRequest updatedRequest) {
         try {
-            if (scheduler.checkExists(JobKey.jobKey(jobName, "email-jobs"))) {
+            if (scheduler.checkExists(JobKey.jobKey(jobName, JOB_GROUP))) {
                 // Delete the existing job
-                scheduler.deleteJob(JobKey.jobKey(jobName, "email-jobs"));
+                scheduler.deleteJob(JobKey.jobKey(jobName, JOB_GROUP));
 
                 // Build a new job with updated parameters
                 JobDetail updatedJobDetail = templateUtils.buildJobDetail(updatedRequest);

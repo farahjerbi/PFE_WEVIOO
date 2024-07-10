@@ -1,0 +1,26 @@
+{
+  "databases": {
+      "email_db": {
+          "dbname": "Ms_Email_Notification",
+          "user": "postgres",
+          "password": "admin",
+          "host": "localhost",
+          "port": "5432"
+      },
+      "sms_db": {
+          "dbname": "Ms_SMS_Notification",
+          "user": "postgres",
+          "password": "admin",
+          "host": "localhost",
+          "port": "5432"
+      },
+      "push_db": {
+          "dbname": "Ms_PUSH_Notification",
+          "user": "postgres",
+          "password": "admin",
+          "host": "localhost",
+          "port": "5432"
+      }
+  }
+}
+

@@ -29,10 +29,11 @@ const ListUsers = () => {
       const itemsPerPage = 6; 
       const indexOfLastItem = currentPage * itemsPerPage;
       const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-      const currentItems = users?.slice(indexOfFirstItem, indexOfLastItem);
+      const nonAdminUsers = users?.filter(user => user.role !== 'ADMIN');
+      const currentItems = nonAdminUsers?.slice(indexOfFirstItem, indexOfLastItem);
       useEffect(() => {
         dispatchAction(getUsers());
-        });
+        },[]);
       const handlePageChange = (page:any) => {
         setCurrentPage(page);
       };
@@ -94,8 +95,7 @@ const ListUsers = () => {
           (e)=>e.firstName.toLowerCase().includes(query) ||
            e.lastName.toLowerCase().includes(query) ||
            e.email.toLowerCase().includes(query)||
-           e.enabled.toString()===query
-
+           e.enabled.toString()===query 
         ).map(user => (
 
         <MDBCol key={user.id} xl="3" md="6" className="mb-r me-4 mt-4 ms-5">

@@ -58,18 +58,35 @@ public class AuthenticationController {
     }
 
 
-    @PostMapping("verifyToken")
-    public ResponseEntity<?> verifyToken(@RequestBody String token) {
+    @GetMapping("verifyToken/{token}")
+    public ResponseEntity<?> verifyToken(@PathVariable String token) {
         return ResponseEntity.ok(jwtGenerator.validateToken(token));
     }
 
     @PostMapping("verifyEmail")
-    public void verifyEmail(@RequestBody String email){
-        emailAuthVerification.sendEmailAuthVerification(email);
+    public ResponseEntity<String> verifyEmail(@RequestBody String email) {
+        Boolean emailExists = userRepository.existsByEmail(email);
+        if (Boolean.TRUE.equals(emailExists)) {
+            return ResponseEntity.badRequest().body("Email Already Exists");
+        } else {
+            emailAuthVerification.sendEmailAuthVerification(email);
+            return ResponseEntity.ok().build();
+        }
+    }
+
+    @PostMapping("verifyUserExist")
+    public Boolean verifyUserExist(@RequestBody String email) {
+       return userRepository.existsByEmail(email);
     }
 
     @PostMapping("sendEmailForgotPassword")
-    public void sendEmailForgotPassword(@RequestBody String email){
+    public ResponseEntity<String> sendEmailForgotPassword(@RequestBody String email){
+        Boolean emailExists = userRepository.existsByEmail(email);
+        if (Boolean.FALSE.equals(emailExists)) {
+            return ResponseEntity.badRequest().body("Email Does Not Exists");
+        }else{
         emailForgetPassword.sendEmailForgotPassword(email);
+            return ResponseEntity.ok().build();
+        }
     }
 }

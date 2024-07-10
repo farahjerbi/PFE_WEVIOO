@@ -6,15 +6,15 @@ import { useAddTemplateEmailMutation } from '../../../../redux/services/emailApi
 import { toast } from 'sonner'
 import { EmailTemplate } from '../../../../models/email/EmailTemplate'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { ADD_EMAIL_TEMPLATE, LIST_EMAIL_TEMPLATES, LIST_SMS_TEMPLATES } from '../../../../routes/paths'
-import { Box, Button, FormControl, InputAdornment, InputLabel, MenuItem, Select, SelectChangeEvent, TextField, Typography } from '@mui/material'
+import {  LIST_EMAIL_TEMPLATES, LIST_SMS_TEMPLATES } from '../../../../routes/paths'
+import { Box, FormControl, InputAdornment, InputLabel, MenuItem, Select, SelectChangeEvent, TextField, Typography } from '@mui/material'
 import Textarea from '@mui/joy/Textarea';
 import { useDispatch } from 'react-redux'
 import { setEmail } from '../../../../redux/state/emailSlice'
 import InstructionsModal from '../../../../components/modals/instructions/InstructionsModal'
 import { useAddTemplateSMSMutation } from '../../../../redux/services/smsApi'
 import { SmsTemplate } from '../../../../models/sms/SmsTemplate'
-import { setAddSMS, setSMSs } from '../../../../redux/state/smsSlice'
+import { setAddSMS } from '../../../../redux/state/smsSlice'
 import { Language } from "../../../../models/sms/Language"
 import data from '@emoji-mart/data'
 import Picker from '@emoji-mart/react'

@@ -103,14 +103,14 @@ public class ProfileServiceImpl implements ProfileService {
 
     public List<UsersResponse> getAllUsers() {
         List<UserEntity> users = userRepository.findAllWithMembers();
-        List<UsersResponse> userResponsess = new ArrayList<>();
+        List<UsersResponse> userResponses = new ArrayList<>();
 
         for (UserEntity user : users) {
             UsersResponse userResponse = modelMapper.map(user, UsersResponse.class);
-            userResponsess.add(userResponse);
+            userResponses.add(userResponse);
         }
 
-        return userResponsess;
+        return userResponses;
     }
 
 

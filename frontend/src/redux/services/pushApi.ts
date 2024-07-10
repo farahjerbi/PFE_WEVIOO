@@ -1,10 +1,20 @@
 import {createApi , fetchBaseQuery} from "@reduxjs/toolkit/query/react"
 import { WebPushSubscription } from "../../models/push/WebPushSubscription";
+import { SendPushIndiv } from "../../models/push/SendPush";
 
 export const pushApi = createApi({
     reducerPath: 'pushApi',
     baseQuery:fetchBaseQuery({
-        baseUrl:"http://localhost:8099/apiPush"
+        baseUrl:"http://localhost:8099/apiPush",
+        prepareHeaders: (headers) => {
+            let token = localStorage.getItem('token');
+            if (token && token.startsWith('"') && token.endsWith('"')) {
+                token = token.substring(1, token.length - 1);
+                headers.set('Authorization', `Bearer ${token}`);
+            }
+            
+            return headers;
+          }
     }),
     endpoints:(builder)=>({
         subscribe : builder.mutation({
@@ -31,7 +41,7 @@ export const pushApi = createApi({
             }),
         }),
         getPushById: builder.mutation({
-            query: ( id: number ) => ({
+            query: ( id: any ) => ({
                 url: `/getById/${id}`,
                 method: "GET",
             }),
@@ -60,11 +70,19 @@ export const pushApi = createApi({
             method: "GET",
         }),
     }),
+    sendPushSeprartely : builder.mutation({
+        query:(body:SendPushIndiv)=>{
+            return{
+                url:"/notifySeparately",
+                method:"POST",
+                body,
+            };
+        }
     }),
     
- 
+}),
 })
 
 export const {useGetPushByIdMutation,useSubscribeMutation,useDeletePushTemplateMutation, useDeleteScheduledPushMutation
-    ,useGetScheduledPushsByUserMutation,useToggleFavoritePushMutation,useGetSavedTemplatesPushMutation
+    ,useGetScheduledPushsByUserMutation,useToggleFavoritePushMutation,useGetSavedTemplatesPushMutation,useSendPushSeprartelyMutation
 }=pushApi;

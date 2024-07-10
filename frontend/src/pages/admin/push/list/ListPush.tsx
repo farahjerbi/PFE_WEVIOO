@@ -18,10 +18,12 @@ import { Role } from '../../../../models/user/Role';
 import Send from '@mui/icons-material/Send';
 import BookmarkRemoveOutlined from '@mui/icons-material/BookmarkRemoveOutlined';
 import BookmarkAddedOutlined from '@mui/icons-material/BookmarkAddedOutlined';
-import { useToggleFavoritePushMutation } from '../../../../redux/services/pushApi';
+import {  useToggleFavoritePushMutation } from '../../../../redux/services/pushApi';
 import { toast } from 'sonner';
 import CustomizedSteppers from '../../../../components/CustomizedSteppers/CustomizedSteppers';
 import DeletePushTemplate from '../../../../components/modals/delete/DeletePushTemplate';
+import { useNavigate } from 'react-router-dom';
+import { SEND_PUSH_SEPARATELY } from '../../../../routes/paths';
 interface Props{
     query:string
     }
@@ -29,6 +31,7 @@ const ListPush  : React.FC<Props> = ({query }) => {
     const user=useSelector(selectUser)
     const role=useSelector(selectRole)
     const templates=useSelector(selectPushs)
+    const navigate=useNavigate()
     const dispatch=useDispatch()
     const dispatchAction: AppDispatch = useDispatch(); 
     const [idDelete,setIdDelete]=useState<number>()
@@ -157,7 +160,7 @@ const ListPush  : React.FC<Props> = ({query }) => {
                           {
                             setSelectedTemplate(template);
                             dispatch(setSelectedPush(template));
-                            setSendModalOpen(true) 
+                            navigate(`${SEND_PUSH_SEPARATELY}/${template.id}`)
                                               }
                           }>
                             <i style={{color:"whitesmoke",fontSize:"1.2rem"}} className="fas fa-envelopes-bulk"></i>
@@ -205,7 +208,7 @@ const ListPush  : React.FC<Props> = ({query }) => {
   </MDBPagination>
 </nav>
 {selectedTemplate && (
-  <UpdatePush show={updateModalOpen} onClose={()=>{setUpdateModalOpen(!updateModalOpen);setSelectedTemplate(undefined)}} template={selectedTemplate} />
+  <UpdatePush view={false}  show={updateModalOpen} onClose={()=>{setUpdateModalOpen(!updateModalOpen);setSelectedTemplate(undefined)}} template={selectedTemplate} />
 
 )}
 {idDelete && (

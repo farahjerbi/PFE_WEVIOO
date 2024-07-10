@@ -128,6 +128,15 @@ const SendSimpleEmail : React.FC<SendSimpleEmailProps> = ({isScheduled }) => {
         setSchedularModal(false)
             };
 
+            const handleNextPage = () => {
+              if (recipientEmails.length === 0 || recipientEmails.every(email => email.trim() === '')) {
+                toast.warning("Please add at least one recipient before proceeding.");
+                return;
+              }
+              setPage(true);
+            };
+            
+
   return (
     <>
           <BreadcrumSection/>
@@ -178,7 +187,7 @@ const SendSimpleEmail : React.FC<SendSimpleEmailProps> = ({isScheduled }) => {
         </div>
       )}  
     </div>
-    <MDBBtn onClick={()=>setPage(!page)} className='btn mt-5 mb-2' color='secondary' >Next <MDBIcon  icon="arrow-right" style={{marginLeft:"5px"}} /> </MDBBtn> 
+    <MDBBtn type='button' onClick={handleNextPage} className='btn mt-5 mb-2' color='secondary' >Next <MDBIcon  icon="arrow-right" style={{marginLeft:"5px"}} /> </MDBBtn> 
     </>
 )}
 

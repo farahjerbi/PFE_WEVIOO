@@ -255,9 +255,6 @@ main {
 }
 
 @media (max-width: 1199.98px) {
-  .sidebar-fixed {
-    display: none;
-  }
   .flexible-content {
     padding-left: 0;
   }

@@ -4,7 +4,16 @@ import { EmailTemplate } from "../../models/email/EmailTemplate";
 export const emailApi = createApi({
     reducerPath: 'emailApi',
     baseQuery:fetchBaseQuery({
-        baseUrl:"http://localhost:8099/apiEmail"
+        baseUrl:"http://localhost:8099/apiEmail",
+        prepareHeaders: (headers) => {
+            let token = localStorage.getItem('token');
+            if (token && token.startsWith('"') && token.endsWith('"')) {
+                token = token.substring(1, token.length - 1);
+                headers.set('Authorization', `Bearer ${token}`);
+            }
+            
+            return headers;
+          }
     }),
     endpoints:(builder)=>({
         addTemplateEmail : builder.mutation({

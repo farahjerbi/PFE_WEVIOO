@@ -6,14 +6,14 @@ export interface IAddContact {
     whatsapp:string,
     email:string
     auth:string
-    Endpoint:string
+    endPoint:string
     publicKey:string,
 }
 
 export interface IContact extends IAddContact {
     id:number,
     userId:number,
-    teams:ITeam[]
+    teams:ITeam[],
 }
 export interface UpdateContact extends IAddContact {
     id:number,

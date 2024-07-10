@@ -2,16 +2,13 @@ package wevioo.tn.ms_email.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.mail.BodyPart;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,11 +23,10 @@ import wevioo.tn.ms_email.repositories.EmailTemplateRepository;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import static wevioo.tn.ms_email.services.TemplateUtils.DIRECTORYPATH;
 
@@ -40,7 +36,7 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
 
     private final EmailTemplateRepository emailTemplateRepository;
 
-    private  final TemplateUtils templateUtils;
+    private final TemplateUtils templateUtils;
 
 
     public static final String UTF_8_ENCODING = "UTF-8";
@@ -49,11 +45,11 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
 
 
     public EmailTemplate createEmailTemplate(EmailTemplate emailTemplate) {
-        if(emailTemplate.getTemplateBody().getContent().contains("@email")
-        ||emailTemplate.getTemplateBody().getContent().contains("@username")
-                ||emailTemplate.getTemplateBody().getContent().contains("@firstname")
-                ||emailTemplate.getTemplateBody().getContent().contains("@lastname")
-        ){
+        if (emailTemplate.getTemplateBody().getContent().contains("@email")
+                || emailTemplate.getTemplateBody().getContent().contains("@username")
+                || emailTemplate.getTemplateBody().getContent().contains("@firstname")
+                || emailTemplate.getTemplateBody().getContent().contains("@lastname")
+        ) {
             emailTemplate.getTemplateBody().setTags(true);
         }
         return emailTemplateRepository.save(emailTemplate);
@@ -77,8 +73,7 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
         try {
 
             UserResponse user = usersClient.getUserById(id);
-            System.out.println("user: " + user);
-            JavaMailSender mailSender =templateUtils.personalJavaMailSender(user.getEmail(), user.getEmailSecret());
+            JavaMailSender mailSender = templateUtils.personalJavaMailSender(user.getEmail(), user.getEmailSecret());
 
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, UTF_8_ENCODING);
@@ -102,35 +97,32 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
             emailTemplate.setContent(result);
 
 
-
             MimeMultipart mimeMultipart = new MimeMultipart("related");
 
-            templateUtils.addHtmlContentToEmail(mimeMultipart,result, addSignature);
+            templateUtils.addHtmlContentToEmail(mimeMultipart, result, addSignature);
 
 
-            if(addSignature.equals("true")){
+            if (addSignature.equals("true")) {
                 String signatureUrl = "http://auth:8090/uploads/" + user.getSignature();
-                templateUtils.addImagesToEmailBody(signatureUrl,mimeMultipart);}
+                templateUtils.addImagesToEmailBody(signatureUrl, mimeMultipart);
+            }
 
             //AddAttachment
             if (attachment != null && !attachment.isEmpty()) {
-                templateUtils.addAttachment(attachment,mimeMultipart);
+                templateUtils.addAttachment(attachment, mimeMultipart);
             }
 
             message.setContent(mimeMultipart);
             mailSender.send(message);
         } catch (MessagingException | IOException | MailException exception) {
-            System.out.println("Converted Request Body: " + exception);
 
             throw new EmailSendingException("Failed to send HTML email", exception);
         }
     }
 
 
-
-
-    public void sendScheduledEmail(Long idTemplate,Long idUser, String requestBody,
-                                   String[] recipients , String[] cc,String replyTo,
+    public void sendScheduledEmail(Long idTemplate, Long idUser, String requestBody,
+                                   String[] recipients, String[] cc, String replyTo,
                                    String addSignature) throws JsonProcessingException {
         EmailTemplate emailTemplate = emailTemplateRepository.findEmailTemplateWithDetails(idTemplate);
 
@@ -138,14 +130,14 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
         Map<String, String> requestBodyMap = objectMapper.readValue(requestBody, Map.class);
 
         try {
-            sendEmail(emailTemplate.getTemplateBody(),requestBodyMap,null,recipients,cc,replyTo,idUser,addSignature);
+            sendEmail(emailTemplate.getTemplateBody(), requestBodyMap, null, recipients, cc, replyTo, idUser, addSignature);
         } catch (Exception exception) {
             throw new EmailSendingException("Failed to send scheduled email", exception);
         }
     }
 
 
-    public String deleteEmailTemplate(Long id){
+    public String deleteEmailTemplate(Long id) {
         String filePath = Paths.get(DIRECTORYPATH, id.toString() + ".json").toString();
         File file = new File(filePath);
         if (file.exists()) {
@@ -156,8 +148,7 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
     }
 
 
-
-    public String updateEmailTemplate(Long id, UpdateEmailTemplateRequest updatedTemplate, Object jsonObject)  {
+    public String updateEmailTemplate(Long id, UpdateEmailTemplateRequest updatedTemplate, Object jsonObject) {
         try {
 
             EmailTemplate emailTemplate = emailTemplateRepository.findEmailTemplateWithDetails(id);
@@ -167,9 +158,9 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
             emailTemplate.getTemplateBody().setContent(updatedTemplate.getContent());
             emailTemplate.getTemplateBody().setSubject(updatedTemplate.getSubject());
 
-            if(updatedTemplate.getState().equals(State.COMPLEX)){
+            if (updatedTemplate.getState().equals(State.COMPLEX)) {
 
-                templateUtils.updateDesignTemplate(jsonObject,id);
+                templateUtils.updateDesignTemplate(jsonObject, id);
             }
             emailTemplateRepository.save(emailTemplate);
         } catch (Exception exception) {
@@ -177,7 +168,6 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
         }
         return "Template updated successfully";
     }
-
 
 
     public void toggleFavoriteEmail(Long emailTemplateId, Long userId) {
@@ -191,10 +181,8 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
             userFavoriteEmails.add(userId);
         }
 
-         emailTemplateRepository.save(emailTemplate);
+        emailTemplateRepository.save(emailTemplate);
     }
-
-
 
 
 }

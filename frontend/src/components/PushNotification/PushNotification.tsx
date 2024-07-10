@@ -150,7 +150,7 @@ const PushNotification: React.FC = () => {
       <ListPush query={query}  />
       </div>
       {open && (
-      <UpdatePush show={open} onClose={()=>{setOpen(!open)}} template={undefined} />
+      <UpdatePush view={false}  show={open} onClose={()=>{setOpen(!open)}} template={undefined} />
       )}
     </>
   );

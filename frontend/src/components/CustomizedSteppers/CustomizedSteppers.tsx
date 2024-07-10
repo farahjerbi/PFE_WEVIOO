@@ -27,6 +27,9 @@ import { Role } from '../../models/user/Role';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import SettingsSuggest from '@mui/icons-material/SettingsSuggest';
+import SettingsAccessibility from '@mui/icons-material/SettingsAccessibility';
+import Send from '@mui/icons-material/Send';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -85,9 +88,9 @@ function ColorlibStepIcon(props: StepIconProps) {
   const { active, completed, className } = props;
 
   const icons: { [index: string]: React.ReactElement } = {
-    1: <SettingsIcon />,
-    2: <GroupAddIcon />,
-    3: <VideoLabelIcon />,
+    1: <SettingsSuggest  />,
+    2: <SettingsAccessibility />,
+    3: <Send />,
   };
 
   return (
@@ -102,7 +105,7 @@ interface Props {
     show:boolean;
   }
 
-const steps = ['Select Placeholders', 'Create an ad group', 'Send Push Notification'];
+const steps = ['Select Placeholders', 'Select Recipients', 'Send Push Notification'];
 const CustomizedSteppers : React.FC<Props> = ({ template , onClose ,show }) => {
     const [open,setOpen]=React.useState<boolean>(show);
     const [value, setValue] = React.useState<any | null>(dayjs());
@@ -126,19 +129,26 @@ const CustomizedSteppers : React.FC<Props> = ({ template , onClose ,show }) => {
         const getStepIcon = (index: number) => {
             switch (index) {
               case 0:
-                return <SettingsIcon />;
+                return <SettingsSuggest />;
               case 1:
-                return <GroupAddIcon />;
+                return <SettingsAccessibility />;
               case 2:
-                return <VideoLabelIcon />;
+                return <Send />;
               default:
                 return null;
             }
           };
+          const validateSubscriptions = (): boolean => {
+            return subscriptions.some(sub => sub.notificationEndPoint && sub.publicKey && sub.auth);
+        };
         
         const handleNext = () => {
-          setActiveStep((prevActiveStep) => prevActiveStep + 1);
-        };
+          if (activeStep === 1 && !validateSubscriptions()) {
+              toast.warning('Please provide at least one valid subscription.');
+              return;
+          }
+          setActiveStep(prevActiveStep => prevActiveStep + 1);
+      };
       
         const handleBack = () => {
           setActiveStep((prevActiveStep) => prevActiveStep - 1);

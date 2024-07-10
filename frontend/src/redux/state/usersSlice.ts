@@ -6,9 +6,20 @@ import { IUser } from "../../models/user/User";
 export const getUsers = createAsyncThunk<any| null, void>(
     "users/getUsers",
     async (_, { rejectWithValue }) => {
+      let token = localStorage.getItem("token");
+      console.log("🚀 ~ token:", token)
+      if (token && token.startsWith('"') && token.endsWith('"')) {
+        token = token.substring(1, token.length - 1);
+    }
+          if (token) {
             try {
                 const response = await axios.get<any>(
-                    `http://localhost:8099/api/users/getAllUsers`
+                    `http://localhost:8099/api/users/getAllUsers`,
+                    {
+                      headers: {
+                        Authorization: `Bearer ${token}`, 
+                      },
+                    }
                 );
                 console.log("🚀 ~ response.data:", response.data)
                 return response.data;
@@ -17,6 +28,7 @@ export const getUsers = createAsyncThunk<any| null, void>(
                 return rejectWithValue(null);
             }
         }
+      }
 );
 
 export interface UsersState{

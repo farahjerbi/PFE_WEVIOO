@@ -7,7 +7,7 @@ import {
   MDBCheckbox,
 }
 from 'mdb-react-ui-kit';
-import {useRegisterUserMutation, useVerifyEmailMutation} from '../../redux/services/authApi';
+import {useRegisterUserMutation, useVerifyEmailMutation, useVerifyUserExistMutation} from '../../redux/services/authApi';
 import { toast } from 'sonner';
 import Code from '../otp_code/Code';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -16,6 +16,9 @@ import { FormControl, InputAdornment, TextField } from '@mui/material';
 import { jwtDecode } from 'jwt-decode';
 import { DecodedToken } from '../../models/authentication/DecodedToken';
 import { AUTHENTICATION } from '../../routes/paths';
+import { validateEmail } from '../../routes/Functions';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../../redux/store';
 const Register=()=> {
   const { emailUser } = useParams();
   const stage="register"
@@ -53,12 +56,11 @@ const formValidation = () => {
       etat = false;
    }
 
-   if(!password.trim() || password.length < 10  ){
-      localError.password = " Password required and minLength is 10" ;
-      etat = false;
-   }
- 
-   if(!confirmPassword.trim() || confirmPassword.length < 10 ){
+   if (!password.trim() || password.length < 10 || !/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/.test(password)) {
+    localError.password = "Password required, minimum length is 10, and must be alphanumeric.";
+    etat = false;
+  }
+   if(!confirmPassword.trim() || confirmPassword.length < 10 || !/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/.test(password)){
       localError.confirmPassword = "Confirm password required and minLength is 10" ;
       etat = false;
    }
@@ -73,67 +75,109 @@ const formValidation = () => {
   const [isMfaEnabled,setIsMfaEnabled]=useState<string>();
   const[registerUser] =useRegisterUserMutation();
   const[verifyEmail]=useVerifyEmailMutation();
+  const[verifyUserExist]=useVerifyUserExistMutation()
   const[toBeContinued,setToBeContinued]=useState<boolean>(true);
   const[Continued,setContinued]=useState<boolean>(false);
   const [mail,setMail]=useState<string>("");
-
   const navigate=useNavigate()
+
   useEffect(() => {
-    if(emailUser){
-      formData.email=emailUser
-      setContinued(true)
+    checkUserExistence();
+  }, []);
+  
+  const checkUserExistence = async () => {
+    if (emailUser) {
+      try {
+        const decodedToken: DecodedToken = jwtDecode(emailUser); 
+        const userEmail = decodedToken.sub;
+
+        const response = await verifyUserExist({ email: userEmail }).unwrap();
+
+        if (response) {
+          navigate(AUTHENTICATION);
+          window.location.reload();
+        } else {
+          formData.email = emailUser; 
+          setContinued(true);
+        }
+      } catch (error) {
+        console.error('Failed to verify user existence:', error);
+        navigate(AUTHENTICATION);
+        window.location.reload();
+      }
     }
-  });
+  };
 
   const verifyEmailUser: (evt: FormEvent<HTMLFormElement>) => void = async (
     e: FormEvent<HTMLFormElement>
-    ) => {
+  ) => {
     e.preventDefault();
-      try {
-        setToBeContinued(false)
-        toast.success("Please Verify Your Email !");
-        const responseTemplate = await verifyEmail({email}).unwrap();
-      } catch (error) {
-        toast.error("Error! Yikes");
-        console.error("🚀 ~ error:", error);
-      }
+    if(!email){
+      toast.error("Enter Email please");
+      return
     }
+    if (!validateEmail(email)){
+      toast.error("Email format incorrect");
+      return
+    }
+    try {
+      const response = await verifyEmail({ email }).unwrap(); 
+      setToBeContinued(false);
+      toast.success("Please Verify Your Email !");
+      
+    } catch (error: any) {
+      if (error && error.data) {
+        toast.error(error.data || "An unknown error occurred.");
+      console.error("🚀 ~ error:", error);
+    }
+  };
+}
   
-  
-  const handleChange=(e: React.ChangeEvent<HTMLInputElement>)=>{
+    const handleChange=(e: React.ChangeEvent<HTMLInputElement>)=>{
     setFormData({...formData,[e.target.name]:e.target.value})
   }
 
-  const handleRegister: (evt: FormEvent<HTMLFormElement>) => void = async (
-    e: FormEvent<HTMLFormElement>
-  ) => {
+  const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const isFormValid = formValidation();
-      if(!isFormValid){
-        toast.error("Error! Yikes");
-        return;
-      }
-     if (formData.password !== formData.confirmPassword) {
-      toast.error("Passwords don't match");
-          }else{
-        const decodedToken: DecodedToken = jwtDecode(email);
-        const userEmail = decodedToken.sub;
-        setMail(userEmail)
-      await registerUser({firstName,lastName,email:userEmail,password,mfaEnabled})
-      .unwrap()
-      .then((userData: any) => {
-          console.log("🚀 ~ .then ~ userData:", userData)
-          setIsMfaEnabled(userData.secretImageUri)
-          toast.success("User registed successfully !")
-          if(!userData.mfaEnabled){
-            setFormData(initialState)
-            navigate(AUTHENTICATION)
-            window.location.reload(); 
-          }
-    })
-  }
 
-  }
+    if (!isFormValid) {
+      toast.error("Invalid Form");
+      return;
+    }
+
+    try {
+      const decodedToken: DecodedToken = jwtDecode(formData.email);
+      const userEmail = decodedToken.sub;
+      setMail(userEmail);
+
+      const userData = await registerUser({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: userEmail,
+        password: formData.password,
+        mfaEnabled: formData.mfaEnabled
+      }).unwrap();
+
+      console.log("🚀 ~ userData:", userData);
+      setIsMfaEnabled(userData.secretImageUri);
+      toast.success("User registered successfully !");
+
+      if (!userData.mfaEnabled) {
+        setFormData(initialState);
+        navigate(AUTHENTICATION);
+        window.location.reload(); 
+      }
+    } catch (error: any) {
+      if (error && error.data) {
+        toast.error(error.data.message);
+        console.error("🚀 ~ error:", error.message);
+      } else {
+        toast.error("An unknown error occurred.");
+        console.error("🚀 ~ error:", error);
+      }
+    }
+  };
 
   return (
     <>
@@ -152,7 +196,7 @@ const formValidation = () => {
                     loop
                     style={{ color: '#6873C8', fontSize: '17px', fontWeight: 'bold' }}
                   />
-                <MDBInput name='email' required value={email} onChange={handleChange} className='mb-4 mt-5' type='email' id='form8Example3' label='Email address' />
+                <MDBInput name='email'  value={email} onChange={handleChange} className='mb-4 mt-5' type='email' id='form8Example3' label='Email address' />
                 <MDBBtn  type='submit' className='mb-4 mt-4' block>
                   Sign up
                 </MDBBtn>

@@ -21,7 +21,7 @@ public class Member {
     private String whatsapp;
     private String email;
     private String auth;
-    private String Endpoint;
+    private String endPoint;
     private String publicKey;
     @ManyToMany(mappedBy = "members")
     private Set<Team> teams = new HashSet<>();

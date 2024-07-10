@@ -18,3 +18,13 @@ export const validatePhone = (phone: string): boolean => {
     return regex.test(phone);
   };
   
+const urlPattern = /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w-]*)*\/?$/;
+
+export  const validateClickTarget = (target:string) => {
+    let normalizedTarget = target.trim();
+  
+    if (!urlPattern.test(normalizedTarget)) {
+      return false; 
+    }
+    return normalizedTarget; 
+  };
