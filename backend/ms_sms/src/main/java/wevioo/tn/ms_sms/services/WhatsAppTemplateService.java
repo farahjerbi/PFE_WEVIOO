@@ -31,7 +31,6 @@ public class WhatsAppTemplateService implements WhatsAppService {
 
 
 
-
     public Response createWhatsAppTemplate(WhatsAppTemplatePayload payload) throws IOException {
         MediaType mediaType = MediaType.parse("application/json");
         RequestBody body = RequestBody.create(mediaType, new Gson().toJson(payload));
@@ -113,10 +112,9 @@ public class WhatsAppTemplateService implements WhatsAppService {
 
                 WhatsAppBulkMessage bulkMessage = new WhatsAppBulkMessage()
                         .addMessagesItem(message);
-                WhatsAppBulkMessageInfo messageInfo = whatsAppApi
+                 whatsAppApi
                         .sendWhatsAppTemplateMessage(bulkMessage)
                         .execute();
-                System.out.println(messageInfo.getMessages().get(0).getStatus().getDescription());
             }
             return "WhatsApp messages sent successfully";
         } catch (Exception e) {
@@ -146,10 +144,9 @@ public class WhatsAppTemplateService implements WhatsAppService {
 
                 WhatsAppBulkMessage bulkMessage = new WhatsAppBulkMessage()
                         .addMessagesItem(message);
-                WhatsAppBulkMessageInfo messageInfo = whatsAppApi
+              whatsAppApi
                         .sendWhatsAppTemplateMessage(bulkMessage)
                         .execute();
-                System.out.println(messageInfo.getMessages().get(0).getStatus().getDescription());
             }
             return "WhatsApp messages sent successfully";
         } catch (Exception e) {

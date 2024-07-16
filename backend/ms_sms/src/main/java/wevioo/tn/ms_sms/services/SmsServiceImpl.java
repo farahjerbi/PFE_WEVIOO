@@ -1,12 +1,10 @@
 package wevioo.tn.ms_sms.services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.infobip.ApiClient;
 import com.infobip.ApiException;
 import com.infobip.api.SmsApi;
 import com.infobip.model.*;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import wevioo.tn.ms_sms.dtos.request.SendIndiv;
@@ -130,8 +128,6 @@ public class SmsServiceImpl implements SmsService{
             return "Failed to send message: " + apiException.getMessage();
         }
     }
-
-
 
 }
 

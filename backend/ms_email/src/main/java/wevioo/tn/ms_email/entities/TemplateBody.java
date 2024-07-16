@@ -25,4 +25,5 @@ public class TemplateBody implements Serializable {
     @JsonIgnore
     @OneToOne(mappedBy = "templateBody")
     private EmailTemplate emailTemplate;
+
 }

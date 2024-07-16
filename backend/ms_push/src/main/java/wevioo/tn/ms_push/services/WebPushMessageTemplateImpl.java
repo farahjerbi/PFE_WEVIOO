@@ -113,7 +113,7 @@ public class WebPushMessageTemplateImpl implements WebPushMessageTemplate{
             pushService.send(notification);
         }
 
-        return "YeeeeeeeeY sent successfully";
+        return "sent successfully";
     }
     public String notify( SendPushNotif message) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException {
         Security.addProvider(new BouncyCastleProvider());
@@ -133,7 +133,7 @@ public class WebPushMessageTemplateImpl implements WebPushMessageTemplate{
             pushService.send(notification);
         }
 
-        return "yEEEEEEy sent :)";
+        return "sent successfully :)";
     }
 
     public String notifySeparately( SendIndiv message) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException {
@@ -153,7 +153,7 @@ public class WebPushMessageTemplateImpl implements WebPushMessageTemplate{
             pushService.send(notification);
         }
 
-        return "yEEEEEEy sent :)";
+        return "sent successfully";
     }
 
 

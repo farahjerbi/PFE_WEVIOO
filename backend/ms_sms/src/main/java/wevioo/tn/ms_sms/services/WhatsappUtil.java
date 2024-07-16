@@ -8,7 +8,6 @@ import wevioo.tn.ms_sms.config.WhatsappJob;
 import wevioo.tn.ms_sms.dtos.request.ScheduleWhatsappRequest;
 
 import java.time.ZonedDateTime;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
 @Service

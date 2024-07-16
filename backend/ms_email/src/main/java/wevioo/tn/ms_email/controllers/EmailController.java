@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import wevioo.tn.ms_email.FeignClients.UsersClient;
+import wevioo.tn.ms_email.dtos.exception.EmailSendingException;
 import wevioo.tn.ms_email.dtos.request.ScheduleEmailRequest;
 import wevioo.tn.ms_email.dtos.request.SendEmail;
 import wevioo.tn.ms_email.dtos.request.SendEmailSeparately;
@@ -37,7 +38,6 @@ public class EmailController {
 
     private final EmailTemplateService emailTemplateService;
     private final EmailTemplateRepository emailTemplateRepository;
-    private final EmailTemplateService emailService;
     private final TemplateUtils templateUtils;
     private final Scheduler scheduler;
     private final UsersClient usersClient;
@@ -81,20 +81,19 @@ public class EmailController {
                 // Send emails separately
                 for (String recipient : email.getRecipients()) {
                     String[] singleRecipient = {recipient};
-                    emailService.sendEmail(emailTemplate.getTemplateBody(), requestBody, email.getAttachment(),
+                    emailTemplateService.sendEmail(emailTemplate.getTemplateBody(), requestBody, email.getAttachment(),
                             singleRecipient, email.getCc(), email.getReplyTo(), email.getId(), email.getAddSignature());
                 }
             } else {
                 // Send email in bulk
-                emailService.sendEmail(emailTemplate.getTemplateBody(), requestBody, email.getAttachment(),
+                emailTemplateService.sendEmail(emailTemplate.getTemplateBody(), requestBody, email.getAttachment(),
                         email.getRecipients(), email.getCc(), email.getReplyTo(), email.getId(), email.getAddSignature());
             }
 
             return ResponseEntity.ok().body("Email sent successfully.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Failed to send email: " + e.getMessage());
-        }
+        throw new EmailSendingException("Error occurred while sending email", e);
+    }
     }
 
     @PostMapping(value = "SendEmailSeparately/{emailTemplateId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -110,7 +109,7 @@ public class EmailController {
                 Map<String, String> requestBody = mapper.readValue(recipient.getRequestBody(), new TypeReference<>() {});
                 String[] singleRecipient = {recipient.getRecipient()};
 
-                emailService.sendEmail(emailTemplate.getTemplateBody(), requestBody, recipient.getAttachment(),
+                emailTemplateService.sendEmail(emailTemplate.getTemplateBody(), requestBody, recipient.getAttachment(),
                         singleRecipient, recipient.getCc(), recipient.getReplyTo(), recipient.getId(), recipient.getAddSignature());
             }
             return ResponseEntity.ok().body("Email sent successfully.");
@@ -165,8 +164,13 @@ public class EmailController {
 
     @GetMapping("getAll")
     public List<EmailTemplate> getAllEmailTemplates() {
-        return emailTemplateRepository.findAll();
+        List<EmailTemplate> templates = emailTemplateRepository.findAll();
+        if (templates.isEmpty()) {
+            throw new IllegalStateException("No email templates found.");
+        }
+        return templates;
     }
+
 
 
     @PostMapping("updateTemplate/{id}")

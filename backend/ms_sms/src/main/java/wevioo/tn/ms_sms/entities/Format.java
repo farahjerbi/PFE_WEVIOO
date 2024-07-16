@@ -1,10 +1,31 @@
 package wevioo.tn.ms_sms.entities;
 
-import lombok.Data;
+import jakarta.persistence.*;
+import lombok.*;
 
-@Data
-public class Format {
+import java.io.Serializable;
+
+
+@Getter
+@Setter
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+public class Format implements Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String format;
     private String text;
-    private String[] examples;
+
+    @OneToOne(mappedBy = "header")
+    private Structure structureHeader;
+
+    @OneToOne(mappedBy = "body")
+    private Structure structureBody;
+
+    @OneToOne(mappedBy = "footer")
+    private Structure structureFooter;
 }

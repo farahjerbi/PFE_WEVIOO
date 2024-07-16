@@ -1,9 +1,9 @@
 import spacy
 from flask import Flask, jsonify, request
 import json
-import psycopg2
+import requests
 from sentence_transformers import SentenceTransformer
-from sklearn.metrics.pairwise import cosine_similarity  # Import cosine_similarity
+from sklearn.metrics.pairwise import cosine_similarity
 from flask_cors import CORS
 
 # Load SpaCy model for preprocessing
@@ -33,72 +33,21 @@ def load_config(config_file):
         config = json.load(file)
     return config
 
-def get_db_connection(db_config):
-    conn = psycopg2.connect(
-        dbname=db_config["dbname"],
-        user=db_config["user"],
-        password=db_config["password"],
-        host=db_config["host"],
-        port=db_config["port"]
-    )
-    return conn
-
-def fetch_email_templates(conn):
+def fetch_templates_from_service(url):
     try:
-        cursor = conn.cursor()
-        cursor.execute("""
-            SELECT et.id, et.name, tb.subject, tb.content AS body, et.language, 'email' as type
-            FROM email_template et
-            JOIN template_body tb ON et.template_body_id = tb.id
-        """)
-        templates = cursor.fetchall()
-        cursor.close()
-        return templates
-    except psycopg2.Error as e:
-        print(f"Error fetching email templates: {e}")
-        return []
-
-def fetch_sms_templates(conn):
-    try:
-        cursor = conn.cursor()
-        cursor.execute("""
-            SELECT id, name, subject, content AS body, language, 'sms' as type
-            FROM sms_template
-        """)
-        templates = cursor.fetchall()
-        cursor.close()
-        return templates
-    except psycopg2.Error as e:
-        print(f"Error fetching SMS templates: {e}")
-        return []
-
-def fetch_push_templates(conn):
-    try:
-        cursor = conn.cursor()
-        cursor.execute("""
-            SELECT id, title AS name, message AS body, 'push' as type
-            FROM web_push_message
-        """)
-        templates = cursor.fetchall()
-        cursor.close()
-        return templates
-    except psycopg2.Error as e:
-        print(f"Error fetching push templates: {e}")
+        response = requests.get(url)
+        response.raise_for_status()
+        return response.json()  # Assuming the response is in JSON format
+    except requests.RequestException as e:
+        print(f"Error fetching templates from {url}: {e}")
         return []
 
 def get_all_templates(config):
     all_templates = []
-    for db_key, db_config in config["databases"].items():
-        conn = get_db_connection(db_config)
-        if db_key == "email_db":
-            templates = fetch_email_templates(conn)
-        elif db_key == "sms_db":
-            templates = fetch_sms_templates(conn)
-        elif db_key == "push_db":
-            templates = fetch_push_templates(conn)
+    for service_key, service_url in config["template_services"].items():
+        templates = fetch_templates_from_service(service_url)
         for template in templates:
-            all_templates.append(template + (db_key,))
-        conn.close()
+            all_templates.append(template)  # Adjust based on your service response structure
     return all_templates
 
 def get_most_similar_templates(user_description, templates):
@@ -108,7 +57,7 @@ def get_most_similar_templates(user_description, templates):
     similarities = []
     for template in templates:
         # Combine subject and body into a single description
-        template_description = f"{template[2] if template[2] else ''} {template[3] if template[3] else ''}".strip()
+        template_description = f"{template.get('subject', '')} {template.get('body', '')}".strip()
         processed_template_desc = preprocess_text(template_description)
         template_embedding = model.encode([processed_template_desc])[0]
 
@@ -138,12 +87,12 @@ def search_templates():
 
         if matched_templates:
             response = [{
-                "id": template[0][0],
-                "type": template[0][-1],
-                "name": template[0][1],
-                "subject": template[0][2],
-                "body": template[0][3] if len(template[0]) > 3 else None,
-                "language": template[0][4]
+                "id": template[0]['id'],
+                "type": template[0]['type'],
+                "name": template[0]['name'],
+                "subject": template[0].get('subject'),
+                "body": template[0].get('body'),
+                "language": template[0].get('language')
             } for template in matched_templates]
         else:
             response = {"message": "No matching templates found."}
@@ -153,4 +102,4 @@ def search_templates():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
