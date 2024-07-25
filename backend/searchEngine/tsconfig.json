@@ -1,7 +1,7 @@
 {
     "template_services": {
       "email_service": "http://email/apiEmail/getAll",
-      "sms_service": "http://sms/apiSms/getAll",
+      "sms_service": "http://sms/apiSms/getAllTemplates",
       "push_service": "http://push/apiPush/getAll"
     }
   }

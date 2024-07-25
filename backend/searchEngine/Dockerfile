@@ -1,10 +1,17 @@
-FROM python:3.9
+# Use the pre-built TensorFlow image as a base
+FROM tensorflow/tensorflow:2.16.2
 
 # Set the working directory
 WORKDIR /usr/src/app
 
 # Copy the requirements file into the container
 COPY requirements.txt ./
+
+# Update pip to the latest version
+RUN pip install --upgrade pip
+
+# Force reinstall blinker to avoid conflicts
+RUN pip install --ignore-installed blinker
 
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir --default-timeout=100 -r requirements.txt
@@ -26,3 +33,4 @@ ENV NAME World
 
 # Run the application
 CMD ["python", "searchEngine.py"]
+

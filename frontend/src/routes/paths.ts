@@ -28,5 +28,6 @@ export const UPDATE_PUSH_TEMPLATE="/push/update"
 export const AUTHENTICATION="/authentication"
 export const CALENDAR="/calendar"
 export const SAVEDTEMPLATES="/saved-templates"
+export const SEARCH="/search"
 
 //docker exec -it db-postgres psql -U postgres -d Ms_Email_Notification

@@ -24,7 +24,7 @@ const BreadcrumSection = () => {
       <MDBCardBody className='d-flex ' style={{ background: "linear-gradient(-200deg, #EBEBEB 0%, #3544ED 450%)",maxHeight:"80px",position:"relative"}}>
           <MDBBreadcrumb>
           <div className='d-flex '>
-          <img src="../../../assets/settings.png" alt="settings" style={{width:"4%",marginRight:"2%"}}/>
+          <img src="../../../assets/settings.png" alt="settings" style={{width:"5%",marginRight:"2%"}}/>
           {breadcrumbs.map((breadcrumb, index) => (
             <MDBBreadcrumbItem key={index} active={index === breadcrumbs.length - 1}>
               <Link style={{  pointerEvents:"none" }} to={breadcrumb.path}>{breadcrumb.displayName}</Link>

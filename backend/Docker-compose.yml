@@ -6,15 +6,15 @@ services:
     build: ./EurekaServer
     ports:
       - "8761:8761"
-    image: eureka:latest
+    image: eureka
     hostname: serviceregistry
     environment:
       - eureka.client.service-url.defaultZone=http://serviceregistry:8761/eureka/
     networks:
-      - mynetwork  # Define a network for inter-service communication
+      - mynetwork  
 
   apiGateway:
-    image: gatewayapi:latest
+    image: gatewayapi
     build: ./APIGateway
     ports:
       - "8099:8099"
@@ -25,11 +25,9 @@ services:
     networks:
       - mynetwork
 
-
-
   auth:
     container_name: auth
-    image: auth:latest
+    image: auth
     build: ./ms_auth
     ports:
       - "8090:8090"
@@ -47,7 +45,7 @@ services:
 
   email:
     container_name: email
-    image: email:latest
+    image: email
     build: ./ms_email
     ports:
       - "8091:8091"
@@ -65,7 +63,7 @@ services:
 
   sms:
     container_name: sms
-    image: sms:latest
+    image: sms
     build: ./ms_sms
     ports:
       - "9092:9092"
@@ -83,7 +81,7 @@ services:
       
   push:
       container_name: push
-      image: push:latest
+      image: push
       build: ./ms_push
       ports:
         - "9093:9093"
@@ -99,8 +97,6 @@ services:
       networks:
         - mynetwork
 
-
-
   db-postgres:
     image: postgres:alpine
     container_name: db-postgres
@@ -113,6 +109,21 @@ services:
     networks:
       - mynetwork
 
+  search-engine:
+    build: ./searchEngine 
+    ports:
+      - "5000:5000"  
+    networks:
+      - mynetwork
+    depends_on:
+      - apiGateway
+
+  frontend:
+    build: ../frontend 
+    ports:
+      - "3000:3000"  
+    networks:
+      - mynetwork
 
 
 networks:

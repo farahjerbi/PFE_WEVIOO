@@ -36,9 +36,19 @@ export const getTemplatesSms = createAsyncThunk<any| null, void>(
 export const getTemplatesWhatsapp = createAsyncThunk<any| null, void>(
     "sms/getTemplatesWhatsapp",
     async (_, { rejectWithValue }) => {
+      let token = localStorage.getItem("token");
+      console.log("🚀 ~ token:", token)
+      if (token && token.startsWith('"') && token.endsWith('"')) {
+        token = token.substring(1, token.length - 1);
+    }
+    if (token) {
             try {
                 const response = await axios.get<any>(
-                    `http://localhost:8099/apiWhatsApp/getAll`
+                    `http://localhost:8099/apiWhatsApp/getAll`,
+                    {
+                      headers: {
+                        Authorization: `Bearer ${token}`,
+                      },}
                 );
                 const textTemplates = response.data.templates.filter((template:any )=> template.structure.type === "TEXT");
                 console.log("🚀 ~ response.data:", textTemplates)
@@ -48,6 +58,8 @@ export const getTemplatesWhatsapp = createAsyncThunk<any| null, void>(
                 return rejectWithValue(null);
             }
         }
+        return null
+      }
 );
 
 

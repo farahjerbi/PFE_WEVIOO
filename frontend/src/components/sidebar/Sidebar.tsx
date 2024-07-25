@@ -5,7 +5,7 @@ import {  useLocation, useNavigate } from 'react-router-dom';
 import { Role } from '../../models/user/Role';
 import { selectRole } from '../../redux/state/authSlice';
 import { useSelector } from 'react-redux';
-import {  CALENDAR, CONTACT, DASHBOARD, LIST_EMAIL_TEMPLATES, LIST_PUSH_TEMPLATES, LIST_SMS_TEMPLATES, LIST_USERS, PROFILE, SAVEDTEMPLATES } from '../../routes/paths';
+import {  CALENDAR, CONTACT, DASHBOARD, LIST_EMAIL_TEMPLATES, LIST_PUSH_TEMPLATES, LIST_SMS_TEMPLATES, LIST_USERS, PROFILE, SAVEDTEMPLATES, SEARCH } from '../../routes/paths';
 import { Tooltip } from '@mui/material';
 import { selectIsOpen } from '../../redux/state/styleSlice';
 const Sidebar = () => {
@@ -47,22 +47,22 @@ const Sidebar = () => {
                         <Tooltip  title="Dashboard"  >
                         <img src="../../../assets/dash-side.png" alt="sidebar-icon" className={isOpen?"sidebar-icon-open":"sidebar-icon"}/>
                         </Tooltip>
-                        {isOpen && ( <span>Dashboard</span> )}
+                        {isOpen && ( <span className='menu'>Dashboard</span> )}
                     </MDBListGroupItem>
 
                     <MDBListGroupItem  className={dashboardName === "profile" ? 'sidebar-item-active' : 'sidebar-item'}  onClick={()=>navigate(PROFILE)}>
                     <Tooltip  title="Profile"  >
                     <img src="../../../assets/profile-side.png" alt="sidebar-icon" className={isOpen?"sidebar-icon-open":"sidebar-icon"} />
                     </Tooltip>
-                    {isOpen && ( <span>Profile</span> )}
+                    {isOpen && ( <span className='menu'>Profile</span> )}
 
                     </MDBListGroupItem>
                     {role===Role.USER && (<>
-                    <MDBListGroupItem  className={dashboardName === "contact" ? 'sidebar-item-active' : 'sidebar-item'}  onClick={()=>navigate(CONTACT)}>
-                         <Tooltip  title="Contact"  >
-                         <img src="../../../assets/phone-book.png" alt="sidebar-icon" className={isOpen?"sidebar-icon-open":"sidebar-icon"} />
+                    <MDBListGroupItem  className={dashboardName === "Search" ? 'sidebar-item-active' : 'sidebar-item'}  onClick={()=>navigate(SEARCH)}>
+                         <Tooltip  title="Search"  >
+                         <img src="../../../assets/searchAI.png" alt="sidebar-icon" className={isOpen?"sidebar-icon-open":"sidebar-icon"} />
                         </Tooltip>
-                        {isOpen && ( <span>Contact</span> )}
+                        {isOpen && ( <span className='menu'>Search</span> )}
                     </MDBListGroupItem>
                     </>)}
 
@@ -70,7 +70,7 @@ const Sidebar = () => {
                          <Tooltip  title="Calendar"  >
                          <img src="../../../assets/calendar-side.png" alt="sidebar-icon" className={isOpen?"sidebar-icon-open":"sidebar-icon"} />
                         </Tooltip>
-                        {isOpen && ( <span>My Calendar</span> )}
+                        {isOpen && ( <span className='menu'>My Calendar</span> )}
                     </MDBListGroupItem>
 
 
@@ -79,7 +79,7 @@ const Sidebar = () => {
             <Tooltip  title="Users"  >
             <img src="../../../assets/users-side.png" alt="sidebar-icon" className={isOpen?"sidebar-icon-open":"sidebar-icon"} />
             </Tooltip>
-              {isOpen && ( <span>Users</span> )}
+              {isOpen && ( <span className='menu'>Users</span> )}
                     </MDBListGroupItem>
                 </>)}
                  
@@ -89,14 +89,14 @@ const Sidebar = () => {
                     <Tooltip  title="Emails"  >
                     <img src="../../../assets/email-side.png" alt="sidebar-icon" className={isOpen?"sidebar-icon-open":"sidebar-icon"}/>
                     </Tooltip>
-                    {isOpen && ( <span>Email Templates</span> )}
+                    {isOpen && ( <span className='menu'>Email Templates</span> )}
                     </MDBListGroupItem>
               
                     <MDBListGroupItem className={dashboardName === "sms/list" ? 'sidebar-item-active' : 'sidebar-item'}  onClick={()=>navigate(LIST_SMS_TEMPLATES)}>
                     <Tooltip  title="SMS"  >
                     <img src="../../../assets/chatting.png" alt="sidebar-icon" className={isOpen?"sidebar-icon-open":"sidebar-icon"} />
                     </Tooltip>
-                    {isOpen && ( <span>SMS Templates</span> )}
+                    {isOpen && ( <span className='menu'>SMS Templates</span> )}
 
                     </MDBListGroupItem>
 
@@ -105,7 +105,7 @@ const Sidebar = () => {
                     <Tooltip  title="Push"  >
                     <img src="../../../assets/bell-side.png" alt="sidebar-icon" className={isOpen?"sidebar-icon-open":"sidebar-icon"} />
                     </Tooltip>
-                    {isOpen && ( <span>Push Templates</span> )}
+                    {isOpen && ( <span className='menu'>Push Templates</span> )}
                     </MDBListGroupItem>
 
               {role===Role.USER && (
@@ -113,7 +113,7 @@ const Sidebar = () => {
                    <Tooltip  title="saved templates"  >
                    <img src="../../../assets/bookmark.png" alt="sidebar-icon" className={isOpen?"sidebar-icon-open-":"sidebar-icon-"} />
                    </Tooltip>
-                   {isOpen && ( <span>Saved Templates</span> )}
+                   {isOpen && ( <span className='menu'>Saved Templates</span> )}
                    </MDBListGroupItem>
               )}      
                  

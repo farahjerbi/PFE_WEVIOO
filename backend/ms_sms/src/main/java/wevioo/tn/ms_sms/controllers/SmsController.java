@@ -70,7 +70,9 @@ public class SmsController {
 
 
     @GetMapping(value = "/getAllTemplates")
-    public ResponseEntity<List<SmsTemplate>> getAllTemplates(){return ResponseEntity.ok(smsRepository.findAll());}
+    public ResponseEntity<List<SmsTemplate>> getAllTemplates(){
+        return ResponseEntity.ok(smsRepository.findAll());
+    }
     @GetMapping(value = "/getSMSTemplateById/{id}")
     public ResponseEntity<SmsTemplate> getSMSTemplateById(@PathVariable Long id) {
         Optional<SmsTemplate> optionalTemplate = smsRepository.findByIdWithPlaceholders(id);

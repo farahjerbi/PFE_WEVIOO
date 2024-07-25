@@ -103,7 +103,7 @@ const ChangePassword:React.FC<Close> = ({ onClose })=> {
                     <form onSubmit={handleChangePassword}>
 
               <MDBCardBody className='p-5 shadow-5 text-center'>
-            <h2 className="fw-bold mb-5">Reset Password</h2>
+            <h2 className="fw-bold mb-5">Change Password</h2>
 
             <MDBInput name='oldPassword' value={oldPassword} onChange={handleChange} wrapperClass={errors.oldPassword ?'mb-1':'mb-4'} label='Old Password' type='password'/>
             {errors.oldPassword && (<>

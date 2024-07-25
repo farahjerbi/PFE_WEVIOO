@@ -12,11 +12,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { IconButton, Tooltip } from '@mui/material';
 import { CONTACT, DASHBOARD, LIST_EMAIL_TEMPLATES, LIST_PUSH_TEMPLATES, LIST_SMS_TEMPLATES } from '../../routes/paths';
 import { selectIsOpen, setIsOpen } from '../../redux/state/styleSlice';
+import { useState } from 'react';
 
 const Navbar = () => {
     const dispatch = useDispatch();
     const isOpen=useSelector(selectIsOpen);
     const navigate=useNavigate();
+    const[query,setQuery]=useState<string>('')
     const handleLogout = () => {
       dispatch(logout());
       navigate('/authentication')
@@ -43,27 +45,18 @@ const Navbar = () => {
                 <div className="nav-content">
                   <ul className="navbar-nav mr-auto">
                         <li>
-                            <Link className="menu-items" to={DASHBOARD}>Dashboard</Link>
+                            <Link className="menu-items" to={CONTACT}>Statistics</Link>
                         </li>
-                        <li>
-                            <Link className="menu-items" to={LIST_EMAIL_TEMPLATES}>Email</Link>
-                        </li>
-                        <li>
-                             <Link className="menu-items" to={LIST_SMS_TEMPLATES}>SMS</Link>
-                        </li>
-                        <li>
-                             <Link className="menu-items" to={LIST_PUSH_TEMPLATES}>Push</Link>
-                        </li>
-                        <li>
-                            <Link className="menu-items" to={CONTACT}>Contact</Link>
+                        <li className='d-flex align-items-center'>
+                        <Link className="menu-items" to={CONTACT}>Contacts</Link>
                         </li>
                     </ul>
                 </div>
-                    <MDBNavbarNav  className='justify-content-end' style={{marginLeft:"50%"}} >
+                    <MDBNavbarNav  className='justify-content-end' style={{marginLeft:"70%"}} >
                         <MDBNavbarItem >
                         <Tooltip title="Logout"  >
                         <IconButton onClick={()=>handleLogout()}>
-                         <img src="../../../assets/sign-out.png" alt="logout" style={{width:"30%"}} />
+                         <img src="../../../assets/sign-out.png" alt="logout" style={{width:"25%"}} />
                         </IconButton>
                         </Tooltip>
                      </MDBNavbarItem>

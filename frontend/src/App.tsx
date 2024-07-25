@@ -1,7 +1,7 @@
 import React, { Suspense, useEffect } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { Toaster } from 'sonner';
-import { ADD_ADVANCED_EMAIL_TEMPLATE, ADD_EMAIL_TEMPLATE, ADD_SIMPLE_EMAIL_TEMPLATE, AUTHENTICATION, CALENDAR, DASHBOARD, EDIT_EMAIL_TEMPLATE, EMAILS_STATISTICS, LIST_EMAIL_TEMPLATES, LIST_USERS, PROFILE, SEND_EMAIL, SEND_EMAIL_SCHEDULED, USERS_STATISTICS,SAVEDTEMPLATES, LIST_SMS_TEMPLATES, ADD_SMS_TEMPLATE, CREATE_SMS_TEMPLATE, CREATE_WHATSAPP_TEMPLATE, UPDATE_SMS_TEMPLATE, SEND_SMS, SEND_WHATSAPP, LIST_PUSH_TEMPLATES, CONTACT, SEND_SMS_SEPARATELY, SEND_WHATSAPP_SEPARATELY, SEND_PUSH_SEPARATELY } from "./routes/paths";
+import { ADD_ADVANCED_EMAIL_TEMPLATE, ADD_EMAIL_TEMPLATE, ADD_SIMPLE_EMAIL_TEMPLATE, AUTHENTICATION, CALENDAR, DASHBOARD, EDIT_EMAIL_TEMPLATE, EMAILS_STATISTICS, LIST_EMAIL_TEMPLATES, LIST_USERS, PROFILE, SEND_EMAIL, SEND_EMAIL_SCHEDULED, USERS_STATISTICS,SAVEDTEMPLATES, LIST_SMS_TEMPLATES, ADD_SMS_TEMPLATE, CREATE_SMS_TEMPLATE, CREATE_WHATSAPP_TEMPLATE, UPDATE_SMS_TEMPLATE, SEND_SMS, SEND_WHATSAPP, LIST_PUSH_TEMPLATES, CONTACT, SEND_SMS_SEPARATELY, SEND_WHATSAPP_SEPARATELY, SEND_PUSH_SEPARATELY, SEARCH } from "./routes/paths";
 import { decodeToken, selectIsAuth, selectRole } from "./redux/state/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Role } from "./models/user/Role";
@@ -37,6 +37,7 @@ const SendWhatsapp = React.lazy(() => import('./pages/user/sms/sendWhatsapp/Send
 const PushNotification = React.lazy(() => import('./components/PushNotification/PushNotification'));
 const Contact=React.lazy(() => import('./pages/user/contact/Contacts'));
 const SendSeparately = React.lazy(() => import('./pages/user/sms/sendSeparately/SendSeparately'));
+const SearchAI = React.lazy(() => import('./components/search/SearchAI'));
 
 
 
@@ -62,6 +63,7 @@ function App() {
                     <Route path='*' element={<NotFound />} />
                     <Route path={LIST_SMS_TEMPLATES} element={<ProtectedRoute><ListSMS /></ProtectedRoute>} />
                     <Route path={LIST_PUSH_TEMPLATES} element={<ProtectedRoute><PushNotification /></ProtectedRoute>}/>
+                    <Route path={SEARCH} element={<ProtectedRoute><SearchAI /></ProtectedRoute>}/>
 
                   {role===Role.ADMIN && ( <>
                     <Route path={ADD_EMAIL_TEMPLATE} element={<ProtectedRoute><AddEmail /></ProtectedRoute>} />
