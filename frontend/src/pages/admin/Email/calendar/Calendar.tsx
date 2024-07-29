@@ -83,10 +83,10 @@ const handleEventMouseLeave = (eventId: string) => {
   const formattedDashboardName =dashboardNameFromPath.slice(1).join('/');
   setDashboardName(formattedDashboardName);
   
-  populateDataEmail(emails);
-  populateDataSMS(sms);
-  populateDataWhatsapp(whatsapp);
-  populateDataPush(push);
+  populateDataEmail(emails ?? []);
+  populateDataSMS(sms ?? []);
+  populateDataWhatsapp(whatsapp ?? []);
+  populateDataPush(push ?? []);
 
     }, [update]);
     
@@ -143,7 +143,7 @@ const handleEventMouseLeave = (eventId: string) => {
           }
       
   return (
-    <MDBCard className='mt-5'  style={{marginLeft:"7%" }}>
+    <MDBCard className='mt-5 mb-5'  style={{marginLeft:"7%" }}>
       <div className={dashboardName==="dashboard"? "mt-5 mb-5 dashboard" :"mt-5 mb-5 calendar"} style={{
           width: "83%",
           marginLeft: "8%"

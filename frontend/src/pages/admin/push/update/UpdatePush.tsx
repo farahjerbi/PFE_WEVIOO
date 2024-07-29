@@ -11,12 +11,13 @@ import Card from '@mui/joy/Card';
 import CardContent from '@mui/joy/CardContent';
 import { Button, Tooltip, styled } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { useDispatch,  } from 'react-redux';
+import { useDispatch, useSelector,  } from 'react-redux';
 import { setPush, setUpdatePush } from '../../../../redux/state/pushSlice';
 import { WebPushTemplate } from '../../../../models/push/WebPushTemplate';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { validateClickTarget } from '../../../../routes/Functions';
+import { selectToken } from '../../../../redux/state/authSlice';
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -54,6 +55,7 @@ const UpdatePush :React.FC<Props> = ({onClose,show ,template,view}) => {
     const [formData, setFormData] = useState(initialState);
     const {title,message,clickTarget}=formData;
     const [icon, setIcon] = useState<File | null>(null);
+    const token=useSelector(selectToken)
     const dispatch=useDispatch()
 
     const [errors,setErrors] = useState(
@@ -112,8 +114,19 @@ const UpdatePush :React.FC<Props> = ({onClose,show ,template,view}) => {
       }
 
       try {
-        const response = await axios.post(`http://localhost:8099/apiPush/updateTemplate/${template?.id}`, formData);
+        let tokeen = token;
+        if (token && token.startsWith('"') && token.endsWith('"')) {
+            tokeen = token.substring(1, token.length - 1);
+        }
         
+        const config = {
+          headers: {
+            Authorization: `Bearer ${tokeen}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        };
+        
+        const response = await axios.post(`http://localhost:8099/apiPush/updateTemplate/${template?.id}`, formData, config);
         if (response.status === 200) {
           const updatedTemplate= response.data;
           dispatch(setUpdatePush(updatedTemplate))
@@ -143,7 +156,18 @@ const UpdatePush :React.FC<Props> = ({onClose,show ,template,view}) => {
       }
 
       try {
-        const response = await axios.post(`http://localhost:8099/apiPush/addTemplate`, formData);
+        let tokeen = token;
+        if (token && token.startsWith('"') && token.endsWith('"')) {
+            tokeen = token.substring(1, token.length - 1);
+        }
+        
+        const config = {
+          headers: {
+            Authorization: `Bearer ${tokeen}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        };
+        const response = await axios.post(`http://localhost:8099/apiPush/addTemplate`, formData,config);
         
         if (response.status === 200) {
           const addedTemplate= response.data;

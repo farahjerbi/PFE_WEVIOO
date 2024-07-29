@@ -11,6 +11,7 @@ import { selectPush, setSelectedPush } from '../../../../redux/state/pushSlice'
 import { SendPush, SendPushIndiv } from '../../../../models/push/SendPush'
 import UpdatePush from '../update/UpdatePush'
 import { useGetPushByIdMutation, useSendPushSeprartelyMutation } from '../../../../redux/services/pushApi'
+import { selectToken } from '../../../../redux/state/authSlice'
 const SendPushSeparately = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [basicModal, setBasicModal] = useState<boolean>(false);
@@ -22,6 +23,7 @@ const SendPushSeparately = () => {
     console.log("🚀 ~ SendPushSeparately ~ template:", template)
     const[getPushById]=useGetPushByIdMutation()
     const { id } = useParams();
+    const token=useSelector(selectToken)
     useEffect(() => {
       fetchData()
     }, []);

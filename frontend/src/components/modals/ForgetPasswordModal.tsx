@@ -54,7 +54,7 @@ const ForgetPasswordModal : React.FC<Props> = ({ onClose ,show }) => {
     <ModalDialog>
           <DialogTitle>Forgotten Password</DialogTitle>
         <DialogContent>
-        <img src="../../../assets/fg.png" alt="" style={{width:"60%",marginLeft:"20%"}} />
+        <img src="../../../assets/Forgotpassword.jpg" alt="" style={{width:"60%",marginLeft:"20%"}} />
           <MDBInput 
           label='Please Enter your email'
           name="email"
@@ -67,7 +67,7 @@ const ForgetPasswordModal : React.FC<Props> = ({ onClose ,show }) => {
           <MDBBtn color='secondary' onClick={toggleOpen}>
             Close
           </MDBBtn>
-        <MDBBtn color='info' onClick={()=>forgotPasswordEmail()}> Send Email ! </MDBBtn> 
+        <MDBBtn className='color_blue' onClick={()=>forgotPasswordEmail()}> Send Email ! </MDBBtn> 
     </ModalDialog>
   </Modal>  
     )

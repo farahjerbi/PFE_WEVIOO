@@ -21,7 +21,7 @@ import WebSubscriptionInput from './WebSubscriptionInput';
 import { WebPushSubscription } from '../../models/push/WebPushSubscription';
 import { DateTimePicker, LocalizationProvider, PickersTimezone } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { selectRole, selectUser } from '../../redux/state/authSlice';
+import { selectRole, selectToken, selectUser } from '../../redux/state/authSlice';
 import { SchedulePushRequest } from '../../models/push/SchedulePushRequest';
 import { Role } from '../../models/user/Role';
 import axios from 'axios';
@@ -118,6 +118,7 @@ const CustomizedSteppers : React.FC<Props> = ({ template , onClose ,show }) => {
     const user=useSelector(selectUser)
     const role=useSelector(selectRole)
     const dispatch=useDispatch();
+    const token=useSelector(selectToken)
       React.useEffect(() => {
         setOpen(show);
     }, [show]);
@@ -170,7 +171,17 @@ const CustomizedSteppers : React.FC<Props> = ({ template , onClose ,show }) => {
               }
           
           try {
-            const response = await axios.post(`http://localhost:8099/apiPush/schedulePush`,whatsappSend);
+            let tokeen = token;
+            if (token && token.startsWith('"') && token.endsWith('"')) {
+                tokeen = token.substring(1, token.length - 1);
+            }
+            
+            const config = {
+              headers: {
+                Authorization: `Bearer ${tokeen}`,
+              }
+            };
+            const response = await axios.post(`http://localhost:8099/apiPush/schedulePush`,whatsappSend,config);
             if (response.status === 200) {
               toast.success("Push notification scheduled successfully !");
             }
@@ -197,7 +208,17 @@ const CustomizedSteppers : React.FC<Props> = ({ template , onClose ,show }) => {
               }
           
           try {
-            const response = await axios.post(`http://localhost:8099/apiPush/notify`,pushSend);
+            let tokeen = token;
+            if (token && token.startsWith('"') && token.endsWith('"')) {
+                tokeen = token.substring(1, token.length - 1);
+            }
+            
+            const config = {
+              headers: {
+                Authorization: `Bearer ${tokeen}`,
+              }
+            };
+            const response = await axios.post(`http://localhost:8099/apiPush/notify`,pushSend,config);
             if (response.status === 200) {
               toast.success("Push notification sent successfully !");
             }

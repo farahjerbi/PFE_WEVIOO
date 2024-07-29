@@ -59,7 +59,7 @@ const Code= ({ email, password ,stage}: OtpProps) => {
                 maxLength={1}
                 value={digit}
                 onChange={(e) => handleInputChange(index, e.target.value)}
-                className='otp-input mb-5'
+                className='otp-input mb-3'
               />
             </div>
           ))}

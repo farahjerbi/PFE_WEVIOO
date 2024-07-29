@@ -1,8 +1,8 @@
 {
     "template_services": {
-      "email_service": "http://email/apiEmail/getAll",
-      "sms_service": "http://sms/apiSms/getAllTemplates",
-      "push_service": "http://push/apiPush/getAll"
+      "email_service": "http://localhost:8099/apiEmail/getAll",
+      "sms_service": "http://localhost:8099/apiSms/getAllTemplates",
+      "push_service": "http://localhost:8099/apiPush/getAll"
     }
   }
   

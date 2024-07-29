@@ -103,7 +103,7 @@ const Login=()=> {
 
       {isMfaEnabled  && (
                 <>
-                <h5 className='title mb-5'>Set Up Two-Factor Authentication</h5>
+                <h5 className='title mb-5'> Two-Factor Authentication</h5>
                 <Code email={email} password={password} stage={stage} />
                 </>
       )}

@@ -35,8 +35,8 @@ import BookmarkRemoveOutlined from "@mui/icons-material/BookmarkRemoveOutlined";
 import { Role } from "../../../../models/user/Role";
 import { selectRole, selectUser } from "../../../../redux/state/authSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { ADD_EMAIL_TEMPLATE, EDIT_EMAIL_TEMPLATE, SEND_EMAIL, SEND_EMAIL_SCHEDULED } from "../../../../routes/paths";
-import { getTemplatesEmail, selectEmails, setSelectedEmail, setUpdateEmailFav } from "../../../../redux/state/emailSlice";
+import { ADD_EMAIL_TEMPLATE, EDIT_EMAIL_TEMPLATE, SEND_EMAIL, SEND_EMAIL_SCHEDULED, SEND_EMAIL_SEPARATELY } from "../../../../routes/paths";
+import { getTemplatesEmail, selectEmails, setEmail, setSelectedEmail, setUpdateEmailFav } from "../../../../redux/state/emailSlice";
 import { AppDispatch } from "../../../../redux/store";
 import DeleteTemplateModal from "../../../../components/modals/delete/DeleteTemplateModal";
 import ViewEmailTemplateSimple from "../../../../components/modals/view/ViewEmailTemplateSimple";
@@ -116,7 +116,7 @@ const ListEmails = () => {
     <div>
       <BreadcrumSection />
       <MDBRow className="mt-5 pt-5">
-      <MDBContainer className="mt-5 d-flex" style={{marginLeft:"17%",width:"70%"}}  >
+      <MDBContainer className="mt-3 d-flex" style={{marginLeft:"17%",width:"70%"}}  >
           <img src="../../../assets/search .png" alt="search" style={{width:"3%"}} />
             <input
               type="text"
@@ -236,10 +236,21 @@ const ListEmails = () => {
                       
                      
                          <td>
-                        <Tooltip style={{marginRight:"5px"}} title="Send" className="color_blue" >
+                        <Tooltip style={{marginRight:"5px"}} title="Send Same Template to all" className="color_blue" >
                           <Button     onClick={() =>
                           {
                             navigate(`${SEND_EMAIL}/${template.id}`)
+                          }
+                          }>
+                          <Send style={{color:"whitesmoke"}}  />
+                          </Button>                           
+                          </Tooltip>
+
+                          <Tooltip style={{marginRight:"5px"}} title="Send Personalized template" className="color_white" >
+                          <Button     onClick={() =>
+                          {
+                            dispatch(setEmail(template))
+                            navigate(`${SEND_EMAIL_SEPARATELY}/${template.id}`)
                           }
                           }>
                           <Send style={{color:"whitesmoke"}}  />

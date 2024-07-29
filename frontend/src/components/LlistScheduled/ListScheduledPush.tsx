@@ -35,7 +35,6 @@ className="mb-4 d-flex align-items-center"
       <tr>
           <th className='tab'>Name template</th>
           <th className='tab'>Type</th>
-          <th className='tab'>Subscriptions</th>
           <th className='tab'>Time of Sent</th>
           <th className='tab'>unschedule</th>
         </tr>
@@ -51,7 +50,6 @@ className="mb-4 d-flex align-items-center"
                    Web Push
                 </MDBBadge>
               </td>
-              <td className='tab'>{template.numbers}</td>
               <td className='tab'>{template.nextTimeFired}</td>
               <td>
               <Tooltip title="Delete" className="color_pink" >

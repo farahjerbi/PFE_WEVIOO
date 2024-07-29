@@ -107,53 +107,55 @@ const Scheduled = () => {
 
 
   <div style={{ width: "80%", marginTop: role === Role.USER ? "2%" : "10%", marginLeft: "10%" }}>
-    {emails && sms && whatsapp && queryT &&(
+    {
+      queryT && 
         <Calendar  emails={emails} sms={sms} whatsapp={whatsapp} push={push}/>
-    )}
+      
+    }
     </div>
     {role===Role.USER && !queryT && (
-         <div>
+         <div className='ms-5'>
          <MDBContainer className="mt-5 ms-5 mb-4 d-flex"   >              
-                   <Button  onClick={()=>setQuery("email")} size="small"  >
+                   <Button onClick={()=>setQuery("email")} size="small" className={query==="email" ? 'baby-bluee':''}  >
                    <img src="../../../assets/mail-calendar.png" alt="" style={{width:"10%",borderRadius:"9px",marginRight:"2%"}}/>
                        Scheduled Emails
                    </Button>      
-                   <Button  onClick={()=>setQuery("sms")} size="small"  >
+                   <Button  onClick={()=>setQuery("sms")} size="small" className={query===NotificationType.SMS ? 'baby-bluee':''}  >
                    <img  src="../../../assets/sms-calendar.png" alt="" style={{width:"10%",marginRight:"2%"}}  /> Scheduled SMS
                    </Button>
-                   <Button onClick={()=>setQuery("whatsapp")} size="small"  >
+                   <Button onClick={()=>setQuery("whatsapp")} size="small" className={query===NotificationType.WHATSAPP? 'baby-bluee':''}  >
                    <img  src="../../../assets/whatsapp-calendar.png" alt="" style={{width:"10%",marginRight:"2%"}} /> Scheduled Whatsapp
                    </Button>
-                   <Button onClick={()=>setQuery("push")} size="small"  >
+                   <Button onClick={()=>setQuery("push")} size="small" className={query===NotificationType.PUSH ? 'baby-bluee':''} >
                    <img  src="../../../assets/push-calendar.png" alt="" style={{width:"10%",marginRight:"2%"}} /> Scheduled Push
                    </Button>
                   
      
                </MDBContainer>
-                <div style={{marginLeft:"24%"}} >
+                <div className='ms-5' >
                      {emails && query==="email" &&(
-                      <>
+                      <div className='ms-5'>
                            <ListScheduledEmails emails={emails}/>
-                      </>
+                      </div>
      
                  )}
                  {sms && query===NotificationType.SMS &&(
-                  <>
+                  <div style={{marginLeft:"15%"}}>
                        <ListScheduled type={NotificationType.SMS} sms={sms}/>
 
-                  </>
+                  </div>
                  )}
                {whatsapp && query===NotificationType.WHATSAPP &&(
-                <>
+                <div style={{marginLeft:"15%"}}>
                      <ListScheduled type={NotificationType.WHATSAPP} sms={whatsapp}/>
 
-                </>
+                </div>
                      )}
         
         {push && query===NotificationType.PUSH &&(
-          <>
+          <div style={{marginLeft:"18.8%"}}>
              <ListScheduledPush push={push} />
-          </>
+          </div>
                      )}
                </div>
                

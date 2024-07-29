@@ -20,7 +20,7 @@ import Stack from '@mui/joy/Stack';
 import { SchedularSMSProps } from '../../../models/email/SchedularProps';
 import { ScheduleSMSRequest } from '../../../models/sms/ScheduleSMSRequest';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectUser } from '../../../redux/state/authSlice';
+import { selectToken, selectUser } from '../../../redux/state/authSlice';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -37,6 +37,8 @@ const ScheduleSMS: React.FC<SchedularSMSProps> = ({numbers,placeholdersValues, o
     const navigate=useNavigate();
     const dispatch=useDispatch()
     const user=useSelector(selectUser)
+    const token=useSelector(selectToken)
+
       useEffect(() => {
         setOpen(show);
     }, [show]);
@@ -65,7 +67,17 @@ const ScheduleSMS: React.FC<SchedularSMSProps> = ({numbers,placeholdersValues, o
           }
       
       try {
-        const response = await axios.post(`http://localhost:8099/apiSms/scheduleSMS`,sendSms);
+        let tokeen = token;
+        if (token && token.startsWith('"') && token.endsWith('"')) {
+            tokeen = token.substring(1, token.length - 1);
+        }
+        
+        const config = {
+          headers: {
+            Authorization: `Bearer ${tokeen}`
+          }
+        };
+        const response = await axios.post(`http://localhost:8099/apiSms/scheduleSMS`,sendSms,config);
         if (response.status === 200) {
           console.log("🚀 ~ Profile ~ response:", response);
           toast.success("SMS scheduled successfully !");

@@ -309,7 +309,7 @@ const formValidation = () => {
     )}
    
     {isMfaEnabled && (
-      <MDBContainer>
+      <MDBContainer className='mb-4' style={{width:"80%"}} >
         <h5 className='title'>Set Up Two-Factor Authentication</h5>
         <img className='QRCode' src={isMfaEnabled} alt="QR Code" />
         <Code email={mail} password={password} stage={stage}/>

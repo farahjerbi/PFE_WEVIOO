@@ -30,7 +30,7 @@ export const smsApi = createApi({
         getAllSMSTemplates : builder.mutation({
             query:()=>{
                 return{
-                    url:"/getAll",
+                    url:"/getAllTemplates",
                     method:"GET"
                  };
             }

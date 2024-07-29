@@ -91,6 +91,15 @@ export const emailApi = createApi({
                 },
             }),
         }),
+        sendSeparateyEMAIL: builder.mutation({
+            query: ({ email, userId, id }) => ({
+                url: `/SendEmailSeparately/${id}/${userId}`,
+                method: "POST",
+                body: {
+                    email
+                },
+            }),
+        }),
         deleteScheduledEmail: builder.mutation({
             query: ( id: string ) => ({
                 url: `/deleteScheduledEmail/${id}`,
@@ -117,5 +126,5 @@ export const emailApi = createApi({
 export const {useAddTemplateEmailMutation,useGetAllEmailTemplatesMutation,useGetTemplatePlaceholdersMutation,
                 useAddDesignTemplateMutation,useGetDesignTemplateMutation,useDeleteTemplateMutation,useGetTemplateByIdMutation,
                 useGetScheduledEmailsMutation,useGetScheduledEmailsByUserMutation,useUpdateTemplateMutation,
-                useDeleteScheduledEmailMutation,useToggleFavoriteEmailMutation,useGetSavedTemplatesEamilMutation
+                useDeleteScheduledEmailMutation,useToggleFavoriteEmailMutation,useGetSavedTemplatesEamilMutation,useSendSeparateyEMAILMutation
             }=emailApi;

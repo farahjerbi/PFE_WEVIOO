@@ -18,6 +18,8 @@ import DialogContent from '@mui/joy/DialogContent';
 import Stack from '@mui/joy/Stack';
 import { SchedularProps } from '../../../models/email/SchedularProps';
 import { LIST_EMAIL_TEMPLATES } from '../../../routes/paths';
+import { useSelector } from 'react-redux';
+import { selectToken } from '../../../redux/state/authSlice';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -35,6 +37,7 @@ dayjs.tz.setDefault('America/New_York');
     console.log("🚀 ~ value:", value)
     const [currentTimezone, setCurrentTimezone] = React.useState<string>('UTC');
     const [loading, setLoading] = useState<boolean>(false);
+    const token=useSelector(selectToken)
     const navigate=useNavigate();
       console.log("🚀 ~ currentTimezone:", currentTimezone)
       useEffect(() => {
@@ -71,7 +74,17 @@ dayjs.tz.setDefault('America/New_York');
 
       
       try {
-        const response = await axios.post(`http://localhost:8099/apiEmail/scheduleEmail`,body);
+        let tokeen = token;
+        if (token && token.startsWith('"') && token.endsWith('"')) {
+            tokeen = token.substring(1, token.length - 1);
+        }
+        
+        const config = {
+          headers: {
+            Authorization: `Bearer ${tokeen}`
+          }
+        };
+        const response = await axios.post(`http://localhost:8099/apiEmail/scheduleEmail`,body,config);
         if (response.status === 200) {
           console.log("🚀 ~ Profile ~ response:", response);
           toast.success("Email scheduled successfully !");

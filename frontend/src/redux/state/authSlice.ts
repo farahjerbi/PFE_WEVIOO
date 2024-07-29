@@ -30,10 +30,8 @@ import { ITeam, ITeamWithContact } from "../../models/user/Team";
                     },
                   }
                 );
-                console.log("🚀 ~ response.data:", response.data)
                 return response.data;
             } catch (error) {
-                console.error("Error decoding token:", error);
                 return rejectWithValue(null);
             }
         }
@@ -45,12 +43,9 @@ export const isTokenExpired = (token: string | null): boolean => {
     if (!token) return true;
     try {
       const decodedToken: DecodedToken = jwtDecode(token);
-      console.log("🚀 ~ isTokenExpired ~ Date.now():", Date.now())
-      console.log("🚀 ~ isTokenExpired ~ decodedToken.exp:", decodedToken.exp* 1000)
       return decodedToken.exp * 1000 < Date.now();
       
     } catch (error) {
-      console.error('Error decoding token:', error);
       return true;
     }
   

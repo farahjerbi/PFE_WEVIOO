@@ -27,21 +27,21 @@ const items = [
     icon: <ViewQuiltRoundedIcon className='blue'/>,
     title: 'Emails',
     description:
-      'This item could provide a snapshot of the most important metrics or data points related to the product.',
+    'Browse and manage your saved email templates. Each template can be used to streamline your email campaigns and ensure consistency in communication.',
     image: 'url("../../../assets/email-dash.gif")',
   },
   {
     icon: <EdgesensorHighRoundedIcon className='purple' />,
     title: 'SMS',
     description:
-      'This item could provide information about the mobile app version of the product.',
+    'View and organize your saved SMS templates. Use these templates to quickly send standardized messages and improve your outreach efficiency.',
     image: 'url("../../../assets/sms-dash.gif")',
   },
   {
     icon: <DevicesRoundedIcon className='baby-blue' />,
     title: 'Push',
     description:
-      'This item could let users know the product is available on all platforms, such as web, mobile, and desktop.',
+    'Access and manage your saved push notification templates. Customize these templates to enhance engagement with your app users across different platforms.',
     image: 'url("../../../assets/push-dash.gif")',
   },
  
@@ -72,9 +72,11 @@ export default function Features() {
               color="text.secondary"
               sx={{ mb: { xs: 2, sm: 4 } }}
             >
-              Here you can provide a brief overview of the key features of the
-              product. For example, you could list the number of features, the types
-              of features, add-ons, or the benefits of the features.
+                Manage your saved templates for emails, SMS, and push notifications in one place.
+                 Here, you can review and organize your templates, ensuring that you have quick access to the ones you need for
+                 effective communication. Whether it's viewing content or reusing existing designs, this section streamlines the process of
+                keeping your templates ready for use.
+
             </Typography>
           </div>
           <Grid container item gap={1} sx={{ display: { xs: 'auto', sm: 'none' } }}>

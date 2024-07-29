@@ -78,7 +78,7 @@ const ListPush  : React.FC<Props> = ({query }) => {
           {currentItems?.filter(
     (template:WebPushTemplate)=>template.title.toLowerCase().includes(query)).map((template:WebPushTemplate) => (
         <MDBCol  key={template.id} xl="3" md={6}  className="mb-r me-4 mt-4 ms-5 " >
-            <MDBCard  style={{minWidth:"400px"}} >
+            <MDBCard  style={{minWidth:"380px"}} >
         <MDBCardBody>
         <Card
     variant="outlined"

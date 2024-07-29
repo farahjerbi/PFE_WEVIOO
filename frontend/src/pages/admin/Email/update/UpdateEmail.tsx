@@ -161,7 +161,7 @@ const UpdateEmail = () => {
                   <MDBInput name='language' value={language} onChange={handleChange}  wrapperClass='mb-4' label='Language'  type='text'/>
               </MDBCol>
               <MDBCol col='6'>
-                  <MDBInput name='state' value={state} onChange={handleChange}  wrapperClass='mb-4' label='Language' disabled  type='text'/>
+                  <MDBInput name='state' value={state} onChange={handleChange}  wrapperClass='mb-4' label='Type' disabled  type='text'/>
               </MDBCol>
               </MDBRow>
   

@@ -1,5 +1,6 @@
 package wevioo.tn.ms_sms.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,6 +12,7 @@ import java.io.Serializable;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Format implements Serializable {
 
     @Id
@@ -19,7 +21,6 @@ public class Format implements Serializable {
 
     private String format;
     private String text;
-
     @OneToOne(mappedBy = "header")
     private Structure structureHeader;
 

@@ -6,7 +6,7 @@ import { useGetTemplateByIdMutation, useGetTemplatePlaceholdersMutation } from '
 import { toast } from 'sonner';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { selectUser } from '../../../../redux/state/authSlice';
+import { selectToken, selectUser } from '../../../../redux/state/authSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { LIST_EMAIL_TEMPLATES } from '../../../../routes/paths';
 import { Button, styled } from '@mui/material';
@@ -50,6 +50,7 @@ const SendSimpleEmail : React.FC<SendSimpleEmailProps> = ({isScheduled }) => {
     const[getTemplateById]=useGetTemplateByIdMutation()
     const template=useSelector(selectEmail)
     const [openInstruction, setOpenInstruction] = React.useState<boolean>(true);
+    const token=useSelector(selectToken)
     useEffect(() => {
         fetchDataTemplate();
         fetchData();
@@ -106,7 +107,18 @@ const SendSimpleEmail : React.FC<SendSimpleEmailProps> = ({isScheduled }) => {
         formData.append('addSignature',String(isSignatureEnabled))
         formData.append('isSentSeparately',String(isSentSeparately))
         try {
-          const response = await axios.post(`http://localhost:8099/apiEmail/sendEmail/${template?.id}`, formData);
+          let tokeen = token;
+          if (token && token.startsWith('"') && token.endsWith('"')) {
+              tokeen = token.substring(1, token.length - 1);
+          }
+          
+          const config = {
+            headers: {
+              Authorization: `Bearer ${tokeen}`,
+              'Content-Type': 'multipart/form-data'
+            }
+          };
+          const response = await axios.post(`http://localhost:8099/apiEmail/sendEmail/${template?.id}`, formData,config);
           
           if (response.status === 200) {
             console.log("🚀 ~ Profile ~ response:", response);

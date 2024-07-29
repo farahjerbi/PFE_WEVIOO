@@ -20,7 +20,7 @@ import Stack from '@mui/joy/Stack';
 import { useDispatch, useSelector } from 'react-redux';
 import { SchedularWhatsappProps } from '../../../models/email/SchedularProps';
 import { ScheduleWhatsappRequest } from '../../../models/sms/ScheduleWhatsappRequest';
-import { selectUser } from '../../../redux/state/authSlice';
+import { selectToken, selectUser } from '../../../redux/state/authSlice';
 import { LIST_SMS_TEMPLATES } from '../../../routes/paths';
 
 
@@ -38,6 +38,8 @@ const ScheduleWhatsapp: React.FC<SchedularWhatsappProps> = ({numbers,placeholder
     const navigate=useNavigate();
     const dispatch=useDispatch()
     const user=useSelector(selectUser)
+    const token=useSelector(selectToken)
+
       useEffect(() => {
         setOpen(show);
     }, [show]);
@@ -63,7 +65,17 @@ const ScheduleWhatsapp: React.FC<SchedularWhatsappProps> = ({numbers,placeholder
           }
       
       try {
-        const response = await axios.post(`http://localhost:8099/apiWhatsApp/scheduleWhatsapp`,whatsappSend);
+        let tokeen = token;
+        if (token && token.startsWith('"') && token.endsWith('"')) {
+            tokeen = token.substring(1, token.length - 1);
+        }
+        
+        const config = {
+          headers: {
+            Authorization: `Bearer ${tokeen}`
+          }
+        };
+        const response = await axios.post(`http://localhost:8099/apiWhatsApp/scheduleWhatsapp`,whatsappSend,config);
         if (response.status === 200) {
           toast.success("Whatsapp message scheduled successfully !");
           navigate(LIST_SMS_TEMPLATES)
