@@ -14,8 +14,11 @@ import wevioo.tn.ms_push.repositories.SubscriptionRepository;
 import wevioo.tn.ms_push.repositories.WebPushMessageTemplateRepository;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.security.Security;
+import java.util.Base64;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -32,6 +35,7 @@ public class WebPushMessageTemplateImpl implements WebPushMessageTemplate{
     private final WebPushMessageTemplateRepository webPushMessageTemplateRepository;
     private final WebPushMessageUtil webPushMessageUtil;
 
+    public static final String UNKNOWN_VALUE = "unknown";
 
     public WebPushMessage createPushTemplate(WebPushMessageAdd s){
         Set<String> placeholders= webPushMessageUtil.extractPlaceholders(s.getMessage());
@@ -115,46 +119,109 @@ public class WebPushMessageTemplateImpl implements WebPushMessageTemplate{
 
         return "sent successfully";
     }
-    public String notify( SendPushNotif message) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException {
+    public String notify(SendPushNotif message) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException {
         Security.addProvider(new BouncyCastleProvider());
-        if(message.getPlaceholderValues()!=null){
+
+        if (message.getPlaceholderValues() != null) {
             message.getWebPushMessageTemplate().setMessage(
                     webPushMessageUtil.replacePlaceholders(message.getWebPushMessageTemplate().getMessage(), message.getPlaceholderValues()));
         }
+
         PushService pushService = new PushService(PUBLIC_KEY, PRIVATE_KEY, SUBJECT);
-        for (WebPushSubscription subscription: message.getWebPushSubscriptions()) {
 
-            Notification notification = new Notification(
-                    subscription.getNotificationEndPoint(),
-                    subscription.getPublicKey(),
-                    subscription.getAuth(),
-                    objectMapper.writeValueAsBytes(message.getWebPushMessageTemplate()));
+        for (WebPushSubscription subscription : message.getWebPushSubscriptions()) {
+            try {
+                validatePublicKey(subscription.getPublicKey());
 
-            pushService.send(notification);
+                validateNotificationEndpoint(subscription.getNotificationEndPoint());
+
+                Notification notification = new Notification(
+                        subscription.getNotificationEndPoint(),
+                        subscription.getPublicKey(),
+                        subscription.getAuth(),
+                        objectMapper.writeValueAsBytes(message.getWebPushMessageTemplate()));
+
+                pushService.send(notification);
+            } catch (IllegalArgumentException e) {
+                throw e;
+            } catch (MalformedURLException e) {
+                throw new RuntimeException( e.getMessage(), e);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to send notification due to unexpected error: " + e.getMessage(), e);
+            }
         }
 
         return "sent successfully :)";
     }
 
-    public String notifySeparately( SendIndiv message) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException {
+    public String notifySeparately(SendIndiv message) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException {
         Security.addProvider(new BouncyCastleProvider());
         PushService pushService = new PushService(PUBLIC_KEY, PRIVATE_KEY, SUBJECT);
-        for (SendSeparately sendSeparately: message.getSendSeparatelyList()) {
-            if(message.getWebPushMessageTemplate()!=null){
-                message.getWebPushMessageTemplate().setMessage(
-                        webPushMessageUtil.replacePlaceholders(message.getWebPushMessageTemplate().getMessage(), sendSeparately.getPlaceholderValues()));
-            }
-            Notification notification = new Notification(
-                    sendSeparately.getWebPushSubscriptions().getNotificationEndPoint(),
-                    sendSeparately.getWebPushSubscriptions().getPublicKey(),
-                    sendSeparately.getWebPushSubscriptions().getAuth(),
-                    objectMapper.writeValueAsBytes(message.getWebPushMessageTemplate()));
 
-            pushService.send(notification);
+        for (SendSeparately sendSeparately : message.getSendSeparatelyList()) {
+            try {
+                // Validate public key
+                validatePublicKey(sendSeparately.getWebPushSubscriptions().getPublicKey());
+
+                // Validate notification endpoint URL
+                validateNotificationEndpoint(sendSeparately.getWebPushSubscriptions().getNotificationEndPoint());
+
+                if (message.getWebPushMessageTemplate() != null) {
+                    message.getWebPushMessageTemplate().setMessage(
+                            webPushMessageUtil.replacePlaceholders(message.getWebPushMessageTemplate().getMessage(), sendSeparately.getPlaceholderValues())
+                    );
+                }
+
+                Notification notification = new Notification(
+                        sendSeparately.getWebPushSubscriptions().getNotificationEndPoint(),
+                        sendSeparately.getWebPushSubscriptions().getPublicKey(),
+                        sendSeparately.getWebPushSubscriptions().getAuth(),
+                        objectMapper.writeValueAsBytes(message.getWebPushMessageTemplate())
+                );
+
+                pushService.send(notification);
+            } catch (IllegalArgumentException e) {
+                throw e;
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e.getMessage(), e);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to send notification due to unexpected error: " + e.getMessage(), e);
+            }
         }
 
         return "sent successfully";
     }
 
+    private void validatePublicKey(String publicKey) {
+        StringBuilder errorMessages = new StringBuilder();
 
+        if (UNKNOWN_VALUE.equals(publicKey) || publicKey.isEmpty()) {
+            errorMessages.append("Public key is 'unknown' or empty. ");
+        }
+
+        try {
+            byte[] decodedKey = Base64.getUrlDecoder().decode(publicKey);
+            if (decodedKey.length != 65) {
+                errorMessages.append("Public key has incorrect length (should be 65 bytes). ");
+            }
+
+        } catch (IllegalArgumentException e) {
+            errorMessages.append("Public key is not properly base64url encoded. ");
+        }
+        if (errorMessages.length() > 0) {
+            throw new IllegalArgumentException(errorMessages.toString().trim());
+        }
+    }
+
+    private void validateNotificationEndpoint(String endpoint) throws MalformedURLException {
+        if (endpoint == null || endpoint.isEmpty()) {
+            throw new MalformedURLException("Notification endpoint URL is null or empty.");
+        }
+        try {
+            new URL(endpoint);
+        } catch (MalformedURLException e) {
+            throw new MalformedURLException("Invalid URL format for notification endpoint: " + e.getMessage());
+        }
+
+    }
 }

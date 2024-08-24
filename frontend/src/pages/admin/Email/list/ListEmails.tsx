@@ -22,7 +22,7 @@ import {
 import { toast } from "sonner";
 import { EmailTemplate } from "../../../../models/email/EmailTemplate";
 import BreadcrumSection from "../../../../components/BreadcrumSection/BreadcrumSection";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Update from '@mui/icons-material/Update';
 import Delete from '@mui/icons-material/Delete';
 import { Button, Tooltip } from "@mui/material";
@@ -60,10 +60,14 @@ const ListEmails = () => {
   const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
   const[toggleFavoriteEmail]=useToggleFavoriteEmailMutation();
   const dispatch=useDispatch();
+  const location = useLocation();
   const dispatchApp: AppDispatch = useDispatch(); 
   useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const searchQuery = queryParams.get('query') || '';
+    setQuery(searchQuery.toLowerCase());
     dispatchApp(getTemplatesEmail());
-   }, []);
+   }, [location.search]);
 
 
   const handlePageChange = (page: any) => {

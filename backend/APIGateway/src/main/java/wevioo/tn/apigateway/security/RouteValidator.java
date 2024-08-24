@@ -15,7 +15,8 @@ public class RouteValidator {
             "/api/users/forgotPassword",
             "uploads",
             "uploadsPush",
-            "/api/auth/"
+            "/api/auth/",
+            "/api/search"
     );
 
     public Predicate<ServerHttpRequest> isSecured =

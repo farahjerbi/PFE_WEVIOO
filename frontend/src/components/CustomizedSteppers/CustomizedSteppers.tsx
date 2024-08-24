@@ -157,19 +157,27 @@ const CustomizedSteppers : React.FC<Props> = ({ template , onClose ,show }) => {
 
         const handleSubmitSchedule: () => void = async (
         ) => {
-          setLoading(true);
-          if(user && user.id){
-            const whatsappSend:SchedulePushRequest={
-                templateId:Number(template?.id),
-                webPushSubscriptions:subscriptions,
-                placeholders:placeholdersValues,
-                dateTime: value.format("YYYY-MM-DDTHH:mm:ss"),
-                timeZone: currentTimezone,
-                userId:user.id,
-                name:template?.title,
-                isAdmin:role===Role.ADMIN
-              }
-          
+          if (user && user.id) {
+          const dateTimeValue = value.format("YYYY-MM-DDTHH:mm:ss");
+          const now = new Date();
+          const selectedDateTime = new Date(dateTimeValue);
+      
+          if (selectedDateTime <= now) {
+            toast.error("Scheduled date and time must be in the future.");
+            setLoading(false);
+            return;
+          }
+      
+          const whatsappSend: SchedulePushRequest = {
+            templateId: Number(template?.id),
+            webPushSubscriptions: subscriptions,
+            placeholders: placeholdersValues,
+            dateTime: dateTimeValue,
+            timeZone: currentTimezone,
+            userId: user?.id,
+            name: template?.title,
+            isAdmin: role === Role.ADMIN
+          };
           try {
             let tokeen = token;
             if (token && token.startsWith('"') && token.endsWith('"')) {
@@ -182,13 +190,21 @@ const CustomizedSteppers : React.FC<Props> = ({ template , onClose ,show }) => {
               }
             };
             const response = await axios.post(`http://localhost:8099/apiPush/schedulePush`,whatsappSend,config);
+            console.log("🚀 ~ response:", response)
             if (response.status === 200) {
               toast.success("Push notification scheduled successfully !");
             }
-          } catch (err) {
-            toast.error('Error!')
-            console.error("Error updating user:", err);
+          } catch (error: any) {
+            console.log("🚀 ~ error:", error);
+            if (error.response && error.response.data) {
+              console.log("🚀 ~ error.response.data:", error.response.data);
+              toast.error(error.response.data.message || "An error occurred");
+            } else {
+              toast.error("An error occurred");
+            }
+            console.error("🚀 ~ error.message:", error.message);
           }
+          
           finally {
               setLoading(false); 
               toggleOpen();

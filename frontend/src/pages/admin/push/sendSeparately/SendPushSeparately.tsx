@@ -1,35 +1,57 @@
 import { FormEvent, useEffect, useState } from 'react'
 import BreadcrumSection from '../../../../components/BreadcrumSection/BreadcrumSection'
-import { MDBBtn, MDBCard, MDBCardBody, MDBCol, MDBContainer, MDBRow, MDBSpinner, MDBTable, MDBTableHead } from 'mdb-react-ui-kit'
+import { MDBBtn, MDBCard, MDBCardBody, MDBCol, MDBContainer, MDBIcon, MDBRow, MDBSpinner, MDBTable, MDBTableHead } from 'mdb-react-ui-kit'
 import { ReactTyped } from 'react-typed'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { useDispatch, useSelector } from 'react-redux'
-import ExcelSendButton from '../../../../components/button/ExcelSendButton'
 import { LIST_PUSH_TEMPLATES } from '../../../../routes/paths'
 import { selectPush, setSelectedPush } from '../../../../redux/state/pushSlice'
 import { SendPush, SendPushIndiv } from '../../../../models/push/SendPush'
 import UpdatePush from '../update/UpdatePush'
-import { useGetPushByIdMutation, useSendPushSeprartelyMutation } from '../../../../redux/services/pushApi'
+import { useGetPushByIdMutation, useProcessPushExcelMutation, useSendPushSeprartelyMutation } from '../../../../redux/services/pushApi'
 import { selectToken } from '../../../../redux/state/authSlice'
+import { WebPushExcelProcessor } from '../../../../models/push/WebPushExcelProcessor'
+import Tooltip from '@mui/material/Tooltip'
+import Button from '@mui/material/Button'
+import Update from '@mui/icons-material/Update'
+import Delete from '@mui/icons-material/Delete'
+import { TextField } from '@mui/material'
 const SendPushSeparately = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [basicModal, setBasicModal] = useState<boolean>(false);
-    const [uploadedData, setUploadedData] = useState<Record<string, string[]>>({});
+    const [placeholderData, setPlaceholderData] = useState<Record<string, string[]>>({});
+    console.log("🚀 ~ SendPushSeparately ~ placeholderData:", placeholderData)
+    const [editMode, setEditMode] = useState<boolean[]>(Array(Object.keys(placeholderData)[0]?.length).fill(false));
+
+    
     const[sendPushSeprartely]=useSendPushSeprartelyMutation()
     const navigate=useNavigate()
     const dispatch = useDispatch();
     const template = useSelector(selectPush);
     console.log("🚀 ~ SendPushSeparately ~ template:", template)
     const[getPushById]=useGetPushByIdMutation()
+    const[processPushExcel]=useProcessPushExcelMutation()
     const { id } = useParams();
     const token=useSelector(selectToken)
     useEffect(() => {
       fetchData()
     }, []);
-    const handleExcelUpload = (data: Record<string, string[]>) => {
-        setUploadedData(data);
-      };
+
+    const handleExcelUpload = async (file: File) => {
+      try {
+          const formData = new FormData();
+          formData.append('file', file);
+          formData.append('template', JSON.stringify(template)); 
+  
+          const response = await processPushExcel(formData).unwrap();
+          console.log('Data processed successfully:', response);
+          setPlaceholderData(response.placeholderData)
+      } catch (error) {
+          console.error('Error processing data:', error);
+      }
+  };
+  
       const fetchData = async () => {
         try {
           const response = await getPushById(id).unwrap();
@@ -39,100 +61,6 @@ const SendPushSeparately = () => {
           console.error('🚀 ~ error:', error);
         }
       };
-
-      const getPlaceholderData = () => {
-        if (!template || !template.placeholders || Object.keys(uploadedData).length === 0) {
-          return {};
-        }
-      
-        const normalizedUploadedData = Object.keys(uploadedData).reduce((acc, key) => {
-          acc[key.toLowerCase()] = uploadedData[key];
-          return acc;
-        }, {} as Record<string, string[]>);
-      
-        const requiredPlaceholders = ['notificationendpoint', 'publickey', 'auth'];
-        const lowerCasePlaceholders = template.placeholders.map(p => p.toLowerCase());
-      
-        requiredPlaceholders.forEach(placeholder => {
-          if (!lowerCasePlaceholders.includes(placeholder)) {
-            lowerCasePlaceholders.push(placeholder);
-          }
-        });
-      
-        const rowCount = normalizedUploadedData[Object.keys(normalizedUploadedData)[0]]?.length || 0;
-        const placeholderData = lowerCasePlaceholders.reduce((acc, placeholder) => {
-          acc[placeholder] = normalizedUploadedData[placeholder] || Array(rowCount).fill('unknown');
-          return acc;
-        }, {} as Record<string, string[]>);
-
-        return placeholderData;
-      };
-      
-      
-      const placeholderData: Record<string, string[]> = getPlaceholderData();
-      console.log("🚀 ~ SendPushSeparately ~ placeholderData:", placeholderData)
-
-      const generateSendSeparatelyList = (): SendPushIndiv => {
-        const placeholderData = getPlaceholderData();
-        const rowCount = placeholderData[Object.keys(placeholderData)[0]]?.length || 0;
-      
-        const sendSeparatelyList: SendPush[] = [];
-        for (let i = 0; i < rowCount; i++) {
-          const row: Record<string, string> = {};
-          let isUnknown = false;
-      
-          template?.placeholders?.forEach(placeholder => {
-            const value = placeholderData[placeholder.toLowerCase()]?.[i] || 'unknown';
-            row[placeholder] = value;
-            if (value.toLowerCase() === 'unknown') {
-              isUnknown = true;
-            }
-          });
-      
-          const notificationEndPoint = placeholderData['notificationendpoint']?.[i] || 'unknown';
-          const publicKey = placeholderData['publickey']?.[i] || 'unknown';
-          const auth = placeholderData['auth']?.[i] || 'unknown';
-      
-          if (isUnknown) {
-            continue;
-          }
-      
-          sendSeparatelyList.push({
-            webPushSubscriptions: { notificationEndPoint, publicKey, auth },
-            placeholderValues: row
-          });
-        }
-      
-        return { webPushMessageTemplate: template, sendSeparatelyList };
-      };
-      
-      const isRowInvalidPush = (placeholderData: Record<string, string[]>, index: number): boolean => {
-        const placeholders = template?.placeholders || [];
-        for (const placeholder of placeholders) {
-          const value = placeholderData[placeholder.toLowerCase()]?.[index] || '';
-          if (value.toLowerCase() === 'unknown' || value.trim() === '') {
-            return true;
-          }
-        }
-        const notificationEndPoint = placeholderData['notificationendpoint']?.[index] || '';
-        const publicKey = placeholderData['publickey']?.[index] || '';
-        const auth = placeholderData['auth']?.[index] || '';
-      
-        return [
-          notificationEndPoint,
-          publicKey,
-          auth,
-        ].some(value => value.toLowerCase() === 'unknown' || value.trim() === '');
-      };
-      const isDataInvalidPush = (placeholderData: Record<string, string[]>, rowCount: number): boolean => {
-        for (let i = 0; i < rowCount; i++) {
-          if (isRowInvalidPush(placeholderData, i)) {
-            return true;
-          }
-        }
-        return false;
-      };
-
 
 
       const handleSubmit: (evt: FormEvent<HTMLFormElement>) => void = async (
@@ -145,43 +73,84 @@ const SendPushSeparately = () => {
           setLoading(false);
           return;
         }
-      
-        const rowCount = placeholderData[Object.keys(placeholderData)[0]]?.length || 0;
-        if (isDataInvalidPush(placeholderData, rowCount)) {
-          toast.warning('Please ensure all fields are filled correctly without "unknown" or empty values.');
-          setLoading(false);
-          return;
-        }
-      
-        const sendPush: SendPushIndiv = generateSendSeparatelyList();
         try {
-          await sendPushSeprartely(sendPush);
-          toast.success("Push Notifications sent Successfully!");
-          navigate(LIST_PUSH_TEMPLATES);
+          if(template){
+            const sendPush:WebPushExcelProcessor = {
+              template: {
+                id: 1,
+                title: "Important Update",
+                message: "Please check the latest updates.",
+                icon: "https://example.com/icon.png",
+                clickTarget: "https://example.com",
+                placeholders: ["user"],
+                userFavoritePush: [101, 102],
+              },
+              placeholderData: placeholderData,
+            };
+        
+            const response = await sendPushSeprartely(sendPush).unwrap();
+            console.log("🚀 ~ SendPushSeparately ~ response:", response)
+            toast.success("Push Notifications sent Successfully!");
+            navigate(LIST_PUSH_TEMPLATES);
+          }
+         
+        } catch (error: any) {
+          if (error && error.data) {
+            toast.error(error.data || "An unknown error occurred.");
+          console.error("🚀 ~ error:", error);
+        }
         } finally {
           setLoading(false);
         }
       };
 
+ 
+      const handleInputChange = (key: string, rowIndex: number, value: string) => {
+        setPlaceholderData(prevData => {
+          const updatedData = { ...prevData };
+          updatedData[key] = [...(prevData[key] || [])];
+          updatedData[key][rowIndex] = value;
+          return updatedData;
+        });
+      };
+    
+      const handleDeleteRow = (rowIndex: number) => {
+        setPlaceholderData(prevData => {
+          const updatedData: Record<string, string[]> = {};
+          Object.keys(prevData).forEach(key => {
+            updatedData[key] = prevData[key].filter((_, index) => index !== rowIndex);
+          });
+          return updatedData;
+        });
+      };
+    
+      const toggleEditMode = (rowIndex: number) => {
+        setEditMode(prevState => {
+          const updatedEditMode = [...prevState];
+          updatedEditMode[rowIndex] = !updatedEditMode[rowIndex];
+          return updatedEditMode;
+        });
+      };
+
   return (
     <>
       <BreadcrumSection />
-      <MDBContainer style={{ width: '83%', marginLeft: '13.5%' }} fluid className='p-4 mt-5'>
+      <MDBContainer style={{ width: '88%', marginLeft: '10%' }} fluid className='p-4 mt-5'>
         <MDBRow>
-          <MDBCol
+          {/* <MDBCol
             style={{
               backgroundRepeat: 'no-repeat',
               backgroundPosition: 'center',
               backgroundImage: 'url(../../../assets/worksheet.png)',
-              backgroundSize: '90% 70%',
+              backgroundSize: '60% 50%',
             }}
             md='4'
             className='text-center text-md-start d-flex flex-column justify-content-center mt-4'
           >
 
-          </MDBCol>
+          </MDBCol> */}
 
-          <MDBCol md='8'>
+          <MDBCol md='14'>
             <form onSubmit={handleSubmit}>
               <MDBCard className='my-5'>
                 <MDBCardBody className='p-5'>
@@ -193,38 +162,122 @@ const SendPushSeparately = () => {
                     loop
                     style={{ color: 'hsl(217, 10%, 50.8%)' }}
                   />
+                  <img src="../../../assets/worksheet.png" alt="worksheet" width={35} />
                   <MDBCard className='my-4'>
-                    <MDBCardBody className='p-5 ' style={{ maxHeight: '170px', overflowY: 'auto' }}>
-                      <MDBTable striped hover bordered>
-                        <MDBTableHead color='blue lighten-4'>
-                          <tr style={{ background: 'rgb(141, 224, 198)' }}>
-                            <th> NotificationEndPoint </th>
-                            <th> PublicKey </th>
-                            <th> Auth </th>
-                            { template?.placeholders?.map(placeholder => (
-                              <th key={placeholder}>{placeholder}</th>
-                            ))}
-                             
-                          </tr>
-                        </MDBTableHead>
-                        <tbody>
-                          {placeholderData[Object.keys(placeholderData)[0]]?.map((_, rowIndex) => (
+                  <MDBCardBody className='p-5' style={{ maxHeight: '170px', overflowY: 'auto' }}>
+                    <MDBTable
+                      striped
+                      hover
+                      bordered
+                      style={{ width: '100%', tableLayout: 'fixed' }}
+                    >
+                      <MDBTableHead color='blue lighten-4'>
+                        <tr style={{ background: 'rgb(141, 224, 198)' }}>
+                          <th style={{ minWidth: '120px' }}>NotificationEndPoint</th>
+                          <th style={{ minWidth: '120px' }}>PublicKey</th>
+                          <th style={{ minWidth: '120px' }}>Auth</th>
+                          {template?.placeholders.map(placeholder => (
+                            <th key={placeholder} style={{ minWidth: '120px' }}>{placeholder}</th>
+                          ))}
+                          <th style={{ minWidth: '120px' }}>Actions</th>
+                        </tr>
+                      </MDBTableHead>
+                      <tbody>
+                        {Object.keys(placeholderData).length > 0 &&
+                          placeholderData[Object.keys(placeholderData)[0]].map((_, rowIndex) => (
                             <tr key={rowIndex}>
-                              <td>  {placeholderData["notificationendpoint"]?.[rowIndex] || 'unknown'} </td>
-                              <td>  {placeholderData["publickey"]?.[rowIndex] || 'unknown'} </td>
-                              <td>  {placeholderData["auth"]?.[rowIndex] || 'unknown'} </td>
-                              {template?.placeholders?.map(placeholder => (
+                              <td>
+                                {editMode[rowIndex] ? (
+                                  <TextField
+                                    variant="outlined"
+                                    size="small"
+                                    value={placeholderData["notificationendpoint"]?.[rowIndex] || 'unknown'}
+                                    onChange={(e) => handleInputChange("notificationendpoint", rowIndex, e.target.value)}
+                                    fullWidth
+                                  />
+                                ) : (
+                                  <span>{placeholderData["notificationendpoint"]?.[rowIndex] || 'unknown'}</span>
+                                )}
+                              </td>
+                              <td>
+                                {editMode[rowIndex] ? (
+                                  <TextField
+                                    variant="outlined"
+                                    size="small"
+                                    value={placeholderData["publickey"]?.[rowIndex] || 'unknown'}
+                                    onChange={(e) => handleInputChange("publickey", rowIndex, e.target.value)}
+                                    fullWidth
+                                  />
+                                ) : (
+                                  <span>{placeholderData["publickey"]?.[rowIndex] || 'unknown'}</span>
+                                )}
+                              </td>
+                              <td>
+                                {editMode[rowIndex] ? (
+                                  <TextField
+                                    variant="outlined"
+                                    size="small"
+                                    value={placeholderData["auth"]?.[rowIndex] || 'unknown'}
+                                    onChange={(e) => handleInputChange("auth", rowIndex, e.target.value)}
+                                    fullWidth
+                                  />
+                                ) : (
+                                  <span>{placeholderData["auth"]?.[rowIndex] || 'unknown'}</span>
+                                )}
+                              </td>
+                              {template?.placeholders.map(placeholder => (
                                 <td key={`${placeholder}-${rowIndex}`}>
-                                  {placeholderData[placeholder.toLowerCase()]?.[rowIndex] || 'unknown'}
+                                  {editMode[rowIndex] ? (
+                                    <TextField
+                                      variant="outlined"
+                                      size="small"
+                                      value={placeholderData[placeholder.toLowerCase()]?.[rowIndex] || 'unknown'}
+                                      onChange={(e) => handleInputChange(placeholder.toLowerCase(), rowIndex, e.target.value)}
+                                      fullWidth
+                                    />
+                                  ) : (
+                                    <span>{placeholderData[placeholder.toLowerCase()]?.[rowIndex] || 'unknown'}</span>
+                                  )}
                                 </td>
                               ))}
+                              <td className='d-flex'>
+                                <Tooltip title={editMode[rowIndex] ? 'Save' : 'Edit'} className="color_white">
+                                  <Button className='me-2' type="button" onClick={() => toggleEditMode(rowIndex)} >
+                                    <Update style={{ color: "whitesmoke" }} />
+                                  </Button>
+                                </Tooltip>
+                                <Tooltip title="Delete" className="color_pink">
+                                  <Button type="button" onClick={() => handleDeleteRow(rowIndex)}>
+                                    <Delete style={{ color: "whitesmoke" }} />
+                                  </Button>
+                                </Tooltip>
+                              </td>
                             </tr>
-                          ))}
-                        </tbody>
-                      </MDBTable>
-                    </MDBCardBody>
+                          ))
+                        }
+                      </tbody>
+                    </MDBTable>
+                  </MDBCardBody>
+
                   </MDBCard>
-                  <ExcelSendButton onExcelUpload={handleExcelUpload} />
+
+                  <MDBBtn type="button" className='ms-5 w-60 mb-4 color_baby_bluee me-5'>
+                    <input
+                      type="file"
+                      accept=".xlsx, .xls"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0]; 
+                        if (file) {
+                          handleExcelUpload(file); 
+                        }
+                      }}
+                      style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }}
+                    />
+                    <MDBIcon icon="file-excel" style={{ marginRight: '3px' }} />
+                    Upload Excel
+                  </MDBBtn>
+
+                                    
                   <MDBBtn type="button" className='ms-5 w-60 mb-4 color_baby_blue' onClick={()=>setBasicModal(true)}> View template</MDBBtn> 
                   {loading && (
                         <div className='d-flex justify-content-center mt-4'>

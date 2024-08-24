@@ -7,6 +7,7 @@ export const CREATE_SMS_TEMPLATE="/sms/add/sms-template"
 export const CREATE_WHATSAPP_TEMPLATE="/sms/add/whatsapp-template"
 export const CREATE_PUSH_TEMPLATE="/push/add/push-template"
 export const ADD_ADVANCED_EMAIL_TEMPLATE="/email/add/advanced-email-template"
+
 export const LIST_EMAIL_TEMPLATES="/email/list"
 export const LIST_SMS_TEMPLATES="/sms/list"
 export const LIST_PUSH_TEMPLATES="/push/list"

@@ -175,16 +175,16 @@ const Contacts = () => {
                   <Team onClose={closeEverything} />
               )}
               {openContactDetails && (
-                <ContactDetails  onClose={handleContactDetailsUpdate}/>
+                <ContactDetails  onClose={handleContactDetailsUpdate} onCloseEverything={closeEverything}/>
               )}
               {openTeamDetails && (
-                  <TeamDetails onClose={handleTeamDetailsUpdate} />
+                  <TeamDetails onClose={handleTeamDetailsUpdate} onCloseEverything={closeEverything} />
                 )}
                     {openUpdateContact && (
-                  <UpdateCnct onClose={closeEverything} />
+                  <UpdateCnct onClose={closeEverything}  />
                 )}
                   {openUpdateTeam && (
-                  <UpdateTeam onClose={closeEverything} />
+                  <UpdateTeam onClose={closeEverything}  />
                 )}
             </MDBCardBody>
           </MDBCard>

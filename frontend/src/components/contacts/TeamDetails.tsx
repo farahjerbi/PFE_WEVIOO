@@ -33,8 +33,9 @@ function stringAvatar(name: string) {
   }
   interface TeamDetailsProps {
     onClose: () => void;
+    onCloseEverything: () => void;
   }
-const TeamDetails : React.FC<TeamDetailsProps> = ({ onClose }) => {
+const TeamDetails : React.FC<TeamDetailsProps> = ({ onClose ,onCloseEverything}) => {
     const team=useSelector(selectTeamDetails)
     console.log("🚀 ~ team:", team)
     const [openDelete,setOpenDelete]=useState<boolean>(false);
@@ -110,7 +111,7 @@ const TeamDetails : React.FC<TeamDetailsProps> = ({ onClose }) => {
         </MDBCardBody>
       </MDBCard>
     </MDBCol>
-    <DeleteContact isMember={false} onClose={()=>setOpenDelete(false)} show={openDelete} />
+    <DeleteContact isMember={false} onClose={()=>{setOpenDelete(false);onCloseEverything()}} show={openDelete} />
   </MDBRow>
 
 );

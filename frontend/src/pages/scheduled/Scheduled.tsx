@@ -1,7 +1,7 @@
 import  { useEffect, useState } from 'react'
 import './Scheduled.css'
 import Calendar from '../admin/Email/calendar/Calendar'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { selectRole, selectUser } from '../../redux/state/authSlice'
 import {  useGetScheduledEmailsByUserMutation } from '../../redux/services/emailApi'
 import BreadcrumSection from '../../components/BreadcrumSection/BreadcrumSection'
@@ -20,16 +20,23 @@ import ListScheduledPush from '../../components/LlistScheduled/ListScheduledPush
 import { ScheduledPushInfo } from '../../models/push/ScheduledPushInfo'
 import CalendarMonth from '@mui/icons-material/CalendarMonth'
 import SettingsSuggest from '@mui/icons-material/SettingsSuggest'
+import { selectScheduledEmails, setScheduledEmails } from '../../redux/state/emailSlice'
+import { selectScheduledSMSs, selectScheduledWhatsapps, setScheduledSMSs, setScheduledWhatapps } from '../../redux/state/smsSlice'
+import { selectScheduledPushs, setScheduledPushs } from '../../redux/state/pushSlice'
 
 const Scheduled = () => {
     //PAGINATION
-    const[emails,setEmails]=useState<ScheduledEmailResponse[]>();
-    const[sms,setSMS]=useState<ScheduledSMSResponse[]>();
-    const[whatsapp,setWhatsapp]=useState<ScheduledSMSResponse[]>();
-    const[push,setPush]=useState<ScheduledPushInfo[]>();
+    // const[emails,setEmails]=useState<ScheduledEmailResponse[]>();
+    // const[sms,setSMS]=useState<ScheduledSMSResponse[]>();
+    // const[whatsapp,setWhatsapp]=useState<ScheduledSMSResponse[]>();
+    // const[push,setPush]=useState<ScheduledPushInfo[]>();
+    const emails=useSelector(selectScheduledEmails)
+    const sms=useSelector(selectScheduledSMSs)
+    const whatsapp=useSelector(selectScheduledWhatsapps)
+    const push=useSelector(selectScheduledPushs)
     const[query,setQuery]=useState<string>("email")
     const[queryT,setQueryT]=useState<boolean>(true)
-
+    const dispatch=useDispatch()
     //END PAGINATION
     const role = useSelector(selectRole);
     const user = useSelector(selectUser);
@@ -49,7 +56,7 @@ const Scheduled = () => {
         if(user){
           try {
             const response = await getScheduledEmailsByUser(user.id).unwrap();
-            setEmails(response)
+            dispatch(setScheduledEmails(response))
           } catch (error) {
             console.error("🚀 ~ error:", error);
           }
@@ -60,7 +67,7 @@ const Scheduled = () => {
         if(user){
           try {
             const response = await getScheduledSMS(user.id).unwrap();
-            setSMS(response)
+            dispatch(setScheduledSMSs(response))
             console.log("🚀 ~ fetchData ~ response SMS:", response);
           } catch (error) {
             console.error("🚀 ~ error:", error);
@@ -71,7 +78,7 @@ const Scheduled = () => {
         if(user){
           try {
             const response = await getScheduledWhatsapp(user.id).unwrap();
-            setWhatsapp(response)
+            dispatch(setScheduledWhatapps(response))
           } catch (error) {
             console.error("🚀 ~ error:", error);
           }
@@ -82,7 +89,7 @@ const Scheduled = () => {
         if(user){
           try {
             const response = await getScheduledPushsByUser(user.id).unwrap();
-            setPush(response)
+            dispatch(setScheduledPushs(response))
           } catch (error) {
             console.error("🚀 ~ error:", error);
           }

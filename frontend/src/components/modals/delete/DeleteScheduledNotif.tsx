@@ -9,6 +9,10 @@ import { useDeleteScheduledEmailMutation } from '../../../redux/services/emailAp
 import { useDeleteScheduledPushMutation } from '../../../redux/services/pushApi';
 import { useDeleteScheduledSMSMutation } from '../../../redux/services/smsApi';
 import { useDeleteScheduledWhatsappMutation } from '../../../redux/services/whatsAppApi';
+import { setDeleteScheduledEmail } from '../../../redux/state/emailSlice';
+import { useDispatch } from 'react-redux';
+import { setDeleteScheduledSms, setDeleteScheduledWhatsapp } from '../../../redux/state/smsSlice';
+import { setDeleteScheduledPush } from '../../../redux/state/pushSlice';
 
 const DeleteScheduledNotif: React.FC<DeleteScheduledNotifProps> = ({ id , onClose ,show,type }) => {
     
@@ -16,6 +20,7 @@ const[deleteScheduledEmail]=useDeleteScheduledEmailMutation()
 const[deleteScheduledSMS]=useDeleteScheduledSMSMutation()
 const[deleteScheduledWhatsapp]=useDeleteScheduledWhatsappMutation()
 const[deleteScheduledPush]=useDeleteScheduledPushMutation()
+const dispatch=useDispatch()
 const [open,setOpen]=useState<boolean>(show);
 
 useEffect(() => {
@@ -43,13 +48,21 @@ const toggleOpen = () =>{
             [NotificationType.PUSH]: "Scheduled Push notification deleted successfully!"
           };
 
+          const updateStateActions: Record<NotificationType, (id: string) => void> = {
+            [NotificationType.EMAIL]: (id: string) => dispatch(setDeleteScheduledEmail(id)),
+            [NotificationType.SMS]: (id: string) => dispatch(setDeleteScheduledSms(id)),
+            [NotificationType.WHATSAPP]: (id: string) => dispatch(setDeleteScheduledWhatsapp(id)),
+            [NotificationType.PUSH]: (id: string) => dispatch(setDeleteScheduledPush(id))
+          };
+
           const deleteFunction = deleteFunctions[type];
           const successMessage = successMessages[type];
+          const updateStateAction = updateStateActions[type];
     
           if (deleteFunction && successMessage) {
             await deleteFunction(id)
+            updateStateAction(id);
             toggleOpen();
-            window.location.reload();
             toast.success(successMessage);
           } else {
             throw new Error("Unknown deletion type");

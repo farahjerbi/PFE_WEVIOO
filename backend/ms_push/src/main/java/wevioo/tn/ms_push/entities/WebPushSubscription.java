@@ -1,5 +1,6 @@
 package wevioo.tn.ms_push.entities;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class WebPushSubscription {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -62,7 +62,6 @@ const [dashboardName, setDashboardName] = useState('');
 
 
 const toggleOpen = () => setBasicModal(!basicModal);
-const[deleteScheduledEmail]=useDeleteScheduledEmailMutation()
 const handleEventMouseEnter = (eventId: string) => {
   setEventInfoBoxes((prevBoxes) => ({
     ...prevBoxes,

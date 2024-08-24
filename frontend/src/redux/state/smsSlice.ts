@@ -3,6 +3,7 @@ import {RootState} from "../store"
 import axios from "axios";
 import { WhatsAppTemplateResponse } from "../../models/sms/WhatsAppTemplateResponse";
 import { SmsTemplate } from "../../models/sms/SmsTemplate";
+import { ScheduledSMSResponse } from "../../models/sms/ScheduledSMSResponse";
 
 export const getTemplatesSms = createAsyncThunk<any| null, void>(
     "sms/getTemplatesSms",
@@ -68,7 +69,11 @@ export interface SMSState{
     whatsappTemplates: WhatsAppTemplateResponse[] | null;
     savedSmsTemplates:SmsTemplate[]|null;
     currentTemplate: SmsTemplate | null;
+    smsAI: SmsTemplate | null;
     currentWhatsappTemplate:WhatsAppTemplateResponse|null;
+    scheduledSMSs:ScheduledSMSResponse[]|undefined;
+    scheduledWhatsapps:ScheduledSMSResponse[]|undefined;
+
 }
 export interface UpdateFav{
     id: number;
@@ -79,7 +84,10 @@ const initialState: SMSState={
     whatsappTemplates:null,
     savedSmsTemplates:null,
     currentTemplate:null,
-    currentWhatsappTemplate:null
+    smsAI:null,
+    currentWhatsappTemplate:null,
+    scheduledSMSs:undefined,
+    scheduledWhatsapps:undefined
 }
 
 export const smsSlice = createSlice({
@@ -104,12 +112,41 @@ export const smsSlice = createSlice({
           )=>{
           state.savedSmsTemplates=action.payload;
       },
+      setScheduledSMSs:(
+        state, 
+        action : PayloadAction<ScheduledSMSResponse[]>
+        )=>{
+        state.scheduledSMSs=action.payload;
+    },
+    setDeleteScheduledSms(state, action: PayloadAction<string>) {
+      if (state.scheduledSMSs) {
+        state.scheduledSMSs = state.scheduledSMSs.filter((sms: ScheduledSMSResponse) => sms.jobId !== action.payload);
+      }
+    },
+      setScheduledWhatapps:(
+        state, 
+        action : PayloadAction<ScheduledSMSResponse[]>
+        )=>{
+        state.scheduledWhatsapps=action.payload;
+    },
+    setDeleteScheduledWhatsapp(state, action: PayloadAction<string>) {
+      if (state.scheduledWhatsapps) {
+        state.scheduledWhatsapps = state.scheduledWhatsapps.filter((sms: ScheduledSMSResponse) => sms.jobId !== action.payload);
+      }
+    },
       setSelectedSms:(
         state, 
         action : PayloadAction<SmsTemplate >
         )=>{
         state.currentTemplate=action.payload;
     },
+    setSMSById: (state, action: PayloadAction<number>) => {
+      if (state.smsTemplates) {
+          state.smsAI = state.smsTemplates.find((email: SmsTemplate) => email.id === action.payload) || null;
+      } else {
+          state.smsAI = null;
+      }
+  },
     
       setCurrentWhatsappTemplate:(
         state, 
@@ -200,7 +237,11 @@ export const selectSMSs = (state: RootState) => state.sms.smsTemplates;
 export const selectWhatsapp = (state: RootState) => state.sms.whatsappTemplates;
 export const selectCurrentSms = (state: RootState) => state.sms.currentTemplate;
 export const selectSavedSMSs = (state: RootState) => state.sms.savedSmsTemplates;
+export const selectScheduledSMSs = (state: RootState) => state.sms.scheduledSMSs;
+export const selectScheduledWhatsapps = (state: RootState) => state.sms.scheduledWhatsapps;
 export const selectCurrentWhatsappTemplate = (state: RootState) => state.sms.currentWhatsappTemplate;
-export const {setCurrentWhatsappTemplate,setUpdateSMSFav,setAddSMS, setDeleteSms,setDeleteWhatsapp,setSMSs,setSavedSMSs,setSelectedSms,setUpdateSMS,setUpdateSmsFavList,setWhatsapps} = smsSlice.actions
+export const {setCurrentWhatsappTemplate,setUpdateSMSFav,setAddSMS, setDeleteSms,setDeleteWhatsapp,setSMSById,
+  setScheduledSMSs,setDeleteScheduledSms,setDeleteScheduledWhatsapp,setScheduledWhatapps,
+  setSMSs,setSavedSMSs,setSelectedSms,setUpdateSMS,setUpdateSmsFavList,setWhatsapps} = smsSlice.actions
 
 export default smsSlice.reducer;

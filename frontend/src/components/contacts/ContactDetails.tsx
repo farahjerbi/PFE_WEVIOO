@@ -8,16 +8,14 @@ import { Button, Tooltip } from '@mui/material';
 import Update from '@mui/icons-material/Update';
 import Delete from '@mui/icons-material/Delete';
 import DeleteContact from '../modals/delete/DeleteContact';
+import { truncateText } from '../../routes/Functions';
 interface ContactDetailsProps {
   onClose: () => void;
+  onCloseEverything: () => void;
 }
-const ContactDetails: React.FC<ContactDetailsProps> = ({ onClose }) => {
+const ContactDetails: React.FC<ContactDetailsProps> = ({ onClose,onCloseEverything }) => {
     const contact=useSelector(selectContactDetails)
     const [openDelete,setOpenDelete]=useState<boolean>(false);
-    const truncateText = (text:string|undefined, maxLength:number) => {
-      if (!text) return '';
-      return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
-  };
 
   return (
       <MDBRow className="justify-content-center align-items-center  ">
@@ -90,11 +88,11 @@ const ContactDetails: React.FC<ContactDetailsProps> = ({ onClose }) => {
                           </Tooltip>
 
                           <Tooltip title="Delete" className="color_blue mt-3" >
-                          <Button  onClick={()=>{setOpenDelete(true);onClose()}}>
+                          <Button  onClick={()=>{setOpenDelete(true)}}>
                           <Delete style={{color:"whitesmoke"}}  />
                           </Button>                           
                           </Tooltip>
-        <DeleteContact isMember={true} onClose={()=>setOpenDelete(false)} show={openDelete} />
+        <DeleteContact isMember={true} onClose={()=>{setOpenDelete(false);onCloseEverything()}} show={openDelete} />
       </MDBRow>
 )
 }

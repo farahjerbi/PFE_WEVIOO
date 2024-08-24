@@ -3,6 +3,7 @@ import {RootState} from "../store"
 import { EmailTemplate } from "../../models/email/EmailTemplate";
 import axios from "axios";
 import { WebPushTemplate } from "../../models/push/WebPushTemplate";
+import { ScheduledPushInfo } from "../../models/push/ScheduledPushInfo";
 
 export const getTemplatesPush = createAsyncThunk<any| null, void>(
     "push/getTemplatesPush",
@@ -37,7 +38,10 @@ export const getTemplatesPush = createAsyncThunk<any| null, void>(
 export interface PushState{
     pushs: WebPushTemplate[] | null;
     push: WebPushTemplate | null;
+    pushAI: WebPushTemplate | null;
     savedPushedTemplates:WebPushTemplate[]|null;
+    scheduledPushs:ScheduledPushInfo[]|undefined;
+
 }
 export interface UpdateFav{
     id: number
@@ -46,7 +50,9 @@ export interface UpdateFav{
 const initialState: PushState={
     pushs:null,
     push:null,
-    savedPushedTemplates:null
+    pushAI:null,
+    savedPushedTemplates:null,
+    scheduledPushs:undefined
 }
 
 export const pushSlice = createSlice({
@@ -65,12 +71,30 @@ export const pushSlice = createSlice({
           )=>{
           state.savedPushedTemplates=action.payload;
       },
+      setScheduledPushs:(
+        state, 
+        action : PayloadAction<ScheduledPushInfo[]>
+        )=>{
+        state.scheduledPushs=action.payload;
+    },
+    setDeleteScheduledPush(state, action: PayloadAction<string>) {
+      if (state.scheduledPushs) {
+        state.scheduledPushs = state.scheduledPushs.filter((push: ScheduledPushInfo) => push.jobId !== action.payload);
+      }
+    },
       setSelectedPush:(
         state, 
         action : PayloadAction<WebPushTemplate>
         )=>{
         state.push=action.payload;
     },
+    setPushById: (state, action: PayloadAction<number>) => {
+      if (state.pushs) {
+          state.pushAI = state.pushs.find((email: WebPushTemplate) => email.id === action.payload) || null;
+      } else {
+          state.pushAI = null;
+      }
+  },
         setPush(state, action: PayloadAction<WebPushTemplate>) {
             if (state.pushs) {
               state.pushs.push(action.payload);
@@ -126,6 +150,8 @@ export const selectPushsInfo = (state:RootState)=>state.push;
 export const selectPushs = (state: RootState) => state.push.pushs;
 export const selectPush = (state: RootState) => state.push.push;
 export const selectSavedPushs = (state: RootState) => state.push.savedPushedTemplates;
-export const {setUpdatePushFavList,setSelectedPush,setPushs,setUpdatePushFav,setDeletePush,setUpdatePush,setPush,setSavedPushs} = pushSlice.actions
+export const selectScheduledPushs = (state: RootState) => state.push.scheduledPushs;
+export const {setUpdatePushFavList,setSelectedPush,setPushs,setUpdatePushFav,setPushById,setDeleteScheduledPush,setScheduledPushs,
+  setDeletePush,setUpdatePush,setPush,setSavedPushs} = pushSlice.actions
 
 export default pushSlice.reducer;

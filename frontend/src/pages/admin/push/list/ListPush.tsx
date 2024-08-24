@@ -11,7 +11,7 @@ import Delete from '@mui/icons-material/Delete';
 import Update from '@mui/icons-material/Update';
 import { useEffect, useState } from 'react';
 import { WebPushTemplate } from '../../../../models/push/WebPushTemplate';
-import { getTemplatesPush, selectPushs, setSelectedPush, setUpdatePushFav } from '../../../../redux/state/pushSlice';
+import { getTemplatesPush, selectPush, selectPushs, setSelectedPush, setUpdatePushFav } from '../../../../redux/state/pushSlice';
 import { AppDispatch } from '../../../../redux/store';
 import UpdatePush from '../update/UpdatePush';
 import { Role } from '../../../../models/user/Role';
@@ -24,6 +24,7 @@ import CustomizedSteppers from '../../../../components/CustomizedSteppers/Custom
 import DeletePushTemplate from '../../../../components/modals/delete/DeletePushTemplate';
 import { useNavigate } from 'react-router-dom';
 import { SEND_PUSH_SEPARATELY } from '../../../../routes/paths';
+import { truncateText } from '../../../../routes/Functions';
 interface Props{
     query:string
     }
@@ -39,6 +40,8 @@ const ListPush  : React.FC<Props> = ({query }) => {
     const [sendModalOpen,setSendModalOpen]=useState<boolean>(false)
     const [updateModalOpen,setUpdateModalOpen]=useState<boolean>(false)
     const [selectedTemplate,setSelectedTemplate]=useState<WebPushTemplate>()
+    const template = useSelector(selectPush);
+    const [basicModal, setBasicModal] = useState<boolean>(false);
     const[toggleFavoritePush]=useToggleFavoritePushMutation()
 
            /*Pagination*/
@@ -78,7 +81,7 @@ const ListPush  : React.FC<Props> = ({query }) => {
           {currentItems?.filter(
     (template:WebPushTemplate)=>template.title.toLowerCase().includes(query)).map((template:WebPushTemplate) => (
         <MDBCol  key={template.id} xl="3" md={6}  className="mb-r me-4 mt-4 ms-5 " >
-            <MDBCard  style={{minWidth:"380px"}} >
+            <MDBCard  style={{minWidth:"380px",maxHeight:"300px"}} >
         <MDBCardBody>
         <Card
     variant="outlined"
@@ -87,7 +90,7 @@ const ListPush  : React.FC<Props> = ({query }) => {
       width: 320,
       '&:hover': { boxShadow: 'md', borderColor: 'neutral.outlinedHoverBorder' },
     }}
-  >
+    onClick={()=>{dispatch(setSelectedPush(template));setBasicModal(true)}}  >
     <AspectRatio ratio="1" sx={{ width: 90 }}>
       <img
         src={`http://localhost:8099/uploadsPush/${template.icon}`}
@@ -105,7 +108,7 @@ const ListPush  : React.FC<Props> = ({query }) => {
           underline="none"
           sx={{ color: 'text.tertiary' }}
         >
-            <div className='mt-2'> {template.message}</div>
+            <div className='mt-2'> {truncateText(template.message, 25)} </div>
         </Link>
       </Typography>
     </CardContent>
@@ -218,6 +221,10 @@ const ListPush  : React.FC<Props> = ({query }) => {
 {selectedTemplate && (
   <CustomizedSteppers template={selectedTemplate} show={sendModalOpen} onClose={()=>{setSendModalOpen(!sendModalOpen);setSelectedTemplate(undefined)}} />
 )}
+
+{template && ( 
+            <UpdatePush view={true} template={template} show={basicModal} onClose={()=>setBasicModal(false)}  />
+    )}    
 
     </>
 

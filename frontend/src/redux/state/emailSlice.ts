@@ -2,6 +2,7 @@ import {createAsyncThunk, createSlice , PayloadAction} from "@reduxjs/toolkit"
 import {RootState} from "../store"
 import { EmailTemplate } from "../../models/email/EmailTemplate";
 import axios from "axios";
+import { ScheduledEmailResponse } from "../../models/email/ScheduledEmailRespose";
 
 export const getTemplatesEmail = createAsyncThunk<any| null, void>(
     "email/getTemplatesEmail",
@@ -34,8 +35,10 @@ export const getTemplatesEmail = createAsyncThunk<any| null, void>(
 
 export interface EmailState{
     emails: any| null;
-    email: EmailTemplate | null;
+    email: EmailTemplate | null;    
+    emailAI: EmailTemplate | null;
     savedEmailTemplates:EmailTemplate[]|null;
+    scheduledEmails:ScheduledEmailResponse[]|undefined;
 }
 export interface UpdateFav{
     id: number|undefined;
@@ -44,7 +47,9 @@ export interface UpdateFav{
 const initialState: EmailState={
     emails:null,
     email:null,
-    savedEmailTemplates:null
+    emailAI:null,
+    savedEmailTemplates:null,
+    scheduledEmails:undefined
 }
 
 export const emailSlice = createSlice({
@@ -63,12 +68,31 @@ export const emailSlice = createSlice({
           )=>{
           state.savedEmailTemplates=action.payload;
       },
+      setScheduledEmails:(
+        state, 
+        action : PayloadAction<ScheduledEmailResponse[]>
+        )=>{
+        state.scheduledEmails=action.payload;
+    },
+    setDeleteScheduledEmail(state, action: PayloadAction<string>) {
+      if (state.scheduledEmails) {
+        state.scheduledEmails = state.scheduledEmails.filter((email: ScheduledEmailResponse) => email.jobId !== action.payload);
+      }
+    },
+      setEmailById: (state, action: PayloadAction<number>) => {
+        if (state.emails) {
+            state.emailAI = state.emails.find((email: EmailTemplate) => email.id === action.payload) || null;
+        } else {
+            state.emailAI = null;
+        }
+    },
       setSelectedEmail:(
         state, 
         action : PayloadAction<EmailTemplate>
         )=>{
         state.email=action.payload;
     },
+    
         setEmail(state, action: PayloadAction<EmailTemplate>) {
             if (state.emails) {
               state.emails.push(action.payload);
@@ -124,6 +148,9 @@ export const selectEmailsInfo = (state:RootState)=>state.email;
 export const selectEmails = (state: RootState) => state.email.emails;
 export const selectEmail = (state: RootState) => state.email.email;
 export const selectSavedEmails = (state: RootState) => state.email.savedEmailTemplates;
-export const {setUpdateEmailFavList,setSelectedEmail,setEmails,setUpdateEmailFav,setDeleteEmail,setUpdateEmail,setEmail,setSavedEmails} = emailSlice.actions
+export const selectScheduledEmails = (state: RootState) => state.email.scheduledEmails;
+
+export const {setUpdateEmailFavList,setSelectedEmail,setEmails,setEmailById,setScheduledEmails,setDeleteScheduledEmail,
+  setUpdateEmailFav,setDeleteEmail,setUpdateEmail,setEmail,setSavedEmails} = emailSlice.actions
 
 export default emailSlice.reducer;

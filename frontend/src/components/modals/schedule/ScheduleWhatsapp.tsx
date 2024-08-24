@@ -53,11 +53,20 @@ const ScheduleWhatsapp: React.FC<SchedularWhatsappProps> = ({numbers,placeholder
 
  
       if(user && user.id){
+        const dateTimeValue = value.format("YYYY-MM-DDTHH:mm:ss");
+        const now = new Date();
+        const selectedDateTime = new Date(dateTimeValue);
+    
+        if (selectedDateTime <= now) {
+          toast.error("Scheduled date and time must be in the future.");
+          setLoading(false);
+          return;
+        }
         const whatsappSend:ScheduleWhatsappRequest={
             templateId:Number(templateId),
             numbers:numbers,
             placeholders:placeholders,
-            dateTime: value.format("YYYY-MM-DDTHH:mm:ss"),
+            dateTime: dateTimeValue,
             timeZone: currentTimezone,
             userId:user.id,
             name:name,
@@ -80,9 +89,15 @@ const ScheduleWhatsapp: React.FC<SchedularWhatsappProps> = ({numbers,placeholder
           toast.success("Whatsapp message scheduled successfully !");
           navigate(LIST_SMS_TEMPLATES)
         }
-      } catch (err) {
-        toast.error('Error!')
-        console.error("Error updating user:", err);
+      } catch (error: any) {
+        console.log("🚀 ~ error:", error);
+        if (error.response && error.response.data) {
+          console.log("🚀 ~ error.response.data:", error.response.data);
+          toast.error(error.response.data.message || "An error occurred");
+        } else {
+          toast.error("An error occurred");
+        }
+        console.error("🚀 ~ error.message:", error.message);
       }
       finally {
           setLoading(false); 

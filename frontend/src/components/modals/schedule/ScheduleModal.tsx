@@ -52,6 +52,15 @@ dayjs.tz.setDefault('America/New_York');
 
     const handleSubmitSchedule: () => void = async (
     ) => {
+      const dateTimeValue = value.format("YYYY-MM-DDTHH:mm:ss");
+      const now = new Date();
+      const selectedDateTime = new Date(dateTimeValue);
+  
+      if (selectedDateTime <= now) {
+        toast.error("Scheduled date and time must be in the future.");
+        setLoading(false);
+        return;
+      }
       const convertedPlaceholders: { [key: string]: string } = {};
 
       for (const key in placeholdersValues) {
@@ -67,7 +76,7 @@ dayjs.tz.setDefault('America/New_York');
         "placeHolders":  convertedPlaceholders, 
         "userId": id,
         "addSignature": String(addSignature),
-        "dateTime": value.format("YYYY-MM-DDTHH:mm:ss"),
+        "dateTime": dateTimeValue,
         "timeZone": currentTimezone
       };
       console.log("🚀 ~ body:", body)
@@ -90,9 +99,15 @@ dayjs.tz.setDefault('America/New_York');
           toast.success("Email scheduled successfully !");
           navigate(LIST_EMAIL_TEMPLATES)
         }
-      } catch (err) {
-        toast.error('Error!')
-        console.error("Error updating user:", err);
+      } catch (error: any) {
+        console.log("🚀 ~ error:", error);
+        if (error.response && error.response.data) {
+          console.log("🚀 ~ error.response.data:", error.response.data);
+          toast.error(error.response.data.message || "An error occurred");
+        } else {
+          toast.error("An error occurred");
+        }
+        console.error("🚀 ~ error.message:", error.message);
       }
       finally {
           setLoading(false); 

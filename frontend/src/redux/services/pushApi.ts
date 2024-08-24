@@ -1,6 +1,7 @@
 import {createApi , fetchBaseQuery} from "@reduxjs/toolkit/query/react"
 import { WebPushSubscription } from "../../models/push/WebPushSubscription";
 import { SendPushIndiv } from "../../models/push/SendPush";
+import { WebPushExcelProcessor } from "../../models/push/WebPushExcelProcessor";
 
 export const pushApi = createApi({
     reducerPath: 'pushApi',
@@ -71,7 +72,7 @@ export const pushApi = createApi({
         }),
     }),
     sendPushSeprartely : builder.mutation({
-        query:(body:SendPushIndiv)=>{
+        query:(body:WebPushExcelProcessor)=>{
             return{
                 url:"/notifySeparately",
                 method:"POST",
@@ -79,10 +80,18 @@ export const pushApi = createApi({
             };
         }
     }),
+    processPushExcel: builder.mutation({
+        query: (formData: FormData) => ({
+            url: "/process",
+            method: "POST",
+            body: formData,
+        }),
+    }),
     
 }),
 })
 
 export const {useGetPushByIdMutation,useSubscribeMutation,useDeletePushTemplateMutation, useDeleteScheduledPushMutation
-    ,useGetScheduledPushsByUserMutation,useToggleFavoritePushMutation,useGetSavedTemplatesPushMutation,useSendPushSeprartelyMutation
+    ,useGetScheduledPushsByUserMutation,useToggleFavoritePushMutation,useGetSavedTemplatesPushMutation,useSendPushSeprartelyMutation,
+    useProcessPushExcelMutation
 }=pushApi;

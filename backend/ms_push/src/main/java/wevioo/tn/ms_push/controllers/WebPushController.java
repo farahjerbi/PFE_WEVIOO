@@ -8,14 +8,18 @@ import org.jose4j.lang.JoseException;
 import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import wevioo.tn.ms_push.dtos.request.*;
 import wevioo.tn.ms_push.dtos.response.SchedulePushResponse;
 import wevioo.tn.ms_push.dtos.response.ScheduledPushInfo;
+import wevioo.tn.ms_push.dtos.response.WebPushExcelProcessor;
 import wevioo.tn.ms_push.entities.WebPushMessage;
 import wevioo.tn.ms_push.entities.WebPushSubscription;
 import wevioo.tn.ms_push.repositories.WebPushMessageTemplateRepository;
+import wevioo.tn.ms_push.services.ExcelFileService;
 import wevioo.tn.ms_push.services.SubscriptionService;
 import wevioo.tn.ms_push.services.WebPushMessageTemplate;
 import wevioo.tn.ms_push.services.WebPushMessageUtil;
@@ -34,6 +38,7 @@ import java.util.concurrent.ExecutionException;
 
 public class WebPushController {
     private final Scheduler scheduler;
+    private final ExcelFileService excelFileService;
 
     private final SubscriptionService subscriptionService;
     private final WebPushMessageTemplate webPushMessageTemplate;
@@ -90,8 +95,22 @@ public class WebPushController {
     }
 
     @PostMapping("/notifySeparately")
-    public String notifySeparately(@RequestBody SendIndiv message) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException {
-        return  webPushMessageTemplate.notifySeparately(message);
+    public ResponseEntity<String> notifySeparately(@RequestBody WebPushExcelProcessor message)
+            throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException {
+        List<SendSeparately> result = excelFileService.generateSendSeparatelyList(message.getPlaceholderData(), message.getTemplate());
+
+        try {
+            excelFileService.validateSendSeparatelyList(result);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+        SendIndiv sendIndiv = new SendIndiv();
+        sendIndiv.setWebPushMessageTemplate(message.getTemplate());
+        sendIndiv.setSendSeparatelyList(result);
+
+        String response = webPushMessageTemplate.notifySeparately(sendIndiv);
+
+        return ResponseEntity.ok(response);
     }
 
 
@@ -197,6 +216,27 @@ public class WebPushController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting job.");
         }
     }
+
+
+    @PostMapping(value="/process", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<WebPushExcelProcessor> processExcelFile(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("template") String templateJson) {
+        try {
+            if (templateJson == null || templateJson.trim().isEmpty()) {
+                throw new IllegalArgumentException("Template cannot be null or empty.");
+            }
+            ObjectMapper objectMapper = new ObjectMapper();
+            WebPushMessage template = objectMapper.readValue(templateJson, WebPushMessage.class);
+
+            WebPushExcelProcessor result = excelFileService.processExcelFile(file, template);
+            return ResponseEntity.ok(result);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
+    /*UPDATES*/
 
 
 }

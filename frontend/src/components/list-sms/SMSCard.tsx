@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Visibility from '@mui/icons-material/Visibility';
 import Update from '@mui/icons-material/Update';
 import Delete from '@mui/icons-material/Delete';
@@ -8,7 +8,7 @@ import Send from '@mui/icons-material/Send';
 import ScheduleSend from '@mui/icons-material/ScheduleSend';
 import { MDBCard, MDBCardBody, MDBPagination, MDBPaginationItem, MDBPaginationLink, MDBTable, MDBTableBody, MDBTableHead } from 'mdb-react-ui-kit';
 import { Button, Tooltip } from '@mui/material'
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Role } from '../../models/user/Role';
 import { SmsTemplate } from '../../models/sms/SmsTemplate';
 import { IUser } from '../../models/user/User';
@@ -36,6 +36,12 @@ const SMSCard: React.FC<PropsSMS> = ({ role, templates, user }) => {
   const [query, setQuery] = useState<string>('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 3;
+  const location = useLocation();
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const searchQuery = queryParams.get('query') || '';
+    setQuery(searchQuery.toLowerCase());
+   }, [location.search]);
 
   // Pagination calculation
   const indexOfLastItem = currentPage * itemsPerPage;
