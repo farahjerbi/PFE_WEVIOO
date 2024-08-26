@@ -1,6 +1,7 @@
 package wevioo.tn.ms_push.services;
 
 import org.jose4j.lang.JoseException;
+import org.springframework.http.ResponseEntity;
 import wevioo.tn.ms_push.dtos.request.SendIndiv;
 import wevioo.tn.ms_push.dtos.request.SendPushNotif;
 import wevioo.tn.ms_push.dtos.request.WebPushMessageAdd;
@@ -16,7 +17,7 @@ public interface WebPushMessageTemplate {
     WebPushMessage createPushTemplate(WebPushMessageAdd s);
     void deletePushTemplate(Long id);
     void toggleFavoritePush(Long pushTemplateId, Long userId);
-    String notifyAll(SendPushNotif message) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException;
-    String notify(SendPushNotif message) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException ;
-    String notifySeparately( SendIndiv message) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException;
+    ResponseEntity<String> notifyAll(SendPushNotif message) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException;
+    ResponseEntity<String>  notify(SendPushNotif message) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException ;
+    ResponseEntity<String>  notifySeparately( SendIndiv message) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException;
 }

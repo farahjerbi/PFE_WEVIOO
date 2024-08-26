@@ -14,6 +14,7 @@ import wevioo.tn.ms_sms.dtos.response.UserResponse;
 import wevioo.tn.ms_sms.dtos.response.WhatsAppTemplateResponse;
 import wevioo.tn.ms_sms.entities.SmsTemplate;
 import wevioo.tn.ms_sms.openFeign.UsersClient;
+import wevioo.tn.ms_sms.services.ExcelFileService;
 import wevioo.tn.ms_sms.services.SmsUtils;
 import wevioo.tn.ms_sms.services.WhatsAppService;
 import wevioo.tn.ms_sms.services.WhatsappUtil;
@@ -33,6 +34,7 @@ public class WhatsAppController {
     private final WhatsappUtil whatsappUtil;
     private final Scheduler scheduler;
     private final UsersClient usersClient;
+    private final ExcelFileService excelFileService;
 
 
 
@@ -79,8 +81,9 @@ public class WhatsAppController {
         return whatsAppService.sendSmsWhatsApp(sendsSms);
     }
     @PostMapping(value = "/sendSMSWhatsAppSeparately")
-    public String sendSMSWhatsAppSeparately(@RequestBody SendIndivWhatsapp sendsSms) {
-        return whatsAppService.sendSmsWhatsAppSeparately(sendsSms);
+    public ResponseEntity<String> sendSMSWhatsAppSeparately(@RequestBody WhatsappExcelProcessor test) {
+        SendIndivWhatsapp send = excelFileService.generateSendSeparatelyListWhatsapp(test.getPlaceholderData(), test.getWhatsAppTemplateResponse());
+        return  ResponseEntity.ok(whatsAppService.sendSmsWhatsAppSeparately(send));
     }
 
     @GetMapping("/{id}")
@@ -235,7 +238,6 @@ public class WhatsAppController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting job.");
         }
     }
-
 
 
 }

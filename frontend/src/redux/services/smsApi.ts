@@ -1,6 +1,7 @@
 import {createApi , fetchBaseQuery} from "@reduxjs/toolkit/query/react"
 import { SmsTemplate } from "../../models/sms/SmsTemplate";
 import { SendIndiv, SendsSms } from "../../models/sms/SendsSms";
+import { SMSExcelProcessor } from "../../models/sms/ExcelProcessor";
 
 export const smsApi = createApi({
     reducerPath: 'smsApi',
@@ -92,7 +93,7 @@ export const smsApi = createApi({
             }),
     }),
     sendSMSSeprartely : builder.mutation({
-        query:(body:SendIndiv)=>{
+        query:(body:SMSExcelProcessor)=>{
             return{
                 url:"/sendSMSSeparately",
                 method:"POST",

@@ -7,33 +7,29 @@ import { toast } from 'sonner'
 import { useDispatch, useSelector } from 'react-redux'
 import { LIST_PUSH_TEMPLATES } from '../../../../routes/paths'
 import { selectPush, setSelectedPush } from '../../../../redux/state/pushSlice'
-import { SendPush, SendPushIndiv } from '../../../../models/push/SendPush'
 import UpdatePush from '../update/UpdatePush'
 import { useGetPushByIdMutation, useProcessPushExcelMutation, useSendPushSeprartelyMutation } from '../../../../redux/services/pushApi'
-import { selectToken } from '../../../../redux/state/authSlice'
 import { WebPushExcelProcessor } from '../../../../models/push/WebPushExcelProcessor'
 import Tooltip from '@mui/material/Tooltip'
 import Button from '@mui/material/Button'
 import Update from '@mui/icons-material/Update'
 import Delete from '@mui/icons-material/Delete'
 import { TextField } from '@mui/material'
+import Add from '@mui/icons-material/Add'
 const SendPushSeparately = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [basicModal, setBasicModal] = useState<boolean>(false);
     const [placeholderData, setPlaceholderData] = useState<Record<string, string[]>>({});
     console.log("🚀 ~ SendPushSeparately ~ placeholderData:", placeholderData)
     const [editMode, setEditMode] = useState<boolean[]>(Array(Object.keys(placeholderData)[0]?.length).fill(false));
-
-    
+    const [newRowData, setNewRowData] = useState<Record<string, string>>({});
     const[sendPushSeprartely]=useSendPushSeprartelyMutation()
     const navigate=useNavigate()
     const dispatch = useDispatch();
     const template = useSelector(selectPush);
-    console.log("🚀 ~ SendPushSeparately ~ template:", template)
     const[getPushById]=useGetPushByIdMutation()
     const[processPushExcel]=useProcessPushExcelMutation()
     const { id } = useParams();
-    const token=useSelector(selectToken)
     useEffect(() => {
       fetchData()
     }, []);
@@ -42,11 +38,11 @@ const SendPushSeparately = () => {
       try {
           const formData = new FormData();
           formData.append('file', file);
-          formData.append('template', JSON.stringify(template)); 
-  
+          formData.append('requiredPlaceholders', JSON.stringify(template?.placeholders)); 
+
           const response = await processPushExcel(formData).unwrap();
           console.log('Data processed successfully:', response);
-          setPlaceholderData(response.placeholderData)
+          setPlaceholderData(response)
       } catch (error) {
           console.error('Error processing data:', error);
       }
@@ -130,6 +126,35 @@ const SendPushSeparately = () => {
           updatedEditMode[rowIndex] = !updatedEditMode[rowIndex];
           return updatedEditMode;
         });
+      };
+      const handleNewRowChange = (key: string, value: string) => {
+        setNewRowData(prevData => ({
+          ...prevData,
+          [key]: value,
+        }));
+      };
+      
+      const handleAddNewRow = () => {
+        setPlaceholderData(prevData => {
+          const updatedData: { [key: string]: string[] } = {};
+      
+          Object.keys(prevData).forEach(key => {
+            updatedData[key] = prevData[key] ? [...prevData[key]] : [];
+            updatedData[key].push(newRowData[key] || 'unknown');
+          });
+      
+          const maxLength = Math.max(...Object.values(updatedData).map(list => list.length));
+      
+          Object.keys(updatedData).forEach(key => {
+            while (updatedData[key].length < maxLength) {
+              updatedData[key].push('unknown');
+            }
+          });
+      
+          return updatedData;
+        });
+      
+        setNewRowData({});
       };
 
   return (
@@ -255,6 +280,59 @@ const SendPushSeparately = () => {
                             </tr>
                           ))
                         }
+                          {Object.keys(placeholderData).length > 0  && (
+                            <tr>
+                            <td>
+                              <TextField
+                                variant="outlined"
+                                size="small"
+                                value={newRowData['notificationendpoint'] || ''}
+                                onChange={(e) => handleNewRowChange('notificationendpoint', e.target.value)}
+                                fullWidth
+                                placeholder="notificationendpoint"
+                              />
+                            </td>
+                            <td>
+                              <TextField
+                                variant="outlined"
+                                size="small"
+                                value={newRowData['publickey'] || ''}
+                                onChange={(e) => handleNewRowChange('publickey', e.target.value)}
+                                fullWidth
+                                placeholder="publickey"
+                              />
+                            </td>
+                            <td>
+                              <TextField
+                                variant="outlined"
+                                size="small"
+                                value={newRowData['auth'] || ''}
+                                onChange={(e) => handleNewRowChange('auth', e.target.value)}
+                                fullWidth
+                                placeholder="auth"
+                              />
+                            </td>
+                            {template?.placeholders.map(placeholder => (
+                              <td key={`new-${placeholder}`}>
+                                <TextField
+                                  variant="outlined"
+                                  size="small"
+                                  value={newRowData[placeholder.toLowerCase()] || ''}
+                                  onChange={(e) => handleNewRowChange(placeholder.toLowerCase(), e.target.value)}
+                                  fullWidth
+                                  placeholder={placeholder}
+                                />
+                              </td>
+                            ))}
+                            <td>
+                            <Tooltip title='Add Row' className="color_blue">
+                                      <Button className='me-2' type="button"  onClick={handleAddNewRow}>
+                                        <Add style={{ color: "whitesmoke" }} /> 
+                                      </Button>
+                                    </Tooltip>
+                            </td>
+                          </tr>
+                        )}    
                       </tbody>
                     </MDBTable>
                   </MDBCardBody>

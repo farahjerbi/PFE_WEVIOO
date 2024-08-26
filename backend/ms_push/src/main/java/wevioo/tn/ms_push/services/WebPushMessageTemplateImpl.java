@@ -6,6 +6,7 @@ import nl.martijndwars.webpush.Notification;
 import nl.martijndwars.webpush.PushService;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jose4j.lang.JoseException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import wevioo.tn.ms_push.dtos.request.*;
 import wevioo.tn.ms_push.entities.WebPushMessage;
@@ -98,7 +99,7 @@ public class WebPushMessageTemplateImpl implements WebPushMessageTemplate{
         webPushMessageTemplateRepository.save(pushTemplate);
     }
 
-    public String notifyAll(SendPushNotif message) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException {
+    public ResponseEntity<String> notifyAll(SendPushNotif message) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException {
         Security.addProvider(new BouncyCastleProvider());
         if(message.getPlaceholderValues()!=null){
             message.getWebPushMessageTemplate().setMessage(
@@ -117,9 +118,9 @@ public class WebPushMessageTemplateImpl implements WebPushMessageTemplate{
             pushService.send(notification);
         }
 
-        return "sent successfully";
+        return ResponseEntity.ok("Notifications sent successfully");
     }
-    public String notify(SendPushNotif message) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException {
+    public ResponseEntity<String>  notify(SendPushNotif message) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException {
         Security.addProvider(new BouncyCastleProvider());
 
         if (message.getPlaceholderValues() != null) {
@@ -151,10 +152,10 @@ public class WebPushMessageTemplateImpl implements WebPushMessageTemplate{
             }
         }
 
-        return "sent successfully :)";
+        return ResponseEntity.ok("Notifications sent successfully");
     }
 
-    public String notifySeparately(SendIndiv message) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException {
+    public ResponseEntity<String>  notifySeparately(SendIndiv message) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException {
         Security.addProvider(new BouncyCastleProvider());
         PushService pushService = new PushService(PUBLIC_KEY, PRIVATE_KEY, SUBJECT);
 
@@ -188,8 +189,7 @@ public class WebPushMessageTemplateImpl implements WebPushMessageTemplate{
                 throw new RuntimeException("Failed to send notification due to unexpected error: " + e.getMessage(), e);
             }
         }
-
-        return "sent successfully";
+        return ResponseEntity.ok("Notifications sent successfully");
     }
 
     private void validatePublicKey(String publicKey) {

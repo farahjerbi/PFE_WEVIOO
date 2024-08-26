@@ -7,25 +7,22 @@ import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import wevioo.tn.ms_sms.dtos.request.ScheduleSMSRequest;
-import wevioo.tn.ms_sms.dtos.request.SendIndiv;
-import wevioo.tn.ms_sms.dtos.request.SendsSms;
-import wevioo.tn.ms_sms.dtos.request.UpdateSmsTemplate;
+import org.springframework.web.multipart.MultipartFile;
+import wevioo.tn.ms_sms.dtos.request.*;
 import wevioo.tn.ms_sms.dtos.response.ScheduleSMSResponse;
 import wevioo.tn.ms_sms.dtos.response.ScheduledSMSInfo;
 import wevioo.tn.ms_sms.dtos.response.UserResponse;
 import wevioo.tn.ms_sms.entities.SmsTemplate;
 import wevioo.tn.ms_sms.openFeign.UsersClient;
 import wevioo.tn.ms_sms.repositories.SmsRepository;
+import wevioo.tn.ms_sms.services.ExcelFileService;
 import wevioo.tn.ms_sms.services.SmsService;
 import wevioo.tn.ms_sms.services.SmsUtils;
 
+import java.io.IOException;
 import java.time.ZonedDateTime;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/apiSms")
@@ -35,6 +32,7 @@ public class SmsController {
     private final SmsService smsService;
     private final Scheduler scheduler;
 
+    private final ExcelFileService excelFileService;
     private final SmsRepository smsRepository;
     private final SmsUtils smsUtils;
     private final UsersClient usersClient;
@@ -62,10 +60,12 @@ public class SmsController {
     public String sendSMS(@RequestBody SendsSms sendsSms) {
         return smsService.sendSms(sendsSms);
     }
-    @PostMapping(value = "/sendSMSSeparately")
-    public String sendSMSSeparately(@RequestBody SendIndiv sendsSms) {
 
-        return smsService.sendSmsSeparately(sendsSms);
+    @PostMapping(value = "/sendSMSSeparately")
+    public ResponseEntity<String> sendSMSSeparately( @RequestBody SMSExcelProcessor test) {
+        SendIndiv sendIndiv = excelFileService.generateSendSeparatelyList(test.getPlaceholderData(), test.getSmsTemplate());
+        return ResponseEntity.ok(smsService.sendSmsSeparately(sendIndiv));
+
     }
 
 
@@ -235,7 +235,6 @@ public class SmsController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting job.");
         }
     }
-
 
 }
 

@@ -4,9 +4,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import wevioo.tn.ms_push.dtos.request.SendIndiv;
 import wevioo.tn.ms_push.dtos.request.SendSeparately;
-import wevioo.tn.ms_push.dtos.response.WebPushExcelProcessor;
 import wevioo.tn.ms_push.entities.WebPushMessage;
 import wevioo.tn.ms_push.entities.WebPushSubscription;
 
@@ -20,13 +18,6 @@ public class ExcelFileService {
     private static final String NOTIFICATION_ENDPOINT = "notificationendpoint";
     private static final String PUBLIC_KEY = "publickey";
     private static final String AUTH = "auth";
-
-    public WebPushExcelProcessor processExcelFile(MultipartFile file, WebPushMessage template) throws IOException {
-        Map<String, String[]> placeholderData = processExcelFile(file, template.getPlaceholders().toArray(new String[0]));
-        WebPushExcelProcessor result = new WebPushExcelProcessor();
-        result.setPlaceholderData(placeholderData);
-        return result;
-    }
 
     public List<SendSeparately> generateSendSeparatelyList(Map<String, String[]> placeholderData, WebPushMessage template) {
         List<SendSeparately> sendSeparatelyList = new ArrayList<>();
@@ -59,14 +50,18 @@ public class ExcelFileService {
         return sendSeparatelyList;
     }
 
-
-    private Map<String, String[]> processExcelFile(MultipartFile file, String[] requiredPlaceholders) throws IOException {
+    public Map<String, String[]> processExcelFile(MultipartFile file, String[] requiredPlaceholders) throws IOException {
         Map<String, String[]> data = new HashMap<>();
+
+        // Clean up requiredPlaceholders
+        requiredPlaceholders = Arrays.stream(requiredPlaceholders)
+                .map(placeholder -> placeholder.replaceAll("[\\[\\]\"]", "").trim())
+                .toArray(String[]::new);
+
         try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
             Sheet sheet = workbook.getSheetAt(0);
             Iterator<Row> rowIterator = sheet.iterator();
 
-            // Extract headers
             Row headerRow = rowIterator.hasNext() ? rowIterator.next() : null;
             if (headerRow == null) {
                 throw new IOException("No header row found in the Excel file.");
@@ -79,7 +74,6 @@ public class ExcelFileService {
                 data.put(header, new String[sheet.getPhysicalNumberOfRows() - 1]);
             }
 
-            // Ensure required placeholders are included
             for (String placeholder : requiredPlaceholders) {
                 data.putIfAbsent(placeholder.toLowerCase(), new String[sheet.getPhysicalNumberOfRows() - 1]);
             }
@@ -91,16 +85,15 @@ public class ExcelFileService {
                     Cell cell = row.getCell(i);
                     String cellValue = getCellValueAsString(cell);
                     if (cellValue.isEmpty()) {
-                        cellValue = UNKNOWN_VALUE;
+                        cellValue = "unknown";
                     }
                     String header = getCellValueAsString(headerRow.getCell(i)).toLowerCase();
                     data.get(header)[rowIndex] = cellValue;
                 }
 
-                // Fill missing required placeholders with 'unknown'
                 for (String placeholder : requiredPlaceholders) {
                     if (data.get(placeholder.toLowerCase())[rowIndex] == null) {
-                        data.get(placeholder.toLowerCase())[rowIndex] = UNKNOWN_VALUE;
+                        data.get(placeholder.toLowerCase())[rowIndex] = "unknown";
                     }
                 }
                 rowIndex++;
@@ -115,8 +108,13 @@ public class ExcelFileService {
         }
         return switch (cell.getCellType()) {
             case STRING -> cell.getStringCellValue();
-            case NUMERIC -> DateUtil.isCellDateFormatted(cell) ? cell.getDateCellValue().toString() :
-                    BigDecimal.valueOf(cell.getNumericCellValue()).toPlainString();
+            case NUMERIC -> {
+                if (cell.getNumericCellValue() % 1 == 0) {
+                    yield String.valueOf((int) cell.getNumericCellValue());
+                } else {
+                    yield BigDecimal.valueOf(cell.getNumericCellValue()).toPlainString();
+                }
+            }
             case BOOLEAN -> String.valueOf(cell.getBooleanCellValue());
             case FORMULA -> cell.getCellFormula();
             case BLANK -> "";

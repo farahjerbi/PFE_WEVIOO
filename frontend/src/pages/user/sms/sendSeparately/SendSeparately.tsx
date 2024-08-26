@@ -1,30 +1,37 @@
 import { FormEvent, useEffect, useState } from 'react'
 import BreadcrumSection from '../../../../components/BreadcrumSection/BreadcrumSection'
-import { MDBBtn, MDBCard, MDBCardBody, MDBCol, MDBContainer, MDBRow, MDBSpinner, MDBTable, MDBTableHead } from 'mdb-react-ui-kit'
+import { MDBBtn, MDBCard, MDBCardBody, MDBCol, MDBContainer, MDBIcon, MDBRow, MDBSpinner, MDBTable, MDBTableHead } from 'mdb-react-ui-kit'
 import { ReactTyped } from 'react-typed'
 import { useGetSMSTemplateByIdMutation, useSendSMSSeprartelyMutation } from '../../../../redux/services/smsApi'
 import { useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { selectCurrentSms, selectCurrentWhatsappTemplate, setCurrentWhatsappTemplate, setSelectedSms } from '../../../../redux/state/smsSlice'
 import { useDispatch, useSelector } from 'react-redux'
-import ExcelSendButton from '../../../../components/button/ExcelSendButton'
-import { SendIndiv, SendSeperately } from '../../../../models/sms/SendsSms'
 import { LIST_SMS_TEMPLATES } from '../../../../routes/paths'
 import ViewSMSTemplate from '../../../../components/modals/view/ViewSMSTemplate'
 import { NotificationType } from '../../../../models/NotificationType'
 import { useGetWhatsappTemplateByIdMutation, useSendSMSWhatsAppSeparatelyMutation } from '../../../../redux/services/whatsAppApi'
-import { SendIndivWhatsapp, SendWhatsappSeparately } from '../../../../models/sms/SendWhatsAppMsg'
+import { useProcessPushExcelMutation } from '../../../../redux/services/pushApi'
+import { SMSExcelProcessor, WhatsappExcelProcessor } from '../../../../models/sms/ExcelProcessor'
+import { Button, TextField, Tooltip } from '@mui/material'
+import Update from '@mui/icons-material/Update'
+import Save from '@mui/icons-material/Save'
+import Delete from '@mui/icons-material/Delete'
+import Add from '@mui/icons-material/Add'
 interface Props{
     type:NotificationType
   }
 const SendSeparately : React.FC<Props> = ({ type}) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [basicModal, setBasicModal] = useState<boolean>(false);
-  const [uploadedData, setUploadedData] = useState<Record<string, string[]>>({});
+  const [placeholderData, setPlaceholderData] = useState<Record<string, string[]>>({});
+  const [editMode, setEditMode] = useState<boolean[]>(Array(Object.keys(placeholderData)[0]?.length).fill(false));
+  const [newRowData, setNewRowData] = useState<Record<string, string>>({});
   const [getSMSTemplateById] = useGetSMSTemplateByIdMutation();
   const[sendSMSSeprartely]=useSendSMSSeprartelyMutation()
   const[sendSMSWhatsAppSeparately]=useSendSMSWhatsAppSeparatelyMutation()
   const[getWhatsappTemplateById]=useGetWhatsappTemplateByIdMutation()
+  const[processPushExcel]=useProcessPushExcelMutation()
   const navigate=useNavigate()
   const dispatch = useDispatch();
   const template = useSelector(selectCurrentSms);
@@ -44,6 +51,7 @@ const SendSeparately : React.FC<Props> = ({ type}) => {
       console.error('🚀 ~ error:', error);
     }
   };
+
   const fetchDataWhatsapp = async () => {
     try {
       const response = await getWhatsappTemplateById(id).unwrap();
@@ -55,120 +63,20 @@ const SendSeparately : React.FC<Props> = ({ type}) => {
   };
 
 
-
-  const handleExcelUpload = (data: Record<string, string[]>) => {
-    setUploadedData(data);
-  };
-
-  const getSMSPlaceholderData = () => {
-    const smsPlaceholderData: Record<string, string[]> = {};
-    if (!template || !template.placeholders || Object.keys(uploadedData).length === 0) {
-      smsPlaceholderData['phone'] = uploadedData['phone'] || [];
-      return smsPlaceholderData;
+  const handleExcelUpload = async (file: File) => {
+    try {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('requiredPlaceholders',
+           type===NotificationType.SMS? JSON.stringify(template?.placeholders)
+           :JSON.stringify(templateWhatsapp?.placeholders)); 
+        const response = await processPushExcel(formData).unwrap();
+        console.log('Data processed successfully:', response);
+        setPlaceholderData(response)
+    } catch (error) {
+        console.error('Error processing data:', error);
     }
-  
-    const lowerCasePlaceholders = template.placeholders.map(p => p.toLowerCase());
-    if (!lowerCasePlaceholders.includes('phone')) {
-      lowerCasePlaceholders.push('phone');
-    }
-  
-    lowerCasePlaceholders.forEach(placeholder => {
-      smsPlaceholderData[placeholder] = uploadedData[placeholder] || [];
-    });
-  
-    return smsPlaceholderData;
-  };
-  
-  const getWhatsAppPlaceholderData = () => {
-    const whatsappPlaceholderData: Record<string, string[]> = {};
-    if (!templateWhatsapp || !templateWhatsapp.placeholders || Object.keys(uploadedData).length === 0) {
-      whatsappPlaceholderData['whatsapp'] = uploadedData['whatsapp'] || [];
-      return whatsappPlaceholderData;
-    }
-  
-    const lowerCasePlaceholders = templateWhatsapp.placeholders.map(p => p.toLowerCase());
-    if (!lowerCasePlaceholders.includes('whatsapp')) {
-      lowerCasePlaceholders.push('whatsapp');
-    }
-  
-    lowerCasePlaceholders.forEach(placeholder => {
-      whatsappPlaceholderData[placeholder] = uploadedData[placeholder] || [];
-    });
-  
-    return whatsappPlaceholderData;
-  };
-  
-
-  const placeholderData: Record<string, string[]> = type === NotificationType.SMS ? getSMSPlaceholderData() : getWhatsAppPlaceholderData();
-  console.log("🚀 ~ placeholderData:", placeholderData)
-
-  const generateSendSeparatelyList = (): SendIndiv => {
-    const placeholderData = getSMSPlaceholderData();
-    const rowCount = placeholderData[Object.keys(placeholderData)[0]]?.length || 0;
-
-    const sendSeparatelyList: SendSeperately[] = [];
-    for (let i = 0; i < rowCount; i++) {
-      const row: Record<string, string> = {};
-      let isUnknown = false;
-      template?.placeholders?.forEach(placeholder => {
-        const value = placeholderData[placeholder.toLowerCase()]?.[i] || '';
-        row[placeholder] = value;
-        if (typeof value === 'string' && value.toLowerCase() === 'unknown') {
-          isUnknown = true;
-        }
-      });
-
-      const number = placeholderData['phone']?.[i] || '';
-      if (typeof number === 'string' && number.toLowerCase() === 'unknown') {
-        isUnknown = true;
-      }
-
-      if (!isUnknown) {
-        sendSeparatelyList.push({
-          number: number.toString(),
-          placeholderValues: row,
-        });
-      }
-    }
-
-    return { idTemplate: Number(id), sendSeparatelyList };
-  };
-
-const generateSendSeparatelyListWhatsapp = (): SendIndivWhatsapp => {
-    const placeholderData = getWhatsAppPlaceholderData();
-    const rowCount = placeholderData[Object.keys(placeholderData)[0]]?.length || 0;
-
-    const sendSeparatelyList: SendWhatsappSeparately[] = [];
-    for (let i = 0; i < rowCount; i++) {
-      const row: Record<string, string> = {};
-      let isUnknown = false;
-      templateWhatsapp?.placeholders?.forEach(placeholder => {
-        const value = placeholderData[placeholder.toLowerCase()]?.[i] || '';
-        row[placeholder] = value;
-        if (typeof value === 'string' && value.toLowerCase() === 'unknown') {
-          isUnknown = true;
-        }
-      });
-
-      const number = placeholderData['whatsapp']?.[i] || '';
-      if (typeof number === 'string' && number.toLowerCase() === 'unknown') {
-        isUnknown = true;
-      }
-
-      if (!isUnknown && type === NotificationType.SMS) {
-        sendSeparatelyList.push({
-          number: number.toString(),
-          placeholders: Object.values(row),
-        });
-      }
-    }
-
-    return { whatsAppTemplateResponse: templateWhatsapp, sendSeparatelyList };
-  };
-
-  const sendSeparatelyList = generateSendSeparatelyList();
-  const sendSeparatelyListWhatsapp = generateSendSeparatelyListWhatsapp();
-
+};
 
   const handleSubmit: (evt: FormEvent<HTMLFormElement>) => void = async (
     e: FormEvent<HTMLFormElement>
@@ -190,12 +98,18 @@ const generateSendSeparatelyListWhatsapp = (): SendIndivWhatsapp => {
     try {
       if (id) {
         if (type === NotificationType.SMS) {
-          const sendSms: SendIndiv = sendSeparatelyList;
+          const sendSms: SMSExcelProcessor ={
+            smsTemplate:template,
+            placeholderData:placeholderData
+          };
           await sendSMSSeprartely(sendSms);
           toast.success("SMS sent Successfully !");
           navigate(LIST_SMS_TEMPLATES);
         } else if (type === NotificationType.WHATSAPP) {
-          const sendWhatsapp: SendIndivWhatsapp = sendSeparatelyListWhatsapp;
+          const sendWhatsapp: WhatsappExcelProcessor = {
+            whatsAppTemplateResponse:templateWhatsapp,
+            placeholderData:placeholderData
+          };;
           await sendSMSWhatsAppSeparately(sendWhatsapp);
           toast.success("WhatsApp message sent Successfully !");
           navigate(LIST_SMS_TEMPLATES);
@@ -208,25 +122,84 @@ const generateSendSeparatelyListWhatsapp = (): SendIndivWhatsapp => {
       setLoading(false);
     }
   };
+
+
+  const handleInputChange = (key: string, rowIndex: number, value: string) => {
+    setPlaceholderData(prevData => {
+      const updatedData = { ...prevData };
+      updatedData[key] = [...(prevData[key] || [])];
+      updatedData[key][rowIndex] = value;
+      return updatedData;
+    });
+  };
+
+  const handleDeleteRow = (rowIndex: number) => {
+    setPlaceholderData(prevData => {
+      const updatedData: Record<string, string[]> = {};
+      Object.keys(prevData).forEach(key => {
+        updatedData[key] = prevData[key].filter((_, index) => index !== rowIndex);
+      });
+      return updatedData;
+    });
+  };
+
+  const handleNewRowChange = (key: string, value: string) => {
+    setNewRowData(prevData => ({
+      ...prevData,
+      [key]: value,
+    }));
+  };
+  
+  const handleAddNewRow = () => {
+    setPlaceholderData(prevData => {
+      const updatedData: { [key: string]: string[] } = {};
+  
+      Object.keys(prevData).forEach(key => {
+        updatedData[key] = prevData[key] ? [...prevData[key]] : [];
+        updatedData[key].push(newRowData[key] || 'unknown');
+      });
+  
+      const maxLength = Math.max(...Object.values(updatedData).map(list => list.length));
+  
+      Object.keys(updatedData).forEach(key => {
+        while (updatedData[key].length < maxLength) {
+          updatedData[key].push('unknown');
+        }
+      });
+  
+      return updatedData;
+    });
+  
+    setNewRowData({});
+  };
+
+  const toggleEditMode = (rowIndex: number) => {
+    setEditMode(prevState => {
+      const updatedEditMode = [...prevState];
+      updatedEditMode[rowIndex] = !updatedEditMode[rowIndex];
+      return updatedEditMode;
+    });
+  };
+
   return (
     <>
       <BreadcrumSection />
-      <MDBContainer style={{ width: '83%', marginLeft: '13.5%' }} fluid className='p-4 mt-5'>
+      <MDBContainer style={{ width: '90%', marginLeft: '9%' }} fluid className='p-4 mt-5'>
         <MDBRow>
           <MDBCol
             style={{
               backgroundRepeat: 'no-repeat',
               backgroundPosition: 'center',
               backgroundImage: 'url(../../../assets/worksheet.png)',
-              backgroundSize: '90% 70%',
+              backgroundSize: '68% 40%',
             }}
-            md='4'
+            md='2'
             className='text-center text-md-start d-flex flex-column justify-content-center mt-4'
           >
 
           </MDBCol>
 
-          <MDBCol md='8'>
+          <MDBCol md='10'>
             <form onSubmit={handleSubmit}>
               <MDBCard className='my-5'>
                 <MDBCardBody className='p-5'>
@@ -250,33 +223,140 @@ const generateSendSeparatelyListWhatsapp = (): SendIndivWhatsapp => {
                               {type===NotificationType.WHATSAPP && templateWhatsapp?.placeholders?.map(placeholder => (
                               <th key={placeholder}>{placeholder}</th>
                             ))}
+                            <th>Actions</th>
                           </tr>
                         </MDBTableHead>
-                        <tbody>
-                          {placeholderData[type === NotificationType.WHATSAPP ? 'whatsapp' : 'phone']?.map((phoneValue, rowIndex) => (
-                            <tr key={rowIndex}>
-                              <td>{phoneValue}</td>
-                              {type === NotificationType.SMS && template?.placeholders?.map(placeholder => (
-                                <td key={`${placeholder}-${rowIndex}`}>
-                                  {placeholderData[placeholder.toLowerCase()]?.[rowIndex] || ''}
-                                </td>
-                              ))}
-                              {type === NotificationType.WHATSAPP && templateWhatsapp?.placeholders?.map(placeholder => (
-                                <td key={`whatsapp-${placeholder}-${rowIndex}`}>
-                                  {placeholderData[placeholder.toLowerCase()]?.[rowIndex] || ''}
-                                </td>
-                              ))}
-                            </tr>
-                          ))}
-                        </tbody>
+                   <tbody>
+                      {Object.keys(placeholderData).length > 0 &&
+                        placeholderData[Object.keys(placeholderData)[0]].map((_, rowIndex) => (
+                          <tr key={rowIndex}>
+                            <td>
+                              {editMode[rowIndex] ? (
+                                <TextField
+                                  variant="outlined"
+                                  size="small"
+                                  value={placeholderData[type === NotificationType.WHATSAPP ? 'whatsapp' : 'phone']?.[rowIndex] || 'unknown'}
+                                  onChange={(e) => handleInputChange(type === NotificationType.WHATSAPP ? 'whatsapp' : 'phone', rowIndex, e.target.value)}
+                                  fullWidth
+                                />
+                              ) : (
+                                <span>{placeholderData[type === NotificationType.WHATSAPP ? 'whatsapp' : 'phone']?.[rowIndex] || 'unknown'}</span>
+                              )}
+                            </td>
+                            {type === NotificationType.SMS && template?.placeholders?.map(placeholder => (
+                              <td key={`${placeholder}-${rowIndex}`}>
+                                {editMode[rowIndex] ? (
+                                  <TextField
+                                    variant="outlined"
+                                    size="small"
+                                    value={placeholderData[placeholder.toLowerCase()]?.[rowIndex] || 'unknown'}
+                                    onChange={(e) => handleInputChange(placeholder.toLowerCase(), rowIndex, e.target.value)}
+                                    fullWidth
+                                  />
+                                ) : (
+                                  <span>{placeholderData[placeholder.toLowerCase()]?.[rowIndex] || 'unknown'}</span>
+                                )}
+                              </td>
+                            ))}
+                            {type === NotificationType.WHATSAPP && templateWhatsapp?.placeholders?.map(placeholder => (
+                              <td key={`whatsapp-${placeholder}-${rowIndex}`}>
+                                {editMode[rowIndex] ? (
+                                  <TextField
+                                    variant="outlined"
+                                    size="small"
+                                    value={placeholderData[placeholder.toLowerCase()]?.[rowIndex] || 'unknown'}
+                                    onChange={(e) => handleInputChange(placeholder.toLowerCase(), rowIndex, e.target.value)}
+                                    fullWidth
+                                  />
+                                ) : (
+                                  <span>{placeholderData[placeholder.toLowerCase()]?.[rowIndex] || 'unknown'}</span>
+                                )}
+                              </td>
+                            ))}
+                            <td className='d-flex'>
+                              <Tooltip title={editMode[rowIndex] ? 'Save' : 'Edit'} className="color_white">
+                                <Button className='me-2' type="button" onClick={() => toggleEditMode(rowIndex)} >
+                                {editMode[rowIndex]?<Save style={{ color: "whitesmoke" }} />:<Update style={{ color: "whitesmoke" }} />}
+                                </Button>
+                              </Tooltip>
+                              <Tooltip title="Delete" className="color_pink">
+                                <Button type="button" onClick={() => handleDeleteRow(rowIndex)}>
+                                  <Delete style={{ color: "whitesmoke" }} />
+                                </Button>
+                              </Tooltip>
+                            </td>
+                          </tr>
+                        ))
+                      }
 
+            {Object.keys(placeholderData).length > 0  && (
+                            <tr>
+                            <td>
+                            <TextField
+                                  variant="outlined"
+                                  size="small"
+                                  placeholder={type === NotificationType.WHATSAPP ? 'whatsapp' : 'phone'}
+                                  value={newRowData[type === NotificationType.WHATSAPP ? 'whatsapp' : 'phone'] || ''}
+                                  onChange={(e) => handleNewRowChange(type === NotificationType.WHATSAPP ? 'whatsapp' : 'phone', e.target.value)}
+                                  fullWidth
+                                />
+                            </td>
+                            {type === NotificationType.SMS && template?.placeholders?.map(placeholder => (
+                              <td key={`new-${placeholder}`}>
+                                <TextField
+                                  variant="outlined"
+                                  size="small"
+                                  value={newRowData[placeholder.toLowerCase()] || ''}
+                                  onChange={(e) => handleNewRowChange(placeholder.toLowerCase(), e.target.value)}
+                                  fullWidth
+                                  placeholder={placeholder}
+                                />
+                              </td>
+                            ))}
+                             {type === NotificationType.WHATSAPP && templateWhatsapp?.placeholders?.map(placeholder => (
+                              <td key={`new-${placeholder}`}>
+                                <TextField
+                                  variant="outlined"
+                                  size="small"
+                                  value={newRowData[placeholder.toLowerCase()] || ''}
+                                  onChange={(e) => handleNewRowChange(placeholder.toLowerCase(), e.target.value)}
+                                  fullWidth
+                                  placeholder={placeholder}
+                                />
+                              </td>
+                            ))}
+                            <td>
+                            <Tooltip title='Add Row' className="color_blue">
+                                      <Button className='me-2' type="button"  onClick={handleAddNewRow}>
+                                        <Add style={{ color: "whitesmoke" }} /> 
+                                      </Button>
+                                    </Tooltip>
+                            </td>
+                          </tr>)}
+                          
+                    </tbody>
 
 
                       </MDBTable>
                     </MDBCardBody>
                   </MDBCard>
-                  <ExcelSendButton onExcelUpload={handleExcelUpload} />
-                  <MDBBtn type="button" className='ms-5 w-60 mb-4 color_baby_blue' onClick={()=>setBasicModal(true)}> View template</MDBBtn> 
+                 <MDBBtn type="button" className='ms-5 w-60 mb-4 color_baby_bluee me-5'>
+                    <input
+                      type="file"
+                      accept=".xlsx, .xls"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0]; 
+                        if (file) {
+                          handleExcelUpload(file); 
+                        }
+                      }}
+                      style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }}
+                    />
+                    <MDBIcon icon="file-excel" style={{ marginRight: '3px' }} />
+                    Upload Excel
+                  </MDBBtn>
+
+                                    <MDBBtn type="button" className='ms-5 w-60 mb-4 color_baby_blue' onClick={()=>setBasicModal(true)}> View template</MDBBtn> 
                   {loading && (
                         <div className='d-flex justify-content-center mt-4'>
                         <MDBBtn disabled className='btn w-50 ' >

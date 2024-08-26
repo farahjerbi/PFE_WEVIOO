@@ -1,6 +1,7 @@
 import {createApi , fetchBaseQuery} from "@reduxjs/toolkit/query/react"
 import { WhatsAppTemplatePayload } from "../../models/sms/WhatsAppTemplatePayload";
 import { SendIndivWhatsapp, SendWhatsAppMsg } from "../../models/sms/SendWhatsAppMsg";
+import { WhatsappExcelProcessor } from "../../models/sms/ExcelProcessor";
 
 export const whatsAppApi = createApi({
   reducerPath: 'whatsAppApi',
@@ -73,7 +74,7 @@ export const whatsAppApi = createApi({
       })
     }),
     sendSMSWhatsAppSeparately: builder.mutation({
-      query: (body: SendIndivWhatsapp) => ({
+      query: (body: WhatsappExcelProcessor) => ({
         url: "/sendSMSWhatsAppSeparately",
         method: "POST",
         body,

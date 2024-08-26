@@ -27,9 +27,7 @@ import wevioo.tn.ms_push.services.WebPushMessageUtil;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 @RestController
@@ -58,7 +56,7 @@ public class WebPushController {
         }
     }
     @PostMapping("/notify-all")
-    public String notifyAll(@RequestBody SendPushNotif message) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException {
+    public ResponseEntity<String>  notifyAll(@RequestBody SendPushNotif message) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException {
        return webPushMessageTemplate.notifyAll(message);
     }
 
@@ -90,7 +88,7 @@ public class WebPushController {
     }
 
     @PostMapping("/notify")
-    public String notify(@RequestBody SendPushNotif message) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException {
+    public ResponseEntity<String>  notify(@RequestBody SendPushNotif message) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException {
         return  webPushMessageTemplate.notify(message);
     }
 
@@ -108,9 +106,9 @@ public class WebPushController {
         sendIndiv.setWebPushMessageTemplate(message.getTemplate());
         sendIndiv.setSendSeparatelyList(result);
 
-        String response = webPushMessageTemplate.notifySeparately(sendIndiv);
+        ResponseEntity<String>  response = webPushMessageTemplate.notifySeparately(sendIndiv);
 
-        return ResponseEntity.ok(response);
+        return response;
     }
 
 
@@ -218,25 +216,23 @@ public class WebPushController {
     }
 
 
-    @PostMapping(value="/process", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<WebPushExcelProcessor> processExcelFile(
+    @PostMapping(value = "/process", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Map<String, String[]>> processExcelFile(
             @RequestParam("file") MultipartFile file,
-            @RequestParam("template") String templateJson) {
+            @RequestParam(value = "requiredPlaceholders", required = false) String[] requiredPlaceholders) {
         try {
-            if (templateJson == null || templateJson.trim().isEmpty()) {
-                throw new IllegalArgumentException("Template cannot be null or empty.");
+            if (requiredPlaceholders == null) {
+                requiredPlaceholders = new String[]{};
             }
-            ObjectMapper objectMapper = new ObjectMapper();
-            WebPushMessage template = objectMapper.readValue(templateJson, WebPushMessage.class);
-
-            WebPushExcelProcessor result = excelFileService.processExcelFile(file, template);
+            Map<String, String[]> result = excelFileService.processExcelFile(file, requiredPlaceholders);
             return ResponseEntity.ok(result);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("error", new String[]{e.getMessage()}));
         }
     }
-
-    /*UPDATES*/
 
 
 }
