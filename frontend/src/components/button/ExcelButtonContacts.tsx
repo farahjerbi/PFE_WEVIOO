@@ -12,26 +12,16 @@ const ExcelButtonContacts: React.FC<ExcelButtonContactsProps> = ({ onDataProcess
             const filteredRow: any = {};
             keysToKeep.forEach(key => {
                 const value = getValue(row, key);
-                if (value !== undefined) {
+                if (value !== undefined && value !== null && value !== '') {
                     filteredRow[key] = value;
+                } else {
+                    filteredRow[key] = 'unknown';
                 }
             });
-    
-            // Validate email and phone
-            if (filteredRow.email && !validateEmail(filteredRow.email)) {
-                console.warn(`Invalid email: ${filteredRow.email}`);
-                filteredRow.email = undefined; // or handle invalid email
-            }
-            if (filteredRow.phone && !validatePhone(filteredRow.phone)) {
-                console.warn(`Invalid phone: ${filteredRow.phone}`);
-                filteredRow.phone = undefined; // or handle invalid phone
-            }
-            
             return filteredRow;
         });
     };
     
-
     const readExcel = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {

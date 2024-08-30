@@ -34,3 +34,20 @@ export  const truncateText = (text:string|undefined, maxLength:number) => {
     if (!text) return '';
     return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
 };
+
+export const isBase64UrlEncoded = (str: string) => {
+  try {
+      const decodedKey = atob(str.replace(/-/g, '+').replace(/_/g, '/'));
+      return decodedKey.length === 65;
+  } catch (e) {
+      return false;
+  }
+};
+export const isValidUrl = (urlString: string) => {
+  try {
+      new URL(urlString);
+      return true;
+  } catch (_) {
+      return false;
+  }
+};

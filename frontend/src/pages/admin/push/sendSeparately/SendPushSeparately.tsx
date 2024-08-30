@@ -162,19 +162,6 @@ const SendPushSeparately = () => {
       <BreadcrumSection />
       <MDBContainer style={{ width: '88%', marginLeft: '10%' }} fluid className='p-4 mt-5'>
         <MDBRow>
-          {/* <MDBCol
-            style={{
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'center',
-              backgroundImage: 'url(../../../assets/worksheet.png)',
-              backgroundSize: '60% 50%',
-            }}
-            md='4'
-            className='text-center text-md-start d-flex flex-column justify-content-center mt-4'
-          >
-
-          </MDBCol> */}
-
           <MDBCol md='14'>
             <form onSubmit={handleSubmit}>
               <MDBCard className='my-5'>
