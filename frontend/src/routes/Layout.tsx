@@ -21,5 +21,5 @@ export default Layout
 
 //docker exec -it db-postgres psql -U postgres
 //\c CREATE DATABASE "Ms_PUSH_Notification";
-//\c  Ms_Auth_Notification;
+//\c  Ms_Push_Notification;
 

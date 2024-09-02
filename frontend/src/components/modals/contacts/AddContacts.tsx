@@ -29,10 +29,12 @@ const AddContacts: React.FC<Props> = ({ onClose ,show }) => {
     useEffect(() => {
         setOpen(show);
     }, [show]);
+    
     const toggleOpen = () =>{
         onClose();
         setOpen(false)
     }
+
     const handleDataProcessed = (data: any[]) => {
         setContacts(data);
     };

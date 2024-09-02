@@ -61,44 +61,40 @@ const SendPushSeparately = () => {
 
       const handleSubmit: (evt: FormEvent<HTMLFormElement>) => void = async (
         e: FormEvent<HTMLFormElement>
-      ) => {
+    ) => {
         e.preventDefault();
         setLoading(true);
-              if (!placeholderData) {
-          toast.warning('Invalid placeholder data.');
-          setLoading(false);
-          return;
+    
+        if (!placeholderData) {
+            toast.warning('Invalid placeholder data.');
+            setLoading(false);
+            return;
         }
+    
         try {
-          if(template){
-            const sendPush:WebPushExcelProcessor = {
-              template: {
-                id: 1,
-                title: "Important Update",
-                message: "Please check the latest updates.",
-                icon: "https://example.com/icon.png",
-                clickTarget: "https://example.com",
-                placeholders: ["user"],
-                userFavoritePush: [101, 102],
-              },
-              placeholderData: placeholderData,
-            };
-        
-            const response = await sendPushSeprartely(sendPush).unwrap();
-            console.log("🚀 ~ SendPushSeparately ~ response:", response)
-            toast.success("Push Notifications sent Successfully!");
-            navigate(LIST_PUSH_TEMPLATES);
-          }
-         
+            if (template) {
+                const sendPush: WebPushExcelProcessor = {
+                    template: template,
+                    placeholderData: placeholderData,
+                };
+                const response = await sendPushSeprartely(sendPush).unwrap();
+                console.log("🚀 ~ SendPushSeparately ~ response:", response);
+                toast.success("Push Notifications sent Successfully!");
+                navigate(LIST_PUSH_TEMPLATES);
+            }
         } catch (error: any) {
-          if (error && error.data) {
-            toast.error(error.data || "An unknown error occurred.");
-          console.error("🚀 ~ error:", error);
-        }
+            if (error && error.data === 'Sent successfully') {
+              toast.success("Push Notifications sent Successfully!");
+              navigate(LIST_PUSH_TEMPLATES);
+            } else if (error && error.data) {
+                toast.error(error.data || "An unknown error occurred.");
+            }
+            console.error("🚀 ~ error:", error);
         } finally {
-          setLoading(false);
+            setLoading(false);
         }
-      };
+    };
+    
 
  
       const handleInputChange = (key: string, rowIndex: number, value: string) => {

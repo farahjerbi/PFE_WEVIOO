@@ -43,6 +43,7 @@ export const isBase64UrlEncoded = (str: string) => {
       return false;
   }
 };
+
 export const isValidUrl = (urlString: string) => {
   try {
       new URL(urlString);

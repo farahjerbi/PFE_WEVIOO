@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="47b90f9d-f514-4815-89cb-02ca514b65ac" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/Docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/components/navbar/Navbar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/navbar/Navbar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/components/sidebar/Sidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/sidebar/Sidebar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/pages/admin/Email/create/CreateSimpleTemplate.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/pages/admin/Email/create/CreateSimpleTemplate.tsx" afterDir="false" />
-    </list>
+    <list default="true" id="47b90f9d-f514-4815-89cb-02ca514b65ac" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -54,6 +49,7 @@
       <workItem from="1715595710317" duration="20000" />
       <workItem from="1716417379922" duration="3000" />
       <workItem from="1719605214325" duration="21000" />
+      <workItem from="1725040394209" duration="13000" />
     </task>
     <servers />
   </component>

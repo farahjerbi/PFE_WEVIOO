@@ -170,7 +170,7 @@ const formValidation = () => {
       }
     } catch (error: any) {
       if (error && error.data) {
-        toast.error(error.data.message);
+        toast.error(error.data.message || "Registration failed.");
         console.error("🚀 ~ error:", error.message);
       } else {
         toast.error("An unknown error occurred.");

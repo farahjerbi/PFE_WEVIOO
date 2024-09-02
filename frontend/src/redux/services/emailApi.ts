@@ -95,9 +95,7 @@ export const emailApi = createApi({
             query: ({ email, userId, id }) => ({
                 url: `/SendEmailSeparately/${id}/${userId}`,
                 method: "POST",
-                body: {
-                    email
-                },
+                body: email,
             }),
         }),
         deleteScheduledEmail: builder.mutation({

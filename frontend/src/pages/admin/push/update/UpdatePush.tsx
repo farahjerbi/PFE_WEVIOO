@@ -193,7 +193,7 @@ const UpdatePush :React.FC<Props> = ({onClose,show ,template,view}) => {
 
   return (
     <>
-      <Modal open={open} onClose={toggleOpen}>
+      <Modal  open={open}  onClose={toggleOpen}>
         <ModalDialog>
           {!view && (
             <>

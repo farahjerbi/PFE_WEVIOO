@@ -6,6 +6,7 @@ import nl.martijndwars.webpush.Notification;
 import nl.martijndwars.webpush.PushService;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jose4j.lang.JoseException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import wevioo.tn.ms_push.dtos.request.*;
@@ -19,6 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.security.Security;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Set;
@@ -120,22 +122,33 @@ public class WebPushMessageTemplateImpl implements WebPushMessageTemplate{
 
         return ResponseEntity.ok("Notifications sent successfully");
     }
-    public ResponseEntity<String>  notify(SendPushNotif message) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException {
+    public ResponseEntity<String> notify(SendPushNotif message) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException {
         Security.addProvider(new BouncyCastleProvider());
+        List<String> validationErrors = new ArrayList<>();
 
         if (message.getPlaceholderValues() != null) {
             message.getWebPushMessageTemplate().setMessage(
                     webPushMessageUtil.replacePlaceholders(message.getWebPushMessageTemplate().getMessage(), message.getPlaceholderValues()));
         }
 
-        PushService pushService = new PushService(PUBLIC_KEY, PRIVATE_KEY, SUBJECT);
-
         for (WebPushSubscription subscription : message.getWebPushSubscriptions()) {
             try {
                 validatePublicKey(subscription.getPublicKey());
-
                 validateNotificationEndpoint(subscription.getNotificationEndPoint());
+            } catch (IllegalArgumentException | MalformedURLException e) {
+                validationErrors.add("Validation failed for subscription with endpoint: "
+                        + subscription.getNotificationEndPoint() + " - " + e.getMessage());
+            }
+        }
 
+        if (!validationErrors.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Failed to send notifications due to the following validation errors:\n" + String.join("\n", validationErrors));
+        }
+
+        PushService pushService = new PushService(PUBLIC_KEY, PRIVATE_KEY, SUBJECT);
+        for (WebPushSubscription subscription : message.getWebPushSubscriptions()) {
+            try {
                 Notification notification = new Notification(
                         subscription.getNotificationEndPoint(),
                         subscription.getPublicKey(),
@@ -143,30 +156,38 @@ public class WebPushMessageTemplateImpl implements WebPushMessageTemplate{
                         objectMapper.writeValueAsBytes(message.getWebPushMessageTemplate()));
 
                 pushService.send(notification);
-            } catch (IllegalArgumentException e) {
-                throw e;
-            } catch (MalformedURLException e) {
-                throw new RuntimeException( e.getMessage(), e);
             } catch (Exception e) {
                 throw new RuntimeException("Failed to send notification due to unexpected error: " + e.getMessage(), e);
             }
         }
 
-        return ResponseEntity.ok("Notifications sent successfully");
+        return ResponseEntity.status(200).body("Sent successfully");
     }
 
-    public ResponseEntity<String>  notifySeparately(SendIndiv message) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException {
+    public ResponseEntity<String> notifySeparately(SendIndiv message) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException {
         Security.addProvider(new BouncyCastleProvider());
         PushService pushService = new PushService(PUBLIC_KEY, PRIVATE_KEY, SUBJECT);
 
+        List<String> validationErrors = new ArrayList<>();
+
         for (SendSeparately sendSeparately : message.getSendSeparatelyList()) {
             try {
-                // Validate public key
                 validatePublicKey(sendSeparately.getWebPushSubscriptions().getPublicKey());
 
-                // Validate notification endpoint URL
                 validateNotificationEndpoint(sendSeparately.getWebPushSubscriptions().getNotificationEndPoint());
+            } catch (IllegalArgumentException | MalformedURLException e) {
+                validationErrors.add("Validation failed for subscription with endpoint: "
+                        + sendSeparately.getWebPushSubscriptions().getNotificationEndPoint() + " - " + e.getMessage());
+            }
+        }
 
+        if (!validationErrors.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Failed to send notifications due to the following validation errors:\n" + String.join("\n", validationErrors));
+        }
+
+        for (SendSeparately sendSeparately : message.getSendSeparatelyList()) {
+            try {
                 if (message.getWebPushMessageTemplate() != null) {
                     message.getWebPushMessageTemplate().setMessage(
                             webPushMessageUtil.replacePlaceholders(message.getWebPushMessageTemplate().getMessage(), sendSeparately.getPlaceholderValues())
@@ -181,15 +202,12 @@ public class WebPushMessageTemplateImpl implements WebPushMessageTemplate{
                 );
 
                 pushService.send(notification);
-            } catch (IllegalArgumentException e) {
-                throw e;
-            } catch (MalformedURLException e) {
-                throw new RuntimeException(e.getMessage(), e);
             } catch (Exception e) {
                 throw new RuntimeException("Failed to send notification due to unexpected error: " + e.getMessage(), e);
             }
         }
-        return ResponseEntity.ok("Notifications sent successfully");
+
+        return ResponseEntity.status(200).body("Sent successfully");
     }
 
     private void validatePublicKey(String publicKey) {
@@ -200,14 +218,22 @@ public class WebPushMessageTemplateImpl implements WebPushMessageTemplate{
         }
 
         try {
-            byte[] decodedKey = Base64.getUrlDecoder().decode(publicKey);
+            String base64 = publicKey.replace('-', '+').replace('_', '/');
+
+            int padding = base64.length() % 4;
+            if (padding > 0) {
+                base64 += "====".substring(padding);
+            }
+
+            byte[] decodedKey = Base64.getDecoder().decode(base64);
             if (decodedKey.length != 65) {
                 errorMessages.append("Public key has incorrect length (should be 65 bytes). ");
             }
 
         } catch (IllegalArgumentException e) {
-            errorMessages.append("Public key is not properly base64url encoded. ");
+            errorMessages.append("Public key is not properly Base64 URL encoded. ");
         }
+
         if (errorMessages.length() > 0) {
             throw new IllegalArgumentException(errorMessages.toString().trim());
         }

@@ -84,9 +84,8 @@ const SendSeparatelyEmail = () => {
         sendSeparatelyList.push({
           recipient,
           replyTo,
-          id: i,
           addSignature,
-          requestBody: JSON.stringify(row),
+          requestBody: row,
         });
       }
     }
@@ -98,6 +97,7 @@ const SendSeparatelyEmail = () => {
     e.preventDefault();
     setLoading(true);
 
+   
     const sendSeparatelyList = generateSendSeparatelyList();
     const result = validateSendSeparatelyList(sendSeparatelyList);
     if (!result.isValid) {
@@ -191,9 +191,9 @@ const SendSeparatelyEmail = () => {
         return { isValid: false, errorMessage: `addSignature must be 'true' or 'false'. Found: ${addSignature}` };
       }
   
-      const requestBodyObj = JSON.parse(requestBody);
-      for (const key in requestBodyObj) {
-        if (!requestBodyObj[key] || requestBodyObj[key] === 'unknown') {
+      // Validate the requestBody object
+      for (const key in requestBody) {
+        if (!requestBody[key] || requestBody[key] === 'unknown') {
           return { isValid: false, errorMessage: `Field ${key} is empty or unknown.` };
         }
       }
@@ -201,7 +201,7 @@ const SendSeparatelyEmail = () => {
   
     return { isValid: true, errorMessage: null };
   };
-
+  
   return (
     <>
       <BreadcrumSection />

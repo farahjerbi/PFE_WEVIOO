@@ -142,8 +142,21 @@ const CustomizedSteppers : React.FC<Props> = ({ template , onClose ,show }) => {
           const validateSubscriptions = (): boolean => {
             return subscriptions.some(sub => sub.notificationEndPoint && sub.publicKey && sub.auth);
         };
+
+        const validatePlaceholders = (): boolean => {        
+          if (Object.keys(placeholdersValues).length === 0) {
+            return false; 
+          }
+          return Object.values(placeholdersValues).every(value => typeof value === 'string' && value.trim() !== '');
+        };
+        
+        
         
         const handleNext = () => {
+          if (activeStep === 0 && !validatePlaceholders()) {
+            toast.warning('Please fill in all placeholder values.');
+            return;
+        }
           if (activeStep === 1 && !validateSubscriptions()) {
               toast.warning('Please provide at least one valid subscription.');
               return;

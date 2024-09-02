@@ -106,9 +106,7 @@ public class WebPushController {
         sendIndiv.setWebPushMessageTemplate(message.getTemplate());
         sendIndiv.setSendSeparatelyList(result);
 
-        ResponseEntity<String>  response = webPushMessageTemplate.notifySeparately(sendIndiv);
-
-        return response;
+        return webPushMessageTemplate.notifySeparately(sendIndiv);
     }
 
 

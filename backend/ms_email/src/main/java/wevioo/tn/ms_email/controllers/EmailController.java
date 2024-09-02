@@ -96,20 +96,18 @@ public class EmailController {
     }
     }
 
-    @PostMapping(value = "SendEmailSeparately/{emailTemplateId}/{userId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "SendEmailSeparately/{emailTemplateId}/{userId}", consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> SendEmailSeparately(
-            @PathVariable Long emailTemplateId, @PathVariable Long userId,@ModelAttribute List<SendEmailSeparately> email) {
+            @PathVariable Long emailTemplateId, @PathVariable Long userId,@RequestBody List<SendEmailSeparately> email) {
         try {
             EmailTemplate emailTemplate = emailTemplateRepository.findEmailTemplateWithDetails(emailTemplateId);
             if (emailTemplate == null) {
                 return ResponseEntity.ok("Email template not found.");
             }
-            ObjectMapper mapper = new ObjectMapper();
             for (SendEmailSeparately recipient : email) {
-                Map<String, String> requestBody = mapper.readValue(recipient.getRequestBody(), new TypeReference<>() {});
                 String[] singleRecipient = {recipient.getRecipient()};
 
-                emailTemplateService.sendEmail(emailTemplate.getTemplateBody(), requestBody, null,
+                emailTemplateService.sendEmail(emailTemplate.getTemplateBody(), recipient.getRequestBody(), null,
                         singleRecipient,null , recipient.getReplyTo(), userId, recipient.getAddSignature());
             }
             return ResponseEntity.ok().body("Email sent successfully.");

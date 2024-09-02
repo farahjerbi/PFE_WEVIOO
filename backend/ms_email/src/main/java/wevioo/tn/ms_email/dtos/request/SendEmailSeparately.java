@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+
 
 @Data
 @AllArgsConstructor
@@ -12,5 +14,5 @@ public class SendEmailSeparately {
         private String recipient;
         private String replyTo;
         private String addSignature;
-        private String requestBody;
+        private Map<String, String> requestBody;
 }
