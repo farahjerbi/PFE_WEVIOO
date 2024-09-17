@@ -12,6 +12,7 @@ import TeamDetails from '../../../components/contacts/TeamDetails'
 import UpdateCnct from '../../../components/contacts/UpdateCnct'
 import UpdateTeam from '../../../components/contacts/UpdateTeam'
 import AddContacts from '../../../components/modals/contacts/AddContacts'
+import { toast } from 'sonner'
 const Contacts = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [openAddContacts, setOpenAddContacts] = useState<boolean>(false);
@@ -125,14 +126,19 @@ const Contacts = () => {
         <MDBCardBody>
         <Button
                  onClick={()=>{
-                  setOpenAddContact(false);
-                  setOpenContactDetails(false);
-                  setOpenUpdateContact(false)
-                  setOpenUpdateTeam(false)
-                  setOpenTeamDetails(false)
-                  dispatch(setTeamDetails(null));
-                  setOpen(true);
-                  setOpenAddTeam(true);
+                  if(contactsUser && contactsUser?.length>0){
+                    setOpenAddContact(false);
+                    setOpenContactDetails(false);
+                    setOpenUpdateContact(false)
+                    setOpenUpdateTeam(false)
+                    setOpenTeamDetails(false)
+                    dispatch(setTeamDetails(null));
+                    setOpen(true);
+                    setOpenAddTeam(true);
+                  }else{
+                    toast.warning("Before you create a team you should add contacts.")
+                  }
+                 
                 }}
                 className='mb-4'
                 component="label"

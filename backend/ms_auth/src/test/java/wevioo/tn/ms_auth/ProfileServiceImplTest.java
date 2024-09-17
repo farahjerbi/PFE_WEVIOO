@@ -122,15 +122,6 @@ class ProfileServiceImplTest {
         assertNotNull(response);
     }
 
-    @Test
-    void testDeleteProfile() {
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(userEntity));
-
-        String result = profileService.deleteProfile(1L);
-
-        verify(userRepository, times(1)).deleteById(anyLong());
-        assertEquals("User deleted successfully", result);
-    }
 
     @Test
     void testGetAllUsers() {

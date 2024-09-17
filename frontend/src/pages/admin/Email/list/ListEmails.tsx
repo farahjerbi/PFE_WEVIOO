@@ -147,7 +147,7 @@ const ListEmails = () => {
           className="list_container mb-4 d-flex align-items-center"
         >
          {role===Role.ADMIN && ( <MDBCardImage src="../assets/send-email.jpg" position="top" fluid className="size_imgg" style={{marginLeft:"-3%"}} />  )}
-         {role===Role.USER && ( <MDBCardImage src="../assets/send-email.jpg" position="top" fluid className="size_imgg" style={{marginLeft:"-11%"}} />  )}
+         {role===Role.USER && ( <MDBCardImage src="../assets/send-email.jpg" position="top" fluid className="size_imgg_user" style={{marginLeft:"-13%"}} />  )}
 
           <MDBCard style={{marginLeft:"-120px" , background: 'hsla(0, 0%, 100%, 0.55)',
                 backdropFilter: 'blur(30px)',}} >
@@ -239,7 +239,7 @@ const ListEmails = () => {
                                 </td>
                       
                      
-                         <td>
+                         <td className="d-flex">
                         <Tooltip style={{marginRight:"5px"}} title="Send Same Template to all" className="color_blue" >
                           <Button     onClick={() =>
                           {

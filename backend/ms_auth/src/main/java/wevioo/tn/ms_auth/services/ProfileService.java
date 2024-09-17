@@ -14,7 +14,7 @@ import java.util.List;
 public interface ProfileService {
     void changePassword(ChangePasswordRequest changePasswordRequest);
     void forgotPassword(ForgotPassword email);
-    String deleteProfile(long id);
+    void deleteProfile(long id,String password,Boolean isAdmin);
 
     UserResponse UpdateProfile(UpdateUser userEntity , Long id );
     List<UsersResponse> getAllUsers();

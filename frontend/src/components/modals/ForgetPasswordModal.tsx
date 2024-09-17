@@ -33,15 +33,9 @@ const ForgetPasswordModal : React.FC<Props> = ({ onClose ,show }) => {
       return
     }
     try {
-        setEmailForgotten("")
-        const response =await forgotPassword({email:emailForgotten}).unwrap();
-        const { data } = response; 
-    
-        if (data) {
-          setOpen(!open)
+          await forgotPassword({email:emailForgotten}).unwrap();
+          toggleOpen()
           toast.success("Check your email to reset your password !");
-        }
-       
     } catch (error: any) {
       if (error && error.data) {
         toast.error(error.data || "An unknown error occurred.");

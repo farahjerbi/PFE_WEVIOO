@@ -2,7 +2,7 @@ import { MDBBtn, MDBInput } from 'mdb-react-ui-kit'
 import React, { FormEvent, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'sonner'
-import { addTeam, selectContact, selectUser } from '../../redux/state/authSlice';
+import { addTeam, decodeToken, selectContact, selectUser } from '../../redux/state/authSlice';
 import './Team.css'
 import Grid from '@mui/material/Grid';
 import List from '@mui/material/List';
@@ -14,6 +14,7 @@ import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import { IContact } from '../../models/user/Contact';
 import { useCreateTeamMutation } from '../../redux/services/usersApi';
+import { AppDispatch } from '../../redux/store';
 function not(a: readonly IContact[], b: readonly IContact[]) {
     return a.filter((value) => b.indexOf(value) === -1);
   }
@@ -43,6 +44,8 @@ const Team : React.FC<Props> = ({ onClose }) => {
     const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
     const [previous, setPrevious] = useState<boolean>(false);
     const [createTeam]=useCreateTeamMutation();
+    const dispatchh: AppDispatch = useDispatch(); 
+
     const handleAvatarClick = (src: string) => {
         setSelectedAvatar(src);
       };
@@ -72,8 +75,8 @@ const Team : React.FC<Props> = ({ onClose }) => {
       try {
         if(user && user.id){
             const response = await createTeam({team:contactRes,id:user.id}).unwrap()
-            dispatch(addTeam(response))
-        }
+            dispatchh(decodeToken());
+          }
           setFormData(initialState)
           toast.success("Team added Successfully !");
           onClose();

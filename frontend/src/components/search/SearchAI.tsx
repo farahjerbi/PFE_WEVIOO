@@ -14,7 +14,7 @@ import { getTemplatesSms, selectSMSs } from '../../redux/state/smsSlice';
 import { Button, Tooltip } from '@mui/material';
 import { TemplateBody } from '../../models/email/TemplateBody';
 import { AppDispatch } from '../../redux/store';
-import Pageview from '@mui/icons-material/Pageview';
+import OpenInNew from '@mui/icons-material/OpenInNew';
 import { useNavigate } from 'react-router-dom';
 import { LIST_EMAIL_TEMPLATES, LIST_PUSH_TEMPLATES, LIST_SMS_TEMPLATES } from '../../routes/paths';
 interface Template {
@@ -47,14 +47,9 @@ const SearchAI = () => {
 
     const handleSearch = async () => {
         try {
-          if (token && token.startsWith('"') && token.endsWith('"')) {
-            let tokeen = token.substring(1, token.length - 1);
-            console.log("🚀 ~ handleSearch ~ tokeen:", tokeen)
-        
         const response = await axios.post(
-          'http://localhost:5000/api/search', 
-          { description: userDescription }, 
-          { headers: { 'Authorization': `Bearer ${tokeen}` } }
+          'http://search-engine:5000/api/search', 
+          { description: userDescription }
       );
         const templatesFromApi: Template[] = response.data;
 
@@ -75,7 +70,6 @@ const SearchAI = () => {
           const topTemplates = allTemplates.slice(0, 3);
     
             setMatchedTemplates(topTemplates);
-        }
   
         setOpen(true);
     }
@@ -120,7 +114,7 @@ const SearchAI = () => {
                                               <th className='tab'>Name Template</th>
                                               <th className='tab'>Type</th>
                                               <th className='tab'>Subject</th>
-                                              <th className='tab'>View Details</th>
+                                              <th className='tab'>Details</th>
                                           </tr>
                                       </MDBTableHead>
                                       <MDBTableBody>
@@ -146,8 +140,8 @@ const SearchAI = () => {
                                               <td className='tab'>{template?.subject || template?.templateBody?.subject || ""}</td>
                                               <td>
                                                   <Tooltip title="View" >
-                                                      <Button onClick={()=>viewDetails(template)} className="color_white">
-                                                        <Pageview style={{color:"whitesmoke"}} />
+                                                      <Button onClick={()=>viewDetails(template)} className="color_baby_bluee">
+                                                        <OpenInNew style={{color:"whitesmoke"}} />
                                                       </Button>
                                                   </Tooltip>
                                               </td>

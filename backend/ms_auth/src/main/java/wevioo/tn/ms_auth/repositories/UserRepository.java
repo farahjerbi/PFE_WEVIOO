@@ -4,6 +4,7 @@ import feign.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import org.springframework.data.jpa.repository.Query;
+import wevioo.tn.ms_auth.entities.Role;
 import wevioo.tn.ms_auth.entities.UserEntity;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public interface UserRepository extends JpaRepository<UserEntity,Long> {
     Boolean existsByEmail(String email);
     @Query("SELECT u FROM UserEntity u LEFT JOIN FETCH u.members")
     List<UserEntity> findAllWithMembers();
+    List<UserEntity> findByRole(Role role);
 
 
 }

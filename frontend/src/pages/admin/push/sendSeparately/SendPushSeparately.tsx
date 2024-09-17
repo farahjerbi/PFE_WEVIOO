@@ -20,7 +20,6 @@ const SendPushSeparately = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [basicModal, setBasicModal] = useState<boolean>(false);
     const [placeholderData, setPlaceholderData] = useState<Record<string, string[]>>({});
-    console.log("🚀 ~ SendPushSeparately ~ placeholderData:", placeholderData)
     const [editMode, setEditMode] = useState<boolean[]>(Array(Object.keys(placeholderData)[0]?.length).fill(false));
     const [newRowData, setNewRowData] = useState<Record<string, string>>({});
     const[sendPushSeprartely]=useSendPushSeprartelyMutation()
@@ -57,8 +56,6 @@ const SendPushSeparately = () => {
           console.error('🚀 ~ error:', error);
         }
       };
-
-
       const handleSubmit: (evt: FormEvent<HTMLFormElement>) => void = async (
         e: FormEvent<HTMLFormElement>
     ) => {
@@ -93,10 +90,7 @@ const SendPushSeparately = () => {
         } finally {
             setLoading(false);
         }
-    };
-    
-
- 
+      };
       const handleInputChange = (key: string, rowIndex: number, value: string) => {
         setPlaceholderData(prevData => {
           const updatedData = { ...prevData };
@@ -104,8 +98,7 @@ const SendPushSeparately = () => {
           updatedData[key][rowIndex] = value;
           return updatedData;
         });
-      };
-    
+      };  
       const handleDeleteRow = (rowIndex: number) => {
         setPlaceholderData(prevData => {
           const updatedData: Record<string, string[]> = {};
@@ -114,8 +107,7 @@ const SendPushSeparately = () => {
           });
           return updatedData;
         });
-      };
-    
+      }; 
       const toggleEditMode = (rowIndex: number) => {
         setEditMode(prevState => {
           const updatedEditMode = [...prevState];
@@ -128,8 +120,7 @@ const SendPushSeparately = () => {
           ...prevData,
           [key]: value,
         }));
-      };
-      
+      };   
       const handleAddNewRow = () => {
         setPlaceholderData(prevData => {
           const updatedData: { [key: string]: string[] } = {};

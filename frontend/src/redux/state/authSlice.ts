@@ -30,6 +30,7 @@ import { ITeam, ITeamWithContact } from "../../models/user/Team";
                     },
                   }
                 );
+                console.log("🚀 ~ response:", response)
                 return response.data;
             } catch (error) {
                 return rejectWithValue(null);
@@ -124,15 +125,18 @@ export const authSlice = createSlice({
       },
       setDeleteTeam(state, action: PayloadAction<number>) {
         const teamId = action.payload;
-        if (state.team) {
+      
+        if (state.team && Array.isArray(state.team)) {
           state.team = state.team.filter(team => team.id !== teamId);
         }
-        if (state.contact) {
+        if (state.contact && Array.isArray(state.contact)) {
           state.contact.forEach(contact => {
-            contact.teams = contact.teams.filter(team => team.id !== teamId);
+            if (contact.teams && Array.isArray(contact.teams)) {
+              contact.teams = contact.teams.filter(team => team.id !== teamId);
+            }
           });
         }
-      },
+      },      
       addTeam(state, action: PayloadAction<ITeam>) {
         if (state.team) {
           state.team.push(action.payload);

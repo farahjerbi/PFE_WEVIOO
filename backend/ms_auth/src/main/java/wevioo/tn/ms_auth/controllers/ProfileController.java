@@ -46,8 +46,8 @@ public class ProfileController {
     }
 
     @DeleteMapping("deleteProfile/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long id){
-        return new ResponseEntity<>(profileService.deleteProfile(id), HttpStatus.OK);
+    public void deleteUser(@PathVariable Long id,@RequestBody DeleteRequest request){
+         profileService.deleteProfile(id,request.getPassword(),request.getIsAdmin());
     }
 
     @PostMapping("changePassword")

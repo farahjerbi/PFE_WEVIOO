@@ -5,6 +5,7 @@ import {
   MDBContainer,
   MDBInput,
   MDBCheckbox,
+  MDBSpinner,
 }
 from 'mdb-react-ui-kit';
 import {useRegisterUserMutation, useVerifyEmailMutation, useVerifyUserExistMutation} from '../../redux/services/authApi';
@@ -64,6 +65,11 @@ const formValidation = () => {
       localError.confirmPassword = "Confirm password required and minLength is 10" ;
       etat = false;
    }
+   if (password !== confirmPassword) {
+    localError.confirmPassword = "Passwords do not match.";
+    localError.password = "Passwords do not match.";
+    etat = false;
+  }
  
    setErrors(localError)
    return etat ; 
@@ -77,6 +83,8 @@ const formValidation = () => {
   const[verifyEmail]=useVerifyEmailMutation();
   const[verifyUserExist]=useVerifyUserExistMutation()
   const[toBeContinued,setToBeContinued]=useState<boolean>(true);
+  const[loading,setLoading]=useState<boolean>(false);
+  const[loadingEmail,setLoadingEmail]=useState<boolean>(false);
   const[Continued,setContinued]=useState<boolean>(false);
   const [mail,setMail]=useState<string>("");
   const navigate=useNavigate()
@@ -112,23 +120,27 @@ const formValidation = () => {
     e: FormEvent<HTMLFormElement>
   ) => {
     e.preventDefault();
+    setLoadingEmail(true)
     if(!email){
+      setLoadingEmail(false)
       toast.error("Enter Email please");
       return
     }
     if (!validateEmail(email)){
+      setLoadingEmail(false)
       toast.error("Email format incorrect");
       return
     }
     try {
       const response = await verifyEmail({ email }).unwrap(); 
+      setLoadingEmail(false)
       setToBeContinued(false);
       toast.success("Please Verify Your Email !");
       
     } catch (error: any) {
       if (error && error.data) {
+        setLoadingEmail(false)
         toast.error(error.data || "An unknown error occurred.");
-      console.error("🚀 ~ error:", error);
     }
   };
 }
@@ -145,6 +157,7 @@ const formValidation = () => {
       toast.error("Invalid Form");
       return;
     }
+    setLoading(true)
 
     try {
       const decodedToken: DecodedToken = jwtDecode(formData.email);
@@ -158,13 +171,13 @@ const formValidation = () => {
         password: formData.password,
         mfaEnabled: formData.mfaEnabled
       }).unwrap();
-
       console.log("🚀 ~ userData:", userData);
       setIsMfaEnabled(userData.secretImageUri);
       toast.success("User registered successfully !");
 
       if (!userData.mfaEnabled) {
         setFormData(initialState);
+        setLoading(false)
         navigate(AUTHENTICATION);
         window.location.reload(); 
       }
@@ -197,9 +210,20 @@ const formValidation = () => {
                     style={{ color: '#6873C8', fontSize: '17px', fontWeight: 'bold' }}
                   />
                 <MDBInput name='email'  value={email} onChange={handleChange} className='mb-4 mt-5' type='email' id='form8Example3' label='Email address' />
-                <MDBBtn  type='submit' className='mb-4 mt-4' block>
-                  Sign up
-                </MDBBtn>
+                {loadingEmail && (
+                        <div className='d-flex justify-content-center mt-4'>
+                        <MDBBtn disabled className='btn w-50 ' >
+                        <MDBSpinner size='sm' role='status' tag='span' className='me-2' />
+                            Loading...
+                        </MDBBtn>
+                        </div>
+                    )}
+                    {!loadingEmail && (
+                      <MDBBtn  type='submit' className='mb-4 mt-4' block>
+                      Sign up
+                      </MDBBtn>
+                    )}
+               
               </form>
 
         </>
@@ -301,9 +325,18 @@ const formValidation = () => {
           checked={mfaEnabled}
           onChange={(e) => setFormData({ ...formData, mfaEnabled: e.target.checked })}
         />
+           {loading && (
+                        <div className='d-flex justify-content-center mt-4'>
+                        <MDBBtn disabled className='btn w-50 ' >
+                        <MDBSpinner size='sm' role='status' tag='span' className='me-2' />
+                            Loading...
+                        </MDBBtn>
+                        </div>
+                    )}
+                 {!loading && (            
         <MDBBtn  type='submit' className='mb-4' block>
           Sign up
-        </MDBBtn>
+        </MDBBtn>)}
       </form>)}
     </MDBContainer>
     )}

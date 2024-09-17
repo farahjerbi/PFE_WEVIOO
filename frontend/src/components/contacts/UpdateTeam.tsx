@@ -2,7 +2,7 @@ import { MDBBtn, MDBInput } from 'mdb-react-ui-kit'
 import React, { FormEvent, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'sonner'
-import { selectContact, selectContactsByTeamId, selectTeamDetails, selectUser, updateTeamAndContacts } from '../../redux/state/authSlice';
+import { decodeToken, selectContact, selectContactsByTeamId, selectTeamDetails, selectUser, updateTeamAndContacts } from '../../redux/state/authSlice';
 import './Team.css'
 import Grid from '@mui/material/Grid';
 import List from '@mui/material/List';
@@ -14,6 +14,7 @@ import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import { IContact } from '../../models/user/Contact';
 import {  useUpdateTeamMutation } from '../../redux/services/usersApi';
+import { AppDispatch } from '../../redux/store';
 function not(a: readonly IContact[], b: readonly IContact[]) {
     return a.filter((value) => b.indexOf(value) === -1);
   }
@@ -43,6 +44,7 @@ const UpdateTeam : React.FC<Props> = ({ onClose }) => {
     const [previous, setPrevious] = useState<boolean>(false);
     const [updateTeam]=useUpdateTeamMutation();
     const team=useSelector(selectTeamDetails)
+    const dispatchh: AppDispatch = useDispatch(); 
     const [selectedAvatar, setSelectedAvatar] = useState<string | null | undefined>(team?.avatar);
     const handleAvatarClick = (src: string) => {
         setSelectedAvatar(src);
@@ -73,7 +75,7 @@ const UpdateTeam : React.FC<Props> = ({ onClose }) => {
       try {
         if(user && user.id){
             const response = await updateTeam({team:contactRes}).unwrap()
-            dispatch(updateTeamAndContacts(response))
+            dispatchh(decodeToken());
         }
           setFormData(initialState)
           toast.success("Team Updated Successfully !");

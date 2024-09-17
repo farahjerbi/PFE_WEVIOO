@@ -45,12 +45,9 @@ def load_config(config_file):
     logging.debug(f"Loaded config: {config}")
     return config
 
-def fetch_templates_from_service(url, template_type, token):
-    headers = {
-        "Authorization": token
-    }
+def fetch_templates_from_service(url, template_type):
     try:
-        response = requests.get(url, headers=headers)
+        response = requests.get(url)
         response.raise_for_status()
         templates = response.json()  # Assuming the response is in JSON format
 
@@ -63,11 +60,11 @@ def fetch_templates_from_service(url, template_type, token):
         logging.error(f"Error fetching templates from {url}: {e}")
         return []
 
-def get_all_templates(config, token):
+def get_all_templates(config):
     all_templates = []
     for service_key, service_url in config["template_services"].items():
         template_type = service_key.split('_')[0]  # Extract type from service key
-        templates = fetch_templates_from_service(service_url, template_type, token)
+        templates = fetch_templates_from_service(service_url, template_type)
         all_templates.extend(templates)  # Add templates to the list
     logging.debug(f"Total templates fetched: {len(all_templates)}")
     return all_templates
@@ -122,16 +119,11 @@ def get_most_similar_templates(user_description, templates):
 @app.route('/api/search', methods=['POST'])
 def search_templates():
     try:
-        # Retrieve token from headers
-        token = request.headers.get('Authorization')
-        logging.debug(f"Received token: {token}")
-
         user_description = request.json.get('description')
         logging.debug(f"User description: {user_description}")
-        
-        # You can verify the token here if needed, or pass it to the fetch function
+     
         config = load_config('tsconfig.json')
-        all_templates = get_all_templates(config, token)
+        all_templates = get_all_templates(config)
         
         if not all_templates:
             return jsonify({"message": "No templates available from the services."}), 200

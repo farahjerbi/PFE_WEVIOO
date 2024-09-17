@@ -65,13 +65,13 @@ const Sidebar = () => {
                         {isOpen && ( <span className='menu'>Search</span> )}
                     </MDBListGroupItem>
                     </>)}
-
+                    {role===Role.USER && (
                     <MDBListGroupItem  className={dashboardName === "calendar" ? 'sidebar-item-active' : 'sidebar-item'}  onClick={()=>navigate(CALENDAR)}>
                          <Tooltip  title="Calendar"  >
                          <img src="../../../assets/calendar-side.png" alt="sidebar-icon" className={isOpen?"sidebar-icon-open":"sidebar-icon"} />
                         </Tooltip>
                         {isOpen && ( <span className='menu'>My Calendar</span> )}
-                    </MDBListGroupItem>
+                    </MDBListGroupItem>)}
 
 
         {role===Role.ADMIN && (<>

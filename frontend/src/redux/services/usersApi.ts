@@ -45,14 +45,17 @@ export const usersApi = createApi({
             }
         }),
 
-        deleteUser : builder.mutation({
-            query:(id:number)=>{
-                return{
-                    url:`/deleteProfile/${id}`,
-                    method:"DELETE",
+        deleteUser: builder.mutation({
+            query: ({ id, password, isAdmin }: { id: number; password: string; isAdmin: boolean }) => {
+                return {
+                    url: `/deleteProfile/${id}`,
+                    method: "DELETE",
+                    body: { password, isAdmin }, 
                 };
             }
         }),
+        
+        
         changePassword : builder.mutation({
             query:(body:{oldPassword:string,newPassword:string,confirmNewPassword:string,email:string})=>{
                 return{

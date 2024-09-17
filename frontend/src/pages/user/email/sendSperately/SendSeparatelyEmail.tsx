@@ -191,7 +191,6 @@ const SendSeparatelyEmail = () => {
         return { isValid: false, errorMessage: `addSignature must be 'true' or 'false'. Found: ${addSignature}` };
       }
   
-      // Validate the requestBody object
       for (const key in requestBody) {
         if (!requestBody[key] || requestBody[key] === 'unknown') {
           return { isValid: false, errorMessage: `Field ${key} is empty or unknown.` };

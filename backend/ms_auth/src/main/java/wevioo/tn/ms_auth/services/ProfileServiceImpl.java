@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import wevioo.tn.ms_auth.dtos.requests.*;
@@ -12,6 +13,7 @@ import wevioo.tn.ms_auth.dtos.responses.TeamResponse;
 import wevioo.tn.ms_auth.dtos.responses.UserResponse;
 import wevioo.tn.ms_auth.dtos.responses.UsersResponse;
 import wevioo.tn.ms_auth.entities.Member;
+import wevioo.tn.ms_auth.entities.Role;
 import wevioo.tn.ms_auth.entities.Team;
 import wevioo.tn.ms_auth.entities.UserEntity;
 import wevioo.tn.ms_auth.repositories.MemberRepository;
@@ -91,13 +93,26 @@ public class ProfileServiceImpl implements ProfileService {
 
 
 
-    public  String deleteProfile(long id){
-        userRepository.findById(id)
-                .orElseThrow(() -> new IllegalStateException("User not found"));
+    public  void deleteProfile(long id,String password,Boolean isAdmin){
+        if(isAdmin){
+            List<UserEntity> admins = userRepository.findByRole(Role.ADMIN);
+            if (admins.isEmpty()) {
+                throw new IllegalStateException("No user found with role: " + Role.ADMIN);
+            }
+            UserEntity admin= admins.get(0);
+            if (!passwordEncoder.matches(password, admin.getPassword())) {
+                throw new IllegalStateException("Wrong password");
+            }
+        }else{
+            UserEntity user =userRepository.findById(id)
+                    .orElseThrow(() -> new IllegalStateException("User not found"));
 
+            if (!passwordEncoder.matches(password, user.getPassword())) {
+                throw new IllegalStateException("Wrong password");
+            }
+        }
         userRepository.deleteById(id);
 
-        return "User deleted successfully";
     }
 
 

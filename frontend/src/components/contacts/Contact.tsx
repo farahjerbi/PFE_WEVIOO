@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 import { useDispatch, useSelector } from 'react-redux';
 import { addContact, selectContactDetails, selectUser } from '../../redux/state/authSlice';
 import { IAddContact, IContact } from '../../models/user/Contact';
-import { validateEmail } from '../../routes/Functions';
+import { isBase64UrlEncoded, isValidUrl, validateEmail, validatePhone } from '../../routes/Functions';
 
 interface Props{
   onClose: () => void;
@@ -40,18 +40,45 @@ const Contact : React.FC<Props> = ({ onClose  }) => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   
-    if (!fullName || !email || !phone) {
-      toast.warning("Please fill in at least name, email and a phone number");
+    if (!fullName || !email || !phone || !auth || !publicKey || !endPoint || !whatsapp) {
+      toast.warning("Please fill in all the form below!");
       return;
     }
-    if ( !validateEmail(email) ) {
-      toast.warning("Please add a valid email");
-      return;
-    }
+   
     if ( fullName.length<=3 ) {
       toast.warning("FullName must have +3 caracters");
       return;
     }
+
+    if (  auth === '') {
+        toast.warning(`Contact's 'auth' field  empty.`);
+        return;
+    }
+
+  if (publicKey === '' || !isBase64UrlEncoded(publicKey)) {
+      toast.warning(` Contact's public key is invalid. It must be properly base64url encoded and 65 bytes long.`);
+      return;
+  }
+
+  if (endPoint === '' || !isValidUrl(endPoint)) {
+      toast.warning(`Contact's endpoint is invalid. It must be a valid URL.`);
+      return;
+  }
+
+  if (email === '' || !validateEmail(email)) {
+      toast.warning(`Contact's email is invalid.`);
+      return;
+  }
+
+  if (phone === '' || !validatePhone(phone)) {
+      toast.warning(` Contact's phone number is invalid.`);
+      return;
+  }
+
+  if (whatsapp === '' || !validatePhone(whatsapp)) {
+      toast.warning(`Contact's WhatsApp number is invalid.`);
+      return;
+  }
   
     const contactRes: IContact | IAddContact = {
       fullName,

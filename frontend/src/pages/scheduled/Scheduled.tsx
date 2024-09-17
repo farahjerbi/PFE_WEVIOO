@@ -35,7 +35,7 @@ const Scheduled = () => {
     const whatsapp=useSelector(selectScheduledWhatsapps)
     const push=useSelector(selectScheduledPushs)
     const[query,setQuery]=useState<string>("email")
-    const[queryT,setQueryT]=useState<boolean>(true)
+    const[queryT,setQueryT]=useState<boolean>(false)
     const dispatch=useDispatch()
     //END PAGINATION
     const role = useSelector(selectRole);

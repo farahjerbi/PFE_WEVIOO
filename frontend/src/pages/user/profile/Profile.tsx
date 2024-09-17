@@ -31,6 +31,7 @@ const Profile = () => {
     const dispatch=useDispatch();
     const [updated, setUpdated] = useState<boolean>(false);
     const [signatureInput, setSignatureInput] = useState<File | null>(null);
+    const [isEditable, setIsEditable] = useState<boolean>(false);
     const [formData, setFormData] = useState({
         email: user?.email ,
         emailSecret: user?.emailSecret ,
@@ -43,7 +44,6 @@ const Profile = () => {
     const [idDelete, setIdDelete] = useState<number>();
     const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
     const [resetPassword, setResetPassword] = useState<boolean>(false);
-    const [signatureUrl, setSignatureUrl] = useState<string>("");
     let token = localStorage.getItem('token');
     if (token && token.startsWith('"') && token.endsWith('"')) {
         token = token.substring(1, token.length - 1);
@@ -67,7 +67,6 @@ const Profile = () => {
               e: FormEvent<HTMLFormElement>
             ) => {
               e.preventDefault();
-            
               if (!firstName || !lastName || !emailSecret) {
                 toast.warning("Please fill in all fields.");
                 return;
@@ -86,7 +85,7 @@ const Profile = () => {
                       Authorization: `Bearer ${token}`
                     }
                   });
-                
+                  setIsEditable(false)
                 if (response.status === 200) {
                   const updatedUser = response.data;
                   dispatch(setUpdatedUser(updatedUser))
@@ -96,7 +95,8 @@ const Profile = () => {
                 toast.error('Error!')
                 console.error("Error updating user:", err);
               }
-            }
+            
+          }
 
   return (
     <>
@@ -116,53 +116,86 @@ const Profile = () => {
                                     size={"100"}
                                     round
                                     />
-                        <form encType="multipart/form-data" method='POST'  onSubmit={handleSubmit} >
-                        <MDBCardBody className='p-5'>
-                            <h4 className="mb-4">{user.firstName} {user.lastName}</h4>
-                            <hr />
-                            <p className="dark-grey-text mt-4">
-                                <MDBIcon fas icon="quote-left" className="pe-2" />
-                                {user.role}
-                            </p>
-                            <MDBRow>
-                              <MDBCol col='6'>
-                                <MDBInput name='firstName' value={firstName} onChange={handleChange} wrapperClass='mb-4' label='First name' type='text'/>
-                             </MDBCol>
-            
-                            <MDBCol col='6'>
-                                <MDBInput name='lastName' value={lastName} onChange={handleChange} wrapperClass='mb-4' label='Last name' type='text'/>
-                            </MDBCol>
-                            </MDBRow>
-            
-                            <MDBInput disabled name='email' value={email} onChange={handleChange} wrapperClass='mb-4' label='Email' type='email'/>
-                            <MDBInput name='emailSecret' value={emailSecret} onChange={handleChange}  wrapperClass='mb-4' label='Email Secret' type='password'/>
-                            <Tooltip title="Upload Electronic Signature">
-                            <Button
-                                className='mb-4'
-                                component="label"
-                                role={undefined}
-                                variant="contained"
-                                tabIndex={-1}
-                                color='info'
-                                startIcon={<CloudUploadIcon />}
-                              >
-                                <VisuallyHiddenInput accept="*/*" onChange={(e) => setSignatureInput(e.target.files && e.target.files[0])}  className='mb-4'  type="file" />
-                              </Button>
-                            </Tooltip>
-                          {signatureInput && (<p>{signatureInput.name}</p>)}  
-                                {user.signature &&
-                                (
-                                  <img src={`http://localhost:8099/uploads/${user.signature}`}alt="Signature" style={{ maxWidth: '100px', height: 'auto' }} />
-                                )
-                                } 
+                               <form encType="multipart/form-data" method='POST' onSubmit={handleSubmit} >
+              <MDBCardBody className='p-5'>
+                <h4 className="mb-4">{user.firstName} {user.lastName}</h4>
+                <hr />
+                <p className="dark-grey-text mt-4">
+                  <MDBIcon fas icon="quote-left" className="pe-2" />
+                  {user.role}
+                </p>
+                <MDBRow>
+                  <MDBCol col='6'>
+                    <MDBInput 
+                      name='firstName' 
+                      value={firstName} 
+                      onChange={handleChange} 
+                      wrapperClass='mb-4' 
+                      label='First name' 
+                      type='text'
+                      disabled={!isEditable} 
+                    />
+                  </MDBCol>
+                  <MDBCol col='6'>
+                    <MDBInput 
+                      name='lastName' 
+                      value={lastName} 
+                      onChange={handleChange} 
+                      wrapperClass='mb-4' 
+                      label='Last name' 
+                      type='text'
+                      disabled={!isEditable} 
+                    />
+                  </MDBCol>
+                </MDBRow>
+                <MDBInput 
+                  disabled 
+                  name='email' 
+                  value={user.email} 
+                  wrapperClass='mb-4' 
+                  label='Email' 
+                  type='email'
+                />
+                <MDBInput 
+                  name='emailSecret' 
+                  value={emailSecret} 
+                  onChange={handleChange}  
+                  wrapperClass='mb-4' 
+                  label='Email Secret' 
+                  type='password'
+                  disabled={!isEditable} 
+                />
+                <Tooltip title="Upload Electronic Signature">
+                  <Button
+                    className='mb-4'
+                    component="label"
+                    role={undefined}
+                    variant="contained"
+                    tabIndex={-1}
+                    color='info'
+                    startIcon={<CloudUploadIcon />}
+                    disabled={!isEditable} 
+                  >
+                    <VisuallyHiddenInput accept="*/*" onChange={(e) => setSignatureInput(e.target.files && e.target.files[0])}  className='mb-4'  type="file" />
+                  </Button>
+                </Tooltip>
+                {signatureInput && (<p>{signatureInput.name}</p>)}  
+                {user.signature && (
+                  <img src={`http://localhost:8099/uploads/${user.signature}`} alt="Signature" style={{ maxWidth: '100px', height: 'auto' }} />
+                )}
+                <div className='d-flex'>
+                {isEditable && (<MDBBtn className='w-50 me-2 color_baby_blue'> 
+                     save               
+                  </MDBBtn>)}
 
-                            <div className='d-flex '>
-                            <MDBBtn className='w-50 me-2 color_baby_blue'>Update Profile</MDBBtn>                            
-                            <MDBBtn className='w-50 me-2 color_baby_bluee'  onClick={()=>setResetPassword(true)}  >Change Password</MDBBtn>
-                            <MDBBtn className='w-50 color_blue' onClick={() => { setDeleteModalOpen(true); setIdDelete(user.id)}}>Delete Profile</MDBBtn>
-                            </div>
-                            </MDBCardBody>
-                            </form>
+                  {! isEditable && (<MDBBtn className='w-50 me-2 color_baby_blue'  type='button' onClick={()=>setIsEditable(true)}> 
+                                    Update Profile
+                  </MDBBtn>)}
+                  <MDBBtn className='w-50 me-2 color_baby_bluee' type='button' onClick={() => setResetPassword(true)}>Change Password</MDBBtn>
+                  <MDBBtn className='w-50 color_blue' type='button' onClick={() => { setDeleteModalOpen(true); setIdDelete(user.id)}}>Delete Profile</MDBBtn>
+                </div>
+              </MDBCardBody>
+            </form>
                           </MDBCard>
             
                         </MDBCol>

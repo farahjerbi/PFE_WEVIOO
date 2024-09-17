@@ -11,7 +11,7 @@ import { toast } from 'sonner';
 import { addContacts, selectUser } from '../../../redux/state/authSlice';
 import { useAddMembersMutation } from '../../../redux/services/usersApi';
 import ExcelButtonContacts from '../../button/ExcelButtonContacts';
-import { TextField } from '@mui/material';
+import { TextField, Tooltip } from '@mui/material';
 import { isBase64UrlEncoded, isValidUrl, validateEmail, validatePhone } from '../../../routes/Functions';
 interface Props{
     onClose: () => void;
@@ -26,6 +26,12 @@ const AddContacts: React.FC<Props> = ({ onClose ,show }) => {
     const [contacts, setContacts] = useState<any[]>([]);
     const [editIndex, setEditIndex] = useState<number | null>(null);
     const [editContact, setEditContact] = useState<any>({});
+    const cellStyle: React.CSSProperties = {
+        maxWidth: '140px',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+      };
     useEffect(() => {
         setOpen(show);
     }, [show]);
@@ -47,7 +53,7 @@ const AddContacts: React.FC<Props> = ({ onClose ,show }) => {
         for (let index = 0; index < contacts.length; index++) {
           const contact = contacts[index];
       
-          if (!contact.fullName) {
+          if (contact.fullName === 'unknown' || !contact.fullName) {
               toast.warning(`Row ${index + 1}: Contact must have a full name.`);
               setLoading(false);
               return;
@@ -71,19 +77,19 @@ const AddContacts: React.FC<Props> = ({ onClose ,show }) => {
               return;
           }
       
-          if (contact.email && !validateEmail(contact.email)) {
+          if (contact.email === 'unknown' || contact.email === '' || !validateEmail(contact.email)) {
               toast.warning(`Row ${index + 1}: Contact's email is invalid.`);
               setLoading(false);
               return;
           }
       
-          if (contact.phone && !validatePhone(contact.phone)) {
+          if (contact.phone === 'unknown' || contact.phone === '' || !validatePhone(contact.phone)) {
               toast.warning(`Row ${index + 1}: Contact's phone number is invalid.`);
               setLoading(false);
               return;
           }
       
-          if (contact.whatsapp && !validatePhone(contact.whatsapp)) {
+          if (contact.whatsapp === 'unknown' || contact.whatsapp === '' || !validatePhone(contact.whatsapp)) {
               toast.warning(`Row ${index + 1}: Contact's WhatsApp number is invalid.`);
               setLoading(false);
               return;
@@ -156,26 +162,40 @@ const AddContacts: React.FC<Props> = ({ onClose ,show }) => {
             <MDBTable striped hover bordered className='mt-2'>
                         <MDBTableHead color='blue lighten-4'>
                           <tr style={{ background: 'rgb(141, 224, 198)' }}>
-                            <th> FullName </th>
-                            <th> Email </th>
-                            <th> Phone </th>
-                            <th> Whatsapp </th>
-                            <th> Auth </th>
-                            <th> PublicKey </th>
-                            <th> EndPoint </th>
-                            <th> Actions </th>
+                            <th style={cellStyle}> FullName </th>
+                            <th style={cellStyle}> Email </th>
+                            <th style={cellStyle}> Phone </th>
+                            <th style={cellStyle}> Whatsapp </th>
+                            <th style={cellStyle}> Auth </th>
+                            <th style={cellStyle}> PublicKey </th>
+                            <th style={cellStyle}> EndPoint </th>
+                            <th style={cellStyle}> Actions </th>
                           </tr>
                         </MDBTableHead>
                         <tbody style={{overflowY:"auto",maxHeight:"200px"}}>
                         {contacts.map((contact, index) => (
                                 <tr key={index}>
-                                    <td>{editIndex === index ? <TextField variant="outlined" size="small" fullWidth value={editContact.fullName} onChange={e => setEditContact({ ...editContact, fullName: e.target.value })} /> : contact.fullName}</td>
-                                        <td>{editIndex === index ? <TextField variant="outlined" size="small" fullWidth value={editContact.email} onChange={e => setEditContact({ ...editContact, email: e.target.value })} /> : contact.email}</td>
-                                        <td>{editIndex === index ? <TextField variant="outlined" size="small" fullWidth value={editContact.phone} onChange={e => setEditContact({ ...editContact, phone: e.target.value })} /> : contact.phone}</td>
-                                        <td>{editIndex === index ? <TextField variant="outlined" size="small" fullWidth value={editContact.whatsapp} onChange={e => setEditContact({ ...editContact, whatsapp: e.target.value })} /> : contact.whatsapp}</td>
-                                        <td>{editIndex === index ? <TextField variant="outlined" size="small" fullWidth value={editContact.auth} onChange={e => setEditContact({ ...editContact, auth: e.target.value })} /> : contact.auth}</td>
-                                        <td>{editIndex === index ? <TextField variant="outlined" size="small" fullWidth value={editContact.publicKey} onChange={e => setEditContact({ ...editContact, publicKey: e.target.value })} /> : contact.publicKey}</td>
-                                        <td>{editIndex === index ? <TextField variant="outlined" size="small" fullWidth value={editContact.endPoint} onChange={e => setEditContact({ ...editContact, endPoint: e.target.value })} /> : contact.endPoint}</td>
+                                    <Tooltip title={contact.fullName}>
+                                        <td style={cellStyle}>{editIndex === index ? <TextField variant="outlined" size="small" fullWidth value={editContact.fullName} onChange={e => setEditContact({ ...editContact, fullName: e.target.value })} /> : contact.fullName}</td>
+                                    </Tooltip>
+                                    <Tooltip title={contact.email}>
+                                        <td style={cellStyle}>{editIndex === index ? <TextField variant="outlined" size="small" fullWidth value={editContact.email} onChange={e => setEditContact({ ...editContact, email: e.target.value })} /> : contact.email}</td>
+                                    </Tooltip>
+                                    <Tooltip title={contact.phone}>
+                                        <td style={cellStyle}>{editIndex === index ? <TextField variant="outlined" size="small" fullWidth value={editContact.phone} onChange={e => setEditContact({ ...editContact, phone: e.target.value })} /> : contact.phone}</td>
+                                    </Tooltip>
+                                    <Tooltip title={contact.whatsapp}>
+                                        <td style={cellStyle}>{editIndex === index ? <TextField variant="outlined" size="small" fullWidth value={editContact.whatsapp} onChange={e => setEditContact({ ...editContact, whatsapp: e.target.value })} /> : contact.whatsapp}</td>
+                                    </Tooltip>
+                                    <Tooltip title={contact.auth}>
+                                        <td style={cellStyle}>{editIndex === index ? <TextField variant="outlined" size="small" fullWidth value={editContact.auth} onChange={e => setEditContact({ ...editContact, auth: e.target.value })} /> : contact.auth}</td>
+                                    </Tooltip>
+                                    <Tooltip title={contact.publicKey}>
+                                        <td style={cellStyle}>{editIndex === index ? <TextField variant="outlined" size="small" fullWidth value={editContact.publicKey} onChange={e => setEditContact({ ...editContact, publicKey: e.target.value })} /> : contact.publicKey}</td>
+                                    </Tooltip>
+                                    <Tooltip title={contact.endPoint}> 
+                                        <td style={cellStyle}>{editIndex === index ? <TextField variant="outlined" size="small" fullWidth value={editContact.endPoint} onChange={e => setEditContact({ ...editContact, endPoint: e.target.value })} /> : contact.endPoint}</td>
+                                    </Tooltip>
                                     <td>
                                             {editIndex === index ? (
                                                 <div className='d-flex'>

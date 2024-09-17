@@ -10,8 +10,7 @@ import { addContact, selectContactDetails, selectTeam, selectUser, setContactDet
 import { IAddContact, IContact, UpdateContact } from '../../models/user/Contact';
 import { Button, Checkbox, Grid, List, ListItemButton, ListItemIcon, ListItemText, Paper } from '@mui/material';
 import { ITeam } from '../../models/user/Team';
-import { setIsOpen } from '../../redux/state/styleSlice';
-import { validateEmail } from '../../routes/Functions';
+import { isBase64UrlEncoded, isValidUrl, validateEmail, validatePhone } from '../../routes/Functions';
 function not(a: readonly ITeam[], b: readonly ITeam[]) {
   return a.filter((value) => b.indexOf(value) === -1);
 }
@@ -48,6 +47,46 @@ const UpdateCnct: React.FC<Props> = ({ onClose  }) => {
   };
 
   const handleUpdateContact = async (contactRes: UpdateContact) => {
+    if (!fullName || !email || !phone || !auth || !publicKey || !endPoint || !whatsapp) {
+      toast.warning("Please fill in all the form below!");
+      return;
+    }
+   
+    if ( fullName.length<=3 ) {
+      toast.warning("FullName must have +3 caracters");
+      return;
+    }
+
+    if (  auth === '') {
+        toast.warning(`Contact's 'auth' field  empty.`);
+        return;
+    }
+
+  if (publicKey === '' || !isBase64UrlEncoded(publicKey)) {
+      toast.warning(` Contact's public key is invalid. It must be properly base64url encoded and 65 bytes long.`);
+      return;
+  }
+
+  if (endPoint === '' || !isValidUrl(endPoint)) {
+      toast.warning(`Contact's endpoint is invalid. It must be a valid URL.`);
+      return;
+  }
+
+  if (email === '' || !validateEmail(email)) {
+      toast.warning(`Contact's email is invalid.`);
+      return;
+  }
+
+  if (phone === '' || !validatePhone(phone)) {
+      toast.warning(` Contact's phone number is invalid.`);
+      return;
+  }
+
+  if (whatsapp === '' || !validatePhone(whatsapp)) {
+      toast.warning(`Contact's WhatsApp number is invalid.`);
+      return;
+  }
+  
     try {
       const res=await updateMember({ contact: contactRes }).unwrap();
       dispatch(updateContact(res));
